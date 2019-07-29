@@ -1,0 +1,24 @@
+
+val String filename = "balkonmagic.rules"
+
+rule "Balkonmagic an bei Sonnenuntergang und wenn Anwesend"
+when
+  Item Night_Start_Event received update ON
+then
+  if (Presence_Th_Phone.state == ON) {
+    sendCommand(BK_Balkonmagic, ON)
+  }
+  logInfo (filename, "eingeschaltet.")
+end
+
+rule "Balkonmagic aus um 1:30 Uhr"
+when
+  Time cron "0 30 1 * * ?"
+then
+  if (BK_Balkonmagic.state == ON) {
+    sendCommand(BK_Balkonmagic, OFF)
+    logInfo (filename, "ausgeschaltet.")
+  }
+end
+
+// vim: syntax=Xtend

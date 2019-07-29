@@ -1,0 +1,160 @@
+
+import org.eclipse.xtext.xbase.lib.Functions
+
+val String filename = "heizung-raeume.rules"
+
+val Number tempHigher = 23.0
+val Number tempComfort = 21.0
+val Number tempMid = 19.0
+val Number tempLower = 17.0
+val Number tempChill = 15.0
+val Number tempAway = 15.0
+val Number tempAwayLonger = 13.0
+val Number tempOff = 4.5
+
+val Functions$Function5<StringItem, NumberItem, NumberItem, NumberItem, SwitchItem, String> //
+generateSummary = [Heater_Mode, Heater_Act_Temp, Heater_Set_Temp, Heater_Valve_Position, Window_Mode |
+    var String summary = "(fehlende Daten)"
+    if (Heater_Act_Temp.state instanceof Number && Heater_Set_Temp.state instanceof Number && Heater_Valve_Position.state instanceof Number) {
+        val actTemp = (Heater_Act_Temp.state as DecimalType).floatValue
+        val setTemp = (Heater_Set_Temp.state as DecimalType).floatValue
+        val valvePos = (Heater_Valve_Position.state as DecimalType).floatValue
+        val mode = Heater_Mode.state as StringType
+        
+        summary = //
+            if (Window_Mode.state == ON)   String::format("( ↻ Fenster offen ) %.1f °C", actTemp)
+            else if (mode == "BOOST-MODE") String::format("( 🔥 Boost ) %.1f °C", actTemp)
+            else if (mode == "AUTO-MODE")  String::format("( ⚙ %.1f °C ) %.1f °C", setTemp, actTemp)
+            else if (valvePos > 60)        String::format("( ⟰ %.1f °C ) %.1f °C", setTemp, actTemp)
+            else if (valvePos > 40)        String::format("( ⤊ %.1f °C ) %.1f °C", setTemp, actTemp)
+            else if (valvePos > 20)        String::format("( ⇈ %.1f °C ) %.1f °C", setTemp, actTemp)
+            else if (valvePos > 0)         String::format("( ↑ %.1f °C ) %.1f °C", setTemp, actTemp)
+            else if (setTemp > actTemp)    String::format("( • %.1f °C ) %.1f °C", setTemp, actTemp)
+            else String::format("%.1f °C", actTemp)
+    }
+    return summary
+]
+
+val Functions$Function2<ContactItem, NumberItem, OnOffType> //
+heaterInWindowMode = [Window_State, Heater_Set_Temp |
+    if (Window_State.state == OPEN && Heater_Set_Temp.state == 12.0) {
+        return ON
+    } else if (Window_State.state == CLOSED && Heater_Set_Temp.state != 12.0) {
+        return OFF
+    } else {
+        return OFF
+    }
+]
+
+
+///////////////////////////////////////////////////////////////////////////////
+rule "System started - Heizung"
+when
+    System started
+then
+    createTimer(now.plusSeconds(200)) [|
+        logInfo(filename, "System started - Heizung")
+        if (WZ_Heizung_Fault.state == NULL) WZ_Heizung_Fault.postUpdate("NO_FAULT")
+        if (KU_Heizung_Fault.state == NULL) KU_Heizung_Fault.postUpdate("NO_FAULT")
+        if (SZ_Heizung_Fault.state == NULL) SZ_Heizung_Fault.postUpdate("NO_FAULT")
+        if (BD_Heizung_Fault.state == NULL) BD_Heizung_Fault.postUpdate("NO_FAULT")
+    ]
+end
+
+///////////////////////////////////////////////////////////////////////////////
+// *_Fenster_State Auswertung
+rule "*_Fenster_State Auswertung"
+when
+    //Item WZ_Fenster_State changed or
+    Item KU_Fenster_State changed or
+    Item SZ_Fenster_State changed or
+    Item BD_Fenster_State changed
+then {
+    createTimer(now.plusSeconds(15)) [|
+        logInfo(filename, "*_Fenster_State Auswertung")
+        //WZ_Heizung_WindowMode.postUpdate(heaterInWindowMode.apply(WZ_Fenster_State, WZ_Heizung_SetTemp))
+        KU_Heizung_WindowMode.postUpdate(heaterInWindowMode.apply(KU_Fenster_State, KU_Heizung_SetTemp))
+        SZ_Heizung_WindowMode.postUpdate(heaterInWindowMode.apply(SZ_Fenster_State, SZ_Heizung_SetTemp))
+        BD_Heizung_WindowMode.postUpdate(heaterInWindowMode.apply(BD_Fenster_State, BD_Heizung_SetTemp))
+    ]
+}
+end
+
+///////////////////////////////////////////////////////////////////////////////
+// Heizung Erzeuge Heizkörper Temperatur Zusammenfassung
+rule "Heizung Erzeuge Heizkörper Temperatur Zusammenfassung"
+when
+    Item Whg_Heating_Mode received command or
+    Item Heating_TargetTemps changed or
+    Item Heating_ValveSettings changed or
+    Item Heating_OpModes changed or
+    Item Heating_WindowModes changed
+then {
+    //logInfo(filename, "Heizung Erzeuge Heizkörper Temperatur Zusammenfassung")
+    WZ_Heizung_Summary.postUpdate(generateSummary.apply(WZ_Heizung_Mode, WZ_Heizung_ActTemp, WZ_Heizung_SetTemp, WZ_Heizung_Valve, WZ_Heizung_WindowMode))
+    KU_Heizung_Summary.postUpdate(generateSummary.apply(KU_Heizung_Mode, KU_Heizung_ActTemp, KU_Heizung_SetTemp, KU_Heizung_Valve, KU_Heizung_WindowMode))
+    SZ_Heizung_Summary.postUpdate(generateSummary.apply(SZ_Heizung_Mode, SZ_Heizung_ActTemp, SZ_Heizung_SetTemp, SZ_Heizung_Valve, SZ_Heizung_WindowMode))
+    BD_Heizung_Summary.postUpdate(generateSummary.apply(BD_Heizung_Mode, BD_Heizung_ActTemp, BD_Heizung_SetTemp, BD_Heizung_Valve, BD_Heizung_WindowMode))
+    //logInfo(filename, "Heizung Erzeuge Heizkörper Temperatur Zusammenfassung - abgeschlossen")
+}
+end
+
+///////////////////////////////////////////////////////////////////////////////
+// Heizung Auswertung Schnellauswahl (Sitemap)
+rule "WZ_Heizung Auswertung Schnellauswahl (Sitemap)"
+when
+    Item WZ_Heizung_Preset received command
+then {
+    //logInfo(filename, "Auswertung Schnellauswahl (Sitemap)")
+    switch (receivedCommand){
+        case 0: WZ_Heizung_Manu.sendCommand(tempLower)
+        case 1: WZ_Heizung_Manu.sendCommand(tempComfort)
+        case 2: WZ_Heizung_Manu.sendCommand(tempHigher)
+    }
+    WZ_Heizung_Preset.postUpdate(-1)
+}
+end
+
+rule "KU_Heizung Auswertung Schnellauswahl (Sitemap)"
+when
+    Item KU_Heizung_Preset received command
+then {
+    //logInfo(filename, "Auswertung Schnellauswahl (Sitemap)")
+    switch (receivedCommand){
+        case 0: KU_Heizung_Manu.sendCommand(tempLower)
+        case 1: KU_Heizung_Manu.sendCommand(tempComfort)
+        case 2: KU_Heizung_Manu.sendCommand(tempHigher)
+    }
+    KU_Heizung_Preset.postUpdate(-1)
+}
+end
+
+rule "SZ_Heizung Auswertung Schnellauswahl (Sitemap)"
+when
+    Item SZ_Heizung_Preset received command
+then {
+    //logInfo(filename, "Auswertung Schnellauswahl (Sitemap)")
+    switch (receivedCommand){
+        case 0: SZ_Heizung_Manu.sendCommand(tempLower)
+        case 1: SZ_Heizung_Manu.sendCommand(tempComfort)
+        case 2: SZ_Heizung_Manu.sendCommand(tempHigher)
+    }
+    SZ_Heizung_Preset.postUpdate(-1)
+}
+end
+
+rule "BD_Heizung Auswertung Schnellauswahl (Sitemap)"
+when
+    Item BD_Heizung_Preset received command
+then {
+    //logInfo(filename, "Auswertung Schnellauswahl (Sitemap)")
+    switch (receivedCommand){
+        case 0: BD_Heizung_Manu.sendCommand(tempLower)
+        case 1: BD_Heizung_Manu.sendCommand(tempComfort)
+        case 2: BD_Heizung_Manu.sendCommand(tempHigher)
+    }
+    BD_Heizung_Preset.postUpdate(-1)
+}
+end
+
+// vim: syntax=Xtend

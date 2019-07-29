@@ -1,0 +1,81 @@
+import java.util.concurrent.locks.ReentrantLock
+
+val String filename = "verbraucher.rules"
+
+var ReentrantLock finishLock  = new ReentrantLock()
+
+val Number MODE_OFF = 0
+val Number MODE_STANDBY = 1
+val Number MODE_ACTIVE = 2
+val Number MODE_FINISHED = 3
+
+rule "Waschmaschine Überwachung: Init"
+when
+    System started
+then
+    createTimer(now.plusSeconds(170)) [|
+        if (BD_Waschmaschine_OpState == NULL) BD_Waschmaschine_OpState.postUpdate(MODE_OFF)
+        if (KU_Spuelmaschine_OpState == NULL) KU_Spuelmaschine_OpState.postUpdate(MODE_OFF)
+    ]
+end
+
+/**
+ * Waschmaschine
+ * Aus: 0,05 - 0,07 W
+ * Standby/Fertig: 4,3W
+ * Aktiv: bis 2300W (bisher gesehener Mindestwert 4,55W)
+ */
+rule "Waschmaschine Überwachung: Verbrauchszuordnung"
+when
+    Item BD_Waschmaschine_Power changed
+then
+    //logInfo(filename, "Waschmaschine Überwachung: Verbrauchszuordnung")
+    if (BD_Waschmaschine_Power.state < 0.2) BD_Waschmaschine_OpState.postUpdate(MODE_OFF)
+    else if (BD_Waschmaschine_Power.state > 10) BD_Waschmaschine_OpState.postUpdate(MODE_ACTIVE)
+    else if (BD_Waschmaschine_Power.state < 4.5) {
+      if (BD_Waschmaschine_OpState.state == MODE_OFF) BD_Waschmaschine_OpState.postUpdate(MODE_STANDBY)
+      else if (BD_Waschmaschine_OpState.state == MODE_ACTIVE) {
+        finishLock.lock()
+        try {
+          // Debounce for 30 seconds
+          Thread::sleep(30000)
+          if (BD_Waschmaschine_Power.state < 4.5) BD_Waschmaschine_OpState.postUpdate(MODE_FINISHED)
+        } finally {
+          finishLock.unlock()
+        }
+      }
+    }
+end
+
+rule "Waschmaschine Überwachung: Benachrichtigung"
+when
+    Item BD_Waschmaschine_OpState changed
+then
+    if (BD_Waschmaschine_OpState.state == MODE_FINISHED) {
+      pushover("Waschmaschine fertig!")
+    }
+end
+
+rule "Spuelmaschine Überwachung: Verbrauchszuordnung"
+when
+    Item KU_Spuelmaschine_Power changed
+then
+    //logInfo(filename, "Waschmaschine Überwachung: Verbrauchszuordnung")
+    if (KU_Spuelmaschine_Power.state < 0.03) KU_Spuelmaschine_OpState.postUpdate(MODE_OFF)
+    else if (KU_Spuelmaschine_Power.state > 5) KU_Spuelmaschine_OpState.postUpdate(MODE_ACTIVE)
+    else if (KU_Spuelmaschine_Power.state < 0.75) {
+        if (KU_Spuelmaschine_OpState.state == MODE_OFF) KU_Spuelmaschine_OpState.postUpdate(MODE_STANDBY)
+        else if (KU_Spuelmaschine_OpState.state == MODE_ACTIVE) KU_Spuelmaschine_OpState.postUpdate(MODE_FINISHED)
+    }
+end
+
+rule "Spuelmaschine Überwachung: Benachrichtigung"
+when
+    Item KU_Spuelmaschine_OpState changed
+then
+    if (KU_Spuelmaschine_OpState.state == MODE_FINISHED) {
+      pushover("Spühlmaschine fertig!")
+    }
+end
+
+// vim: syntax=Xtend

@@ -1,0 +1,7 @@
+Group  Weatherstation_Chart (System, Charts)
+Number Weatherstation_Chart_Period "Periode" (System)
+Number Weatherstation_Temperature "Temperatur [%.1f Grad Celsius]" <cistern> (Weatherstation_Chart) 
+ 
+String temperature_out { channel="exec:command:weatherstation_temperature:output" }
+String forecast_out { channel="exec:command:weatherstation_forecast:output" }
+//

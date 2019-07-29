@@ -1,0 +1,9 @@
+rule "Weatherstation Temperature"
+  when
+     Item temperature_out received update
+  then
+      Weatherstation_Temperature.postUpdate(
+          ( ( Float::parseFloat(temperature_out.state.toString) as Number ) * 10 ) / 10
+      )
+ 
+end

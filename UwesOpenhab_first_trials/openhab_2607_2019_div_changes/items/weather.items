@@ -1,0 +1,24 @@
+ 
+String temperature_out <temperature> { channel="exec:command:weatherstation_temperature:output" }
+String willRain_out <rain> { channel="exec:command:weatherstation_willRain:output" }
+String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
+String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
+String level_out  { channel="exec:command:weatherstation_waterlevel:output" }
+
+
+String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }
+String water_on_off { channel="exec:command:weatherstation_water_on_off:input" }
+
+String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input", autoupdate = "false" }
+
+// Virtual variable section
+
+Switch Irr_Switch 
+Switch Valve_Switch {expire="600s,OFF"} 
+Switch Fill_Switch  {expire="130s,OFF"} 
+
+Number display_level_out
+
+String  logreaderIrrOnOff "Last Custom [%s]" { channel="logreader:reader:irrOnOffThing:lastCustomEvent" }
+String  logreaderWaterOnOff "Last Custom [%s]" { channel="logreader:reader:waterOnOffThing:lastCustomEvent" }
+//String  logreaderLevel "Last Custom [%s]" { channel="logreader:reader:levelThing:lastCustomEvent" }

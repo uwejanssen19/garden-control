@@ -1,0 +1,5 @@
+Thing   network:pingdevice:ThOP3    [ hostname="192.168.0.17", retry=1, timeout=5000, refreshInterval=60000 ]
+Thing   network:pingdevice:ThN9     [ hostname="192.168.0.20", retry=1, timeout=5000, refreshInterval=60000 ]
+Thing   network:pingdevice:BirkePC  [ hostname="192.168.0.2",  retry=1, timeout=5000, refreshInterval=10000 ] 
+
+// vim: syntax=Xtend

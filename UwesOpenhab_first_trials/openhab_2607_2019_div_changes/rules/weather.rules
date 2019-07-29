@@ -1,0 +1,87 @@
+// Description: Rules for irrigation and water supply control 
+// Author: Uwe Janssen
+// Created: 14.05.2019
+// -----------------------------------------------------------------------------
+// History of changes
+// Date       |  Change                                            | Author
+// -----------------------------------------------------------------------------
+// 14.05.2019 | Creation                                           | Janssen
+// 26.05.2019 | comments changed                                   | Janssen
+// -----------------------------------------------------------------------------
+
+
+rule "Trigger irrigation pump"
+when Item Irr_Switch received command
+then
+    var String cmd = null
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("irr pump", "Do not know how to handle " + receivedCommand.toString)
+    }
+
+    if(cmd !== null) irr_on_off.sendCommand(cmd)
+end
+
+rule "Trigger water valve"
+when Item Valve_Switch received command
+then
+    var String cmd = null
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("water valve", "Do not know how to handle " + receivedCommand.toString)
+    }
+
+    if(cmd !== null) water_on_off.sendCommand(cmd)
+end
+
+rule "Fill barrel for next irrigation"
+// finally invokes low level script supply4NextIrrigation.sh 
+// this script checks whether it makes sense to fill up the barrel
+// it might take 240 secs to fill up a bit
+// see weather.items for expiration time of item Fill_Switch
+// ---------------------------------------------------------------
+// TODO: incorporate this behaviour in a rule
+// ---------------------------------------------------------------
+
+when Item Fill_Switch received command
+then
+    //logInfo("FILL barrel rule", "received command = " + receivedCommand.toString)
+    switch(receivedCommand){
+        case ON: {
+            logInfo("FILL barrel rule", "launching script supply4NextIrr...")
+            // WORKING with water_on_off_script: 
+            fill_barrel.sendCommand("1")
+            // logInfo("FILL barrel rule", "script supply4NextIrr... executed")
+        }
+        case OFF: fill_barrel.sendCommand("0")
+        default: logError("FILL barrel", "Do not know how to handle " + receivedCommand.toString)
+    }
+end
+
+rule "LogReaderIrrOnOff"
+    when
+        Channel "logreader:reader:irrOnOffThing:newCustomEvent" triggered
+    then
+        logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderIrrOnOff.state)
+        sendMail("uwe@janssen-muenchen.de","Bewaesserung: ", logreaderIrrOnOff.state.toString+ "\nWasserstand: "+level_out.state.toString)
+end
+
+rule "LogReaderWaterOnOff"
+    when
+        Channel "logreader:reader:waterOnOffThing:newCustomEvent" triggered
+    then
+        logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderWaterOnOff.state)
+        sendMail("uwe@janssen-muenchen.de","Fuellen: ", logreaderWaterOnOff.state.toString)
+end
+
+rule "Level"
+    when
+        Channel "weatherstation_waterlevel" triggered
+        //Item level_out changed
+    then
+        logInfo("level rule", "Level changed:\n" + level_out.state)
+        //display_level_out.postUpdate("0")
+        //sendMail("uwe@janssen-muenchen.de","Garden Control/Wasserstand: ", level_out.state.toString)
+end

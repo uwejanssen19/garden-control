@@ -1,0 +1,7 @@
+Strategies {
+}
+
+Items {
+    Whg_Heating_Mode, BD_Waschmaschine_OpState, KU_Spuelmaschine_OpState, WZ_SoundSystem_OpState : strategy = everyUpdate, restoreOnStartup
+    Rule_BD_Door_Light, Rule_WhgDoor_Notification : strategy = everyUpdate, restoreOnStartup
+}

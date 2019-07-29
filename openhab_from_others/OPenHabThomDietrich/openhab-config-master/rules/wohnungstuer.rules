@@ -1,0 +1,80 @@
+import org.joda.time.DateTime
+
+val String filename = "wohnungstuer.rules"
+
+var Timer willkommen_timer = null
+var Integer willkommen_timer_minutes = 15
+
+rule "Wohnungstür-Automatik: Init"
+when
+    System started
+then
+    createTimer(now.plusSeconds(175)) [|
+        if (Wohnungstuer_TimerActive.state == NULL) Wohnungstuer_TimerActive.postUpdate(OFF)
+    ]
+end
+
+rule "Wohnungstür-Automatik: Duration Update"
+when
+    Time cron "0 * * * * ?"
+then
+    if (Wohnungstuer_TimerActive.state == ON) {
+        var DateTime timeEnd = new DateTime((Wohnungstuer_TimerEnd.state as DateTimeType).calendar.timeInMillis)
+        var Number timeDuration = ((((timeEnd.millis - now.millis) / 1000) + 30) / 60).intValue()
+        logInfo(filename, "Duration: " + timeDuration)
+        Wohnungstuer_TimerDuration.postUpdate(timeDuration)
+    }
+end
+
+rule "Willkommenslicht nach Wohnungstuer"
+when
+    Item Wohnungstuer_State changed from CLOSED to OPEN
+then
+    if (Night_State.state == ON && KU_Edison_Dimmer_Level.state == 0 && Presence_Th_Phone.state == OFF) {
+        //KU_Edison_Dimmer_Level.sendCommand(70)
+        KU_Weihnachtsbaum.sendCommand(ON)
+        KU_Sonos_Control.sendCommand(PLAY)
+
+        var DateTime deadline = now.plusSeconds(willkommen_timer_minutes * 60)
+        Wohnungstuer_TimerEnd.postUpdate(new DateTimeType(deadline.toCalendar(null)))
+        Wohnungstuer_TimerActive.postUpdate(ON)
+
+        logInfo(filename, "Eddison ein. Timer wird gesetzt")
+        willkommen_timer = createTimer(now.plusSeconds(willkommen_timer_minutes * 60)) [|
+            if (willkommen_timer !== null) {
+                willkommen_timer.cancel
+                willkommen_timer = null
+                Wohnungstuer_TimerActive.postUpdate(OFF)
+                logInfo (filename, "Timer abgelaufen, Eddison aus.")
+                KU_Edison_Dimmer_Level.sendCommand(0)
+                KU_Sonos_Control.sendCommand(PAUSE)
+            }
+        ]
+    } else {
+        logInfo(filename, "Willkommenslicht nicht geschalten: " + Night_State.state + " " + KU_Edison_Dimmer_Level.state + " " + Presence_Th_Phone.state)
+    }
+end
+
+
+rule "Wohnungstuer Benachrichtigung"
+when
+    Item Wohnungstuer_State changed from CLOSED to OPEN
+then
+    if (Rule_WhgDoor_Notification.state == ON && Presence_Th_Phone.state == OFF) {
+        pushover("Wohnungstür wurde geöffnet!")
+    }
+end
+
+rule "Willkommenslicht Timer mit Badlicht loeschen"
+when
+    Item BD_Deckenlicht received update
+then
+    if (willkommen_timer !== null) {
+        willkommen_timer.cancel
+        willkommen_timer = null
+        Wohnungstuer_TimerActive.postUpdate(OFF)
+        logInfo (filename, "Timer nach Aktivität (Bad) gelöscht.")
+    }
+end
+
+// vim: syntax=Xtend

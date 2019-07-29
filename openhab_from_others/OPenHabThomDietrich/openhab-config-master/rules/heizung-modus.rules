@@ -1,0 +1,206 @@
+
+val String filename = "heizung-modus.rules"
+
+// vordefinierte Temperaturen
+val Number tempHigh = 23.0
+val Number tempComfort = 21.0
+val Number tempMid = 19.0
+val Number tempLower = 17.0
+val Number tempChill = 15.0
+val Number tempAway = 15.0
+val Number tempAwayLonger = 13.0
+val Number tempOff = 4.5
+
+// Heizmodi für die ganze Wohnung:
+//  NORMAL: Betriebsmodus für die normale Arbeitswoche
+//  HOMEOFFICE: Folgt Normal
+//  PARTY: Konstante Beheizung, automatischer Wechsel zu NORMAL in der Nacht (nach der Party oder dem besonderen Tag)
+//  SICKDAY: Wärmere Beheizung für den laufenden Tag (Krank zuhause)
+//  WEEKEND_TRIP: leicht abgesenkte Temperatur über das Wochenende, automatischer Wechsel zu NORMAL am nächsten Montag morgen
+//  AWAY: Unterwegs/längere Zeit abwesend, abgesenkte Temperatur für einen undefinierten Zeitraum
+//  OFF_SUMMER: alle Heizkörper sind aus (Sommerbetrieb)
+//  CALENDAR: einzelne Kalender Termine überschreiben das aktuelle Zeitprogramm
+//  AUTO_DEVICE: Wechselt Gerät in automatik Modus, keine automatische Beeinflussung
+//  MANU_DEVICE: Wechselt Gerät in manuellen Modus, keine automatische Beeinflussung
+
+rule "System started"
+when
+    System started
+then
+    createTimer(now.plusSeconds(180)) [ |
+        logInfo(filename, "Whg_Heating system started")
+        if (Whg_Heating_Mode.state == NULL) Whg_Heating_Mode.postUpdate("NORMAL")
+        Heating_TargetPresets.members.filter[item | item.state == NULL].forEach[item | item.postUpdate(tempMid)]
+        Whg_Heating_UpdateHeater.sendCommand(ON)
+    ]
+end
+
+rule "Heizmodus umschalten und Stellglieder setzen"
+when
+    Item Whg_Heating_Mode received update or
+    Item Whg_Heating_UpdateHeater received command ON
+then
+    Whg_Heating_UpdateHeater.postUpdate(OFF)
+    logInfo(filename, "Wohnung Heizmodus: " + Whg_Heating_Mode.state)
+    switch Whg_Heating_Mode.state {
+        case "NORMAL" : {
+            WZ_Heizung_Manu.sendCommand(WZ_Heizung_PresetTemp.state as Number)
+            KU_Heizung_Manu.sendCommand(KU_Heizung_PresetTemp.state as Number)
+            SZ_Heizung_Manu.sendCommand(SZ_Heizung_PresetTemp.state as Number)
+            BD_Heizung_Manu.sendCommand(BD_Heizung_PresetTemp.state as Number)
+        }
+        case "HOMEOFFICE" : {
+            WZ_Heizung_Manu.sendCommand(WZ_Heizung_PresetTemp.state as Number)
+            KU_Heizung_Manu.sendCommand(KU_Heizung_PresetTemp.state as Number)
+            SZ_Heizung_Manu.sendCommand(SZ_Heizung_PresetTemp.state as Number)
+            BD_Heizung_Manu.sendCommand(BD_Heizung_PresetTemp.state as Number)
+        }
+        case "PARTY" : {
+            WZ_Heizung_Manu.sendCommand(tempComfort)
+            KU_Heizung_Manu.sendCommand(tempComfort)
+            SZ_Heizung_Manu.sendCommand(tempChill)
+            BD_Heizung_Manu.sendCommand(tempMid)
+        }
+        case "SICKDAY" : {
+            WZ_Heizung_Manu.sendCommand(tempHigh)
+            KU_Heizung_Manu.sendCommand(tempHigh)
+            SZ_Heizung_Manu.sendCommand(tempMid)
+            BD_Heizung_Manu.sendCommand(tempHigh)
+        }
+        case "WEEKEND_TRIP" : {
+            WZ_Heizung_Manu.sendCommand(tempAway)
+            KU_Heizung_Manu.sendCommand(tempAway)
+            SZ_Heizung_Manu.sendCommand(tempAway)
+            BD_Heizung_Manu.sendCommand(tempAway)
+        }
+        case "AWAY" : {
+            WZ_Heizung_Manu.sendCommand(tempAwayLonger)
+            KU_Heizung_Manu.sendCommand(tempAwayLonger)
+            SZ_Heizung_Manu.sendCommand(tempAwayLonger)
+            BD_Heizung_Manu.sendCommand(tempAwayLonger)
+        }
+        case "OFF_SUMMER" : {
+            WZ_Heizung_Manu.sendCommand(tempOff)
+            KU_Heizung_Manu.sendCommand(tempOff)
+            SZ_Heizung_Manu.sendCommand(tempOff)
+            BD_Heizung_Manu.sendCommand(tempOff)
+        }
+        case "CALENDAR"    : { logWarn(filename, "Wohnung Heizmodus: CALENDAR (nicht implementiert)") }
+        case "AUTO_DEVICE" : { logWarn(filename, "Wohnung Heizmodus: AUTO_DEVICE (nicht implementiert)") }
+        case "MANU_DEVICE" : { logWarn(filename, "Wohnung Heizmodus: MANU_DEVICE (nicht implementiert)") }
+        default            : { logError(filename, "Wohnung Heizmodus ungültig: " + Whg_Heating_Mode.state) }
+    }
+end
+
+// specific to my home
+rule "Wohnzimmer: Wandthermostat folgt Stellglied"
+when
+    Item WZ_Heizung_Manu received command
+then
+    WZ_Wandtherm_Manu.sendCommand(receivedCommand)
+end
+
+// Whg_Heating_Mode Ende PARTY/SICKDAY
+rule "Party Modus Ende 2:00 Uhr"
+when
+    Time cron "0 0 2 ? * * *"
+then
+    if (Whg_Heating_Mode.state == "PARTY" || Whg_Heating_Mode.state == "SICKDAY") {
+        logInfo(filename, "Wohnung Heizmodus: PARTY/SICKDAY wird verlassen")
+        Whg_Heating_Mode.postUpdate("NORMAL")
+    }
+end
+
+// Whg_Heating_Mode Ende WEEKEND_TRIP
+rule "Wochenendtrip Ende Montag 13:00 Uhr"
+when
+    Time cron "0 0 13 ? * MON *"
+then
+    if (Whg_Heating_Mode.state == "WEEKEND_TRIP") {
+        logInfo(filename, "Wohnung Heizmodus: WEEKEND TRIP wird verlassen")
+        Whg_Heating_Mode.postUpdate("NORMAL")
+    }
+end
+
+// Whg_Heating_Mode NORMAL Zeitprogramm
+
+rule "1:30 Uhr"
+when
+    Time cron "0 30 1 ? * * *"
+then
+    logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+    WZ_Heizung_PresetTemp.postUpdate(17.0)
+    KU_Heizung_PresetTemp.postUpdate(17.0)
+    SZ_Heizung_PresetTemp.postUpdate(10.0)
+    BD_Heizung_PresetTemp.postUpdate(17.0)
+    Whg_Heating_UpdateHeater.sendCommand(ON)
+end
+
+/*
+rule "8:30 Uhr (Wochentag Bad)"
+when
+    Time cron "0 30 8 ? * MON-FRI *"
+then
+    logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+    BD_Heizung_PresetTemp.postUpdate(23.0)
+    Whg_Heating_UpdateHeater.sendCommand(ON)
+end
+
+rule "9:30 Uhr (Wochentag Bad)"
+when
+    Time cron "0 30 9 ? * MON-FRI *"
+then
+    logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+    BD_Heizung_PresetTemp.postUpdate(17.0)
+    Whg_Heating_UpdateHeater.sendCommand(ON)
+end
+*/
+
+rule "9:00 Uhr (Wochenende)"
+when
+    Time cron "0 0 9 ? * SAT-SUN *"
+then
+    logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+    WZ_Heizung_PresetTemp.postUpdate(21.0)
+    KU_Heizung_PresetTemp.postUpdate(19.0)
+    //SZ_Heizung_PresetTemp.postUpdate(17.0) //will interfere with open window!
+    BD_Heizung_PresetTemp.postUpdate(19.0)
+    Whg_Heating_UpdateHeater.sendCommand(ON)
+end
+
+rule "10:00 Uhr (Woche Homeoffice)"
+when
+    Time cron "0 0 10 ? * MON-FRI *"
+then
+    if (Whg_Heating_Mode.state == "HOMEOFFICE") {
+        logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+        WZ_Heizung_PresetTemp.postUpdate(21.0)
+        Whg_Heating_UpdateHeater.sendCommand(ON)
+    }
+end
+
+rule "18:00 Uhr"
+when
+    Time cron "0 0 18 ? * * *"
+then
+    logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+    WZ_Heizung_PresetTemp.postUpdate(21.0)
+    KU_Heizung_PresetTemp.postUpdate(19.0)
+    SZ_Heizung_PresetTemp.postUpdate(17.0)
+    BD_Heizung_PresetTemp.postUpdate(20.0)
+    Whg_Heating_UpdateHeater.sendCommand(ON)
+end
+
+rule "20:30 Uhr"
+when
+    Time cron "0 30 20 ? * * *"
+then
+    logInfo(filename, "Wohnung Heizmodus: Zeitprogramm: " + now.toString)
+    WZ_Heizung_PresetTemp.postUpdate(22.0)
+    KU_Heizung_PresetTemp.postUpdate(19.0)
+    SZ_Heizung_PresetTemp.postUpdate(16.0)
+    BD_Heizung_PresetTemp.postUpdate(20.0)
+    Whg_Heating_UpdateHeater.sendCommand(ON)
+end
+
+// vim: syntax=Xtend

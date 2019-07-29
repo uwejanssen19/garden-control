@@ -1,0 +1,25 @@
+rule "Trigger irrigation pump"
+when Item Irr_Switch received command
+then
+    var String cmd = null
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("irr pump", "Do not know how to handle " + receivedCommand.toString)
+    }
+
+    if(cmd !== null) irr_on_off.sendCommand(cmd)
+end
+
+rule "Trigger water valve"
+when Item Valve_Switch received command
+then
+    var String cmd = null
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("irr pump", "Do not know how to handle " + receivedCommand.toString)
+    }
+
+    if(cmd !== null) water_on_off.sendCommand(cmd)
+end

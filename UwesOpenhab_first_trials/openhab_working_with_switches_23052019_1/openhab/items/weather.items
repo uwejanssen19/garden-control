@@ -1,0 +1,21 @@
+Group  Weatherstation_Chart (System, Charts)
+Number Weatherstation_Chart_Period "Periode" (System)
+ 
+String temperature_out <temperature> { channel="exec:command:weatherstation_temperature:output" }
+String willRain_out <rain>{ channel="exec:command:weatherstation_willRain:output" }
+String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
+String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
+String level_out  { channel="exec:command:weatherstation_waterlevel:output" }
+
+
+String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }
+String water_on_off { channel="exec:command:weatherstation_water_on_off:input" }
+String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input" }
+
+// Virtual variable section
+
+Switch Irr_Switch 
+Switch Valve_Switch
+Switch Fill_Switch  // the supply4NextIrrigation script runs on its own, there are no parameters
+
+Number display_level_out
