@@ -1,0 +1,8 @@
+key=value
+1=LEER
+0=VOLL
+LEER=1
+VOLL=0
+-=LEER
+=LEER
+

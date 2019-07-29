@@ -1,0 +1,8 @@
+Thing exec:command:weatherstation_temperature [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=60, timeout=15, autorun=true]
+Thing exec:command:weatherstation_willRain [command="/home/pi/scripts/willRain.sh", transform="REGEX((.*?))", interval=60, autorun=true]
+Thing exec:command:weatherstation_howMuchRain [command="/home/pi/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=60, autorun=true]
+Thing exec:command:weatherstation_isRaining [command="/home/pi/scripts/isRaining.sh", transform="REGEX((.*?))", interval=60, autorun=true]
+Thing exec:command:weatherstation_waterlevel [command="/home/pi/scripts/Level.org.sh", transform="REGEX((.*?))", interval=40, timeout=30, autorun=true]
+
+Thing exec:command:weatherstation_irr_on_off [ command="/home/pi/scripts/irrOnOff.sh %2$s", autorun=true ]
+Thing exec:command:weatherstation_water_on_off [ command="/home/pi/scripts/waterOnOff.sh %2$s", autorun=true ]

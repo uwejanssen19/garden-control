@@ -1,0 +1,51 @@
+
+rule "Trigger irrigation pump"
+when Item Irr_Switch received command
+then
+    var String cmd = null
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("irr pump", "Do not know how to handle " + receivedCommand.toString)
+    }
+
+    if(cmd !== null) irr_on_off.sendCommand(cmd)
+end
+
+rule "Trigger water valve"
+when Item Valve_Switch received command
+then
+    var String cmd = null
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("water valve", "Do not know how to handle " + receivedCommand.toString)
+    }
+
+    if(cmd !== null) water_on_off.sendCommand(cmd)
+end
+
+rule "Fill barrel for next irrigation"
+// finally invokes low level script supply4NextIrrigation.sh 
+// this script checks whether it makes sense to fill up the barrel
+// it might take 240 secs to fill up a bit
+// see weather.items for expiration time of item Fill_Switch
+
+when Item Fill_Switch received command
+then
+    logInfo("FILL barrel rule", "received command = " + receivedCommand.toString)
+    switch(receivedCommand){
+        case ON: {
+            logInfo("FILL barrel rule", "launching script supply4NextIrr...")
+//            executeCommandLine("/home/pi/scripts/supply4NextIrrigation.sh", 60000)
+              // NOT WORKING although better: 
+              // fill_barrel.sendCommand("1")
+              //WORKING
+              water_on_off.sendCommand("1")
+            logInfo("FILL barrel rule", "script supply4NextIrr... executed")
+        }
+        case OFF: water_on_off.sendCommand("0")
+        default: logError("FILL barrel", "Do not know how to handle " + receivedCommand.toString)
+    }
+//    if(cmd !== null) fill_barrel.sendCommand(cmd)
+end

@@ -1,0 +1,25 @@
+// Name of file and name of sitemap has to be the same
+sitemap weather label="Raspberry Pi Garden Irrigation Control"
+{
+
+// "Pseudotemperatur anzeige [%s Grad Celsius]"
+        Frame label="Testanzeige" {
+            Text item=temperature_out label= "Fiktive Temperatur: [%d Grad Celsius]"
+            }
+        Frame label="Wetterdaten" {
+            Text item=willRain_out label="Wird es regnen? [MAP(yesNo.map):%s]"
+            Text item=precipitation_out label="Wieviel?"
+            Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
+            }
+        Frame label="Wasserstand" {
+            Text item=level_out label="Regentonne [MAP(waterLevel.map):%s]" 
+            }
+        Frame label="Irrigation Control" {
+            Default item=irr_on label="Irrigation on " 
+            Default item=irr_off label="Irrigation off" 
+            }
+        Frame label="Water Valve Control" {
+            Default item=water_on label="Watervalve on" 
+            Default item=water_off label="Watervalve off" 
+            }
+}

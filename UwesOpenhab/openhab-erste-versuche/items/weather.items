@@ -1,0 +1,3 @@
+Contact WTR_AX "Water Level: [%s]" <cistern> { channel="exec:command:weather_waterlevel:input" }
+Contact WTR_AX0 "Water Level: [%s]" <cistern> { channel="exec:command:weather_waterlevel0:input" }
+

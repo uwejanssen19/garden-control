@@ -1,0 +1,5 @@
+// interval = 0: no repetition
+// timeout=20 since  reading level takes 10 seconds (ensuring that a stable value will be retrieved)
+Thing exec:command:weather_waterlevel "Wasserstand " @ "Regentonne"   [command="/home/pi/scripts/oh1.sh", interval=0,autorun="true"]
+Thing exec:command:weather_waterlevel0 "Wasserstand " @ "Regentonne"   [command="/home/pi/scripts/oh0.sh", interval=0,autorun="true"]
+

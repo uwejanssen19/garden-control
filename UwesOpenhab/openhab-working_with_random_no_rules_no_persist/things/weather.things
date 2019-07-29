@@ -1,0 +1,2 @@
+Thing exec:command:weatherstation_temperature [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=5, timeout=15, autorun=true]
+//
