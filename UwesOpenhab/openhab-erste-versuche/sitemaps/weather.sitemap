@@ -1,8 +1,0 @@
-// Name of file and name of sitemap has to be the same
-sitemap weather label="Raspberry Pi Garden Irrigation Control"
-{
-        Frame label="Wasserstand" {
-            Default item=WTR_AX
-            Default item=WTR_AX0
-        }
-}

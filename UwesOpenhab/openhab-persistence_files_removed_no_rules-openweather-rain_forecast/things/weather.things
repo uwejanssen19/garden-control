@@ -1,5 +1,0 @@
-Thing exec:command:weatherstation_temperature [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=60, timeout=15, autorun=true]
-Thing exec:command:weatherstation_willRain [command="/home/pi/scripts/willRain.sh", transform="REGEX((.*?))", interval=60, autorun=true]
-Thing exec:command:weatherstation_howMuchRain [command="/home/pi/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=60, autorun=true]
-Thing exec:command:weatherstation_isRaining [command="/home/pi/scripts/isRaining.sh", transform="REGEX((.*?))", interval=60, autorun=true]
-Thing exec:command:weatherstation_waterlevel [command="/home/pi/scripts/Level.org.sh", transform="REGEX((.*?))", interval=40, timeout=30, autorun=true]

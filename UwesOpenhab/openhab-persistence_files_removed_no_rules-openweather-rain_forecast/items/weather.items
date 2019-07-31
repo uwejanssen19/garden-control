@@ -1,8 +1,0 @@
-Group  Weatherstation_Chart (System, Charts)
-Number Weatherstation_Chart_Period "Periode" (System)
- 
-String temperature_out <temperature> { channel="exec:command:weatherstation_temperature:output" }
-String willRain_out <rain>{ channel="exec:command:weatherstation_willRain:output" }
-String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
-String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
-String level_out  <cistern> { channel="exec:command:weatherstation_waterlevel:output" }
