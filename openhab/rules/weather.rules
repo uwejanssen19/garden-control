@@ -15,14 +15,21 @@
 // use procedure since nothing is returned
 val Procedures$Procedure1<String> onDepressureTimer = [ 
     onOff |
-                 logInfo("Depressure rule", "TonDepressureTimer invoked")
-                 water_on_off.sendCommand(onOff)
+        logInfo("Depressure rule", "onDepressureTimer invoked")
+        water_on_off.sendCommand(onOff)
 ]
 
+val Procedures$Procedure1<String> onIrrTimer = [ 
+    onOff |
+                 logInfo("Irr rule", "onIrrTimer invoked")
+                 irr_on_off.sendCommand(onOff)
+]
+
+val DEPRESSURE_TIME = 3 
 
 rule "Trigger irrigation pump"
-when Item Irr_Switch received command
-then
+  when Item Irr_Switch received command
+  then
     var String cmd = null
     switch(receivedCommand){
         case ON: cmd = "1"
@@ -34,8 +41,8 @@ then
 end
 
 rule "Trigger water valve"
-when Item Valve_Switch received command
-then
+  when Item Valve_Switch received command
+  then
     var String cmd = null
     switch(receivedCommand){
         case ON: cmd = "1"
@@ -50,8 +57,8 @@ rule "Fill barrel for next irrigation"
 // finally invokes low level script 
 // this script checks whether it makes sense to fill up the barrel (see /~pi/scripts/supply4NextIrrigation.sh )
 
-when Item Fill_Switch received command
-then
+  when Item Fill_Switch received command
+  then
     //logInfo("FILL barrel rule", "received command = " + receivedCommand.toString)
     switch(receivedCommand){
         case ON: {
@@ -95,13 +102,47 @@ rule "Depressure"
 // Takes away pressure from supply water hose
 // This is done by turning on tap water for a few seconds, then turn off again 
 // Even works when tap faucet is closed
-// since it is only important that the pressure is taken away at the barrel's end of the hose
 // so all along the hose there will be less pressure
 
-when 
+  when 
     Time cron "0 0/20 9-17 * * ?"
-then
+  then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
-    water_on_off.sendCommand("0")
-    createTimer (now.plusSeconds(3), onDepressureTimer("0"))
+    water_on_off.sendCommand("1")
+    createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer("0"))
+end
+
+
+rule "Irrigation ON"
+// time based controlling of irrigation
+  when
+    //Time cron "0 0/2 * * * ? " or // near future test 
+    Time cron "0 00 05 * * ? " or
+    Time cron "0 00 06 * * ? " or 
+    Time cron "0 00 18 * * ? " or
+    Time cron "0 00 19 * * ? "  
+  then
+    // the follwing check actually should be done here but at present is done in low level bash script
+    // if (isRaining || willRain) 
+    // { 
+    //     logInfo("Irrigation rule", "Cron event is due, start irrigation")
+    // }
+    
+    logInfo("Irrigation rule", "Cron event is due, start irrigation")
+    // first make sure barrel has enough water 
+    // fill_barrel.sendCommand("1")
+    // then irrigate
+    irr_on_off.sendCommand("1")            
+    
+end
+
+rule "Irrigation OFF"
+// time based controlling of irrigation
+  when
+    //Time cron "0 1/2 * * * ? " or // near future test 
+    Time cron "0 00 07 * * ? " or
+    Time cron "0 00 20 * * ? " 
+  then   
+    logInfo("Irrigation rule", "Cron event is due, stop irrigation")
+    irr_on_off.sendCommand("0")
 end
