@@ -13,10 +13,9 @@
 // import org.eclipse.xtext.xbase.lib.Procedures // not needed ???
 
 // use procedure since nothing is returned
-val Procedures$Procedure1<String> onDepressureTimer = [ 
-    onOff |
+val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure rule", "onDepressureTimer invoked")
-        water_on_off.sendCommand(onOff)
+        water_on_off.sendCommand("0")
 ]
 
 val Procedures$Procedure1<String> onIrrTimer = [ 
@@ -25,7 +24,7 @@ val Procedures$Procedure1<String> onIrrTimer = [
                  irr_on_off.sendCommand(onOff)
 ]
 
-val DEPRESSURE_TIME = 3 
+val DEPRESSURE_TIME = 6 
 
 rule "Trigger irrigation pump"
   when Item Irr_Switch received command
@@ -106,10 +105,11 @@ rule "Depressure"
 
   when 
     Time cron "0 0/20 9-17 * * ?"
+    //Time cron "0 0/2 9-17 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
     water_on_off.sendCommand("1")
-    createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer("0"))
+    createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer())
 end
 
 
