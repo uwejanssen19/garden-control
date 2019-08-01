@@ -134,7 +134,7 @@ rule "Irrigation ON"
     //     logInfo("Irrigation rule", "Cron event is due, start irrigation")
     // }
     
-    logInfo("Irrigation rule", "Cron event is due, start irrigation")
+    logInfo("Irrigation ON rule", "Cron event is due, start irrigation")
     // first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
     // then irrigate
@@ -150,7 +150,7 @@ rule "Irrigation OFF"
     Time cron "0 00 07 * * ? " or
     Time cron "0 00 20 * * ? " 
   then   
-    logInfo("Irrigation rule", "Cron event is due, stop irrigation")
+    logInfo("Irrigation OFF rule", "Cron event is due, stop irrigation")
     Irr_Switch.sendCommand(OFF)
     irr_on_off.sendCommand("0")
 end
