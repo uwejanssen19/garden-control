@@ -105,8 +105,8 @@ function willRain() {
   # use bc since bash cannot do floats
   ret=$(bc <<< "$PREC > 3.0")
   # return only the result
-  #echo $ret
-  echo "0"
+  echo $ret
+  #echo "0"
 }
 
 function getText() {

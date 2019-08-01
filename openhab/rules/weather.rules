@@ -109,8 +109,8 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    //Time cron "0 0/20 9-17 * * ?"
-    Time cron "0 0/2 9-20 * * ?"
+    Time cron "0 0/20 9-17 * * ?"
+    //Time cron "0 0/2 9-20 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
     Valve_Switch.sendCommand(ON)
@@ -120,9 +120,9 @@ end
 
 
 rule "Irrigation ON"
-// time based controlling of irrigation
+// time based beginning of irrigation
   when
-    Time cron "0 0/2 * * * ? " or // near future test 
+    //Time cron "0 0/2 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -144,9 +144,9 @@ rule "Irrigation ON"
 end
 
 rule "Irrigation OFF"
-// time based controlling of irrigation
+// time based ceasing of irrigation
   when
-    Time cron "0 1/2 * * * ? " or // near future test 
+    //Time cron "0 1/2 * * * ? " or // near future test 
     Time cron "0 00 07 * * ? " or
     Time cron "0 00 20 * * ? " 
   then   
