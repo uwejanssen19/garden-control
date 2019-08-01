@@ -9,6 +9,7 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
             Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel (Liter in 24h) ?"
             Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
         }
+        
         Frame label="Wasserstand" {
             Default item=display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"] visibility=[level_out == "1"]
             Default item=display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"]  visibility=[level_out == "0"] 

@@ -16,12 +16,14 @@
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure rule", "onDepressureTimer invoked")
         water_on_off.sendCommand("0")
+        Valve_Switch.sendCommand(OFF)
 ]
 
 val Procedures$Procedure1<String> onIrrTimer = [ 
     onOff |
                  logInfo("Irr rule", "onIrrTimer invoked")
                  irr_on_off.sendCommand(onOff)
+                 Irr_Switch.sendCommand(onOff)
 ]
 
 val DEPRESSURE_TIME = 6 
@@ -36,7 +38,10 @@ rule "Trigger irrigation pump"
         default: logError("irr pump", "Do not know how to handle " + receivedCommand.toString)
     }
 
-    if(cmd !== null) irr_on_off.sendCommand(cmd)
+    if(cmd !== null) 
+    {
+      irr_on_off.sendCommand(cmd)
+    }
 end
 
 rule "Trigger water valve"
@@ -104,10 +109,11 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 0/20 9-17 * * ?"
-    //Time cron "0 0/2 9-17 * * ?"
+    //Time cron "0 0/20 9-17 * * ?"
+    Time cron "0 0/2 9-20 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
+    Valve_Switch.sendCommand(ON)
     water_on_off.sendCommand("1")
     createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer())
 end
@@ -116,7 +122,7 @@ end
 rule "Irrigation ON"
 // time based controlling of irrigation
   when
-    //Time cron "0 0/2 * * * ? " or // near future test 
+    Time cron "0 0/2 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -132,6 +138,7 @@ rule "Irrigation ON"
     // first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
     // then irrigate
+    Irr_Switch.sendCommand(ON)
     irr_on_off.sendCommand("1")            
     
 end
@@ -139,10 +146,11 @@ end
 rule "Irrigation OFF"
 // time based controlling of irrigation
   when
-    //Time cron "0 1/2 * * * ? " or // near future test 
+    Time cron "0 1/2 * * * ? " or // near future test 
     Time cron "0 00 07 * * ? " or
     Time cron "0 00 20 * * ? " 
   then   
     logInfo("Irrigation rule", "Cron event is due, stop irrigation")
+    Irr_Switch.sendCommand(OFF)
     irr_on_off.sendCommand("0")
 end
