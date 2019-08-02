@@ -109,8 +109,8 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 0/5 9-19 * * ?"
-    //Time cron "0 0/2 9-20 * * ?"
+    //Time cron "0 0/5 9-19 * * ?"
+    Time cron "0 0/20 9-20 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
     Valve_Switch.sendCommand(ON)
