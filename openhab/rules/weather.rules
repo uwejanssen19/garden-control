@@ -9,14 +9,44 @@
 // 26.05.2019 | comments changed                                   | Janssen
 // 31.07.2019 | attempt to do some real programming                | Janssen
 // -----------------------------------------------------------------------------
-// import org.eclipse.xtext.xbase.lib.Functions
-// import org.eclipse.xtext.xbase.lib.Procedures // not needed ???
 
-// use procedure since nothing is returned
-val Procedures$Procedure0 onDepressureTimer = [ 
-        logInfo("Depressure rule", "onDepressureTimer invoked")
+import org.eclipse.xtext.xbase.lib.Procedures // not needed ???
+
+// -----------------------------------------------------------------------------
+// constants definitions
+// -----------------------------------------------------------------------------
+
+val int DEPRESSURE_TIME = 6 // seconds releasing pressure 
+val int DEPRESSURE_DEFAULT_GAP = 20 // default in minutes
+var int depressure_freq = DEPRESSURE_DEFAULT_GAP // minutes until next depressuring
+
+// -----------------------------------------------------------------------------
+// variable definitions
+// -----------------------------------------------------------------------------
+
+var Timer nextDepTimer = null
+
+// -----------------------------------------------------------------------------
+// function/procedure definitions
+// -----------------------------------------------------------------------------
+
+
+val Procedures$Procedure0 depressureTimerElapsed = [ |
+        logInfo("Depressure rule", "depressureTimerElapsed invoked")
         water_on_off.sendCommand("0")
         Valve_Switch.sendCommand(OFF)
+]
+
+// Takes away pressure from supply water hose
+// This is done by turning on tap water for a few seconds, then turn off again 
+// Even works when tap faucet is closed
+// so all along the hose there will be less pressure
+val Procedures$Procedure0 doDepressure = [ | 
+    logInfo("doDepressure", "doDepressure invoked")
+    Valve_Switch.sendCommand(ON)
+    water_on_off.sendCommand("1")
+    // now wait until timer elapses
+    createTimer (now.plusSeconds(DEPRESSURE_TIME), depressureTimerElapsed)
 ]
 
 val Procedures$Procedure1<String> onIrrTimer = [ 
@@ -26,7 +56,39 @@ val Procedures$Procedure1<String> onIrrTimer = [
                  Irr_Switch.sendCommand(onOff)
 ]
 
-val DEPRESSURE_TIME = 6 
+// -----------------------------------------------------------------------------
+// RULES section 
+// -----------------------------------------------------------------------------
+rule "Depressure first start"
+// Starts the first time depressuring the supply hose
+  when  System started
+  then
+
+    DepressureFreq.postUpdate(DEPRESSURE_DEFAULT_GAP)
+    depressure_freq = DEPRESSURE_DEFAULT_GAP;
+    logInfo("Depressure first start rule", "Cron event is due, start depressuring and timer")
+    nextDepTimer = createTimer (now.plusMinutes(depressure_freq), [|
+      logInfo("System started rule", "repeat timer elapsed")
+      doDepressure()
+    nextDepTimer?.reschedule(now.plusMinutes(depressure_freq))
+    ])
+
+end
+
+rule "Depressure freq value changed via GUI"
+  when 
+    Item DepressureFreq changed
+    //Time cron "0 0/20 9-17 * * ?"
+  then
+    depressure_freq = (DepressureFreq.state as Integer).
+    logInfo("Depressure req changed via GUI", "Value changed to: " + depressure_freq)
+    nextDepTimer?.cancel
+    nextDepTimer = createTimer (now.plusMinutes(depressure_freq), [|
+    logInfo("System started rule", "repeat timer elapsed")
+     doDepressure()
+     nextDepTimer?.reschedule(now.plusMinutes(depressure_freq))
+    ])
+end
 
 rule "Trigger irrigation pump"
   when Item Irr_Switch received command
@@ -102,21 +164,6 @@ rule "Level"
         //sendMail("uwe@janssen-muenchen.de","Garden Control/Wasserstand: ", level_out.state.toString)
 end
 
-rule "Depressure"
-// Takes away pressure from supply water hose
-// This is done by turning on tap water for a few seconds, then turn off again 
-// Even works when tap faucet is closed
-// so all along the hose there will be less pressure
-
-  when 
-    Time cron "0 0/20 9-17 * * ?"
-    //Time cron "0 0/2 9-20 * * ?"
-  then
-    logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
-    Valve_Switch.sendCommand(ON)
-    water_on_off.sendCommand("1")
-    createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer())
-end
 
 
 rule "Irrigation ON"

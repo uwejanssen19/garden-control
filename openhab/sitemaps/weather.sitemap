@@ -19,6 +19,7 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
             Default item=Irr_Switch icon="water" label= "Bewässerung"
             Default item=Valve_Switch icon="faucet" label=  "Regentonne fuellen"
             Default item=Fill_Switch icon="cistern" label=  "Fuellen fuer die naechste Bewaesserung"
+            Setpoint item=DepressureFreq label="Häufigkeit der Schlauchentlastung [%s Minuten]" icon="time" minValue=4 maxValue=20 step=2
         }
 
         Frame label="Event from private Log" {
