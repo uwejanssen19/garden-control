@@ -12,6 +12,12 @@
 // import org.eclipse.xtext.xbase.lib.Functions
 // import org.eclipse.xtext.xbase.lib.Procedures // not needed ???
 
+
+val DEPRESSURE_TIME = 10
+val String LEVEL_EMPTY = "1"
+var String level = LEVEL_EMPTY
+var irrigating = false
+
 // use procedure since nothing is returned
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure rule", "onDepressureTimer invoked")
@@ -26,17 +32,26 @@ val Procedures$Procedure1<String> onIrrTimer = [
                  Irr_Switch.sendCommand(onOff)
 ]
 
-val DEPRESSURE_TIME = 6 
+// val Functions$Function0<String> readLevel = [ 
+    
+//                  logInfo("Read level", "readLevel invoked")
+//                  level = level_out.state.toString
+//                  logInfo("Read level", "readLevel level = " + level)
+//                  return level
+// ]
 
 rule "Trigger irrigation pump"
   when Item Irr_Switch received command
   then
     var String cmd = null
-    switch(receivedCommand){
-        case ON: cmd = "1"
-        case OFF: cmd = "0"
-        default: logError("irr pump", "Do not know how to handle " + receivedCommand.toString)
+    if (receivedCommand == ON){
+        cmd = "1"
+        irrigating = true
+    } else if (receivedCommand == OFF) {
+        cmd = "0"
+        irrigating = false
     }
+    logInfo("Trigger irrigation pump","irrigating set to " + irrigating)
 
     if(cmd !== null) 
     {
@@ -69,28 +84,37 @@ rule "Fill barrel for next irrigation"
             logInfo("FILL barrel rule", "launching script supply4NextIrr...")
             // WORKING with water_on_off_script: 
             fill_barrel.sendCommand("1")
-            // logInfo("FILL barrel rule", "script supply4NextIrr... executed")
+            // since fill_barrel measures level  irrigation might have stopped, so turn it on 
+            // else leave it off 
+                logInfo("Fill barrel for next irrigation","irrigating is " + irrigating)
+
+            if (irrigating == true) {
+              irr_on_off.sendCommand("1")
+            }
         }
+
+        // logInfo("FILL barrel rule", "script supply4NextIrr... executed")
+        
         case OFF: fill_barrel.sendCommand("0")
         default: logError("FILL barrel", "I Do not know how to handle " + receivedCommand.toString)
     }
 end
 
-rule "LogReaderIrrOnOff"
-    when
-        Channel "logreader:reader:irrOnOffThing:newCustomEvent" triggered
-    then
-        logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderIrrOnOff.state)
-        sendMail("uwe@janssen-muenchen.de","Bewaesserung: ", logreaderIrrOnOff.state.toString+ "\nWasserstand: "+level_out.state.toString)
-end
+// rule "LogReaderIrrOnOff"
+//     when
+//         Channel "logreader:reader:irrOnOffThing:newCustomEvent" triggered
+//     then
+//         logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderIrrOnOff.state)
+//         sendMail("uwe@janssen-muenchen.de","Bewaesserung: ", logreaderIrrOnOff.state.toString+ "\nWasserstand: "+level_out.state.toString)
+// end
 
-rule "LogReaderWaterOnOff"
-    when
-        Channel "logreader:reader:waterOnOffThing:newCustomEvent" triggered
-    then
-        logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderWaterOnOff.state)
-        //sendMail("uwe@janssen-muenchen.de","Fuellen: ", logreaderWaterOnOff.state.toString)
-end
+// rule "LogReaderWaterOnOff"
+//     when
+//         Channel "logreader:reader:waterOnOffThing:newCustomEvent" triggered
+//     then
+//         logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderWaterOnOff.state)
+//         //sendMail("uwe@janssen-muenchen.de","Fuellen: ", logreaderWaterOnOff.state.toString)
+// end
 
 rule "Level"
     when
@@ -98,7 +122,11 @@ rule "Level"
         //Item level_out changed
     then
         logInfo("level rule", "Level changed:\n" + level_out.state)
-        //display_level_out.postUpdate("0")
+        logInfo("level rule", "irrigating is: " + irrigating)
+        display_level_out.postUpdate(level_out.state)
+    if (irrigating) {
+      irr_on_off.sendCommand("1")
+    }
         //sendMail("uwe@janssen-muenchen.de","Garden Control/Wasserstand: ", level_out.state.toString)
 end
 
@@ -109,12 +137,24 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    //Time cron "0 0/5 9-19 * * ?"
-    Time cron "0 0/20 9-20 * * ?"
+    Time cron "0 0/20 9-17 * * ?"
+    //Time cron "0 0/2 9-20 * * ?"
   then
-    logInfo("Depressure rule", "Cron event is due, start depressuring and timer")
+    logInfo("Depressure rule", "Cron event is due, start depressuring and timer") 
+    var String isRaining = executeCommandLine("/home/pi/scripts/isRaining.sh", 1000)
+    logInfo("Rule Depressure", "isRaining = " + isRaining)
     Valve_Switch.sendCommand(ON)
     water_on_off.sendCommand("1")
+
+    level = level_out.state.toString
+    logInfo("Rule Depressure", "level = " + level)
+    display_level_out.postUpdate(level)
+    logInfo("Depressure rule", "irrigating is: " + irrigating)
+    if (irrigating  == true) {
+      logInfo("Rule Depressure", "found irrgation is active, so keep it on")
+      irr_on_off.sendCommand("1")
+    }
+
     createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
 end
 
@@ -135,11 +175,15 @@ rule "Irrigation ON"
     // }
     
     logInfo("Irrigation ON rule", "Cron event is due, start irrigation")
+    irrigating = true
+    logInfo("Irrigation ON rule","irrigating set to" + irrigating)
+
     // first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
     // then irrigate
     Irr_Switch.sendCommand(ON)
     irr_on_off.sendCommand("1")            
+    sendMail("uwe@janssen-muenchen.de","Bewaesserung: ", "\nWasserstand: "+level_out.state.toString)
     
 end
 
@@ -153,4 +197,5 @@ rule "Irrigation OFF"
     logInfo("Irrigation OFF rule", "Cron event is due, stop irrigation")
     Irr_Switch.sendCommand(OFF)
     irr_on_off.sendCommand("0")
+    irrigating = false
 end

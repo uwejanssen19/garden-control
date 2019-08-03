@@ -8,7 +8,7 @@ TAP_WATER_VALVE_PORT=18
 LEVEL_SENSOR_PORT=23
 LOG_FILE=/tmp/waterOnOff.log
 CURRENT_WEATHER_RESPONSE=/tmp/weather.json
-MAX_READ_COUNT=2
+MAX_READ_COUNT=4
 FORECAST=/tmp/forecast.json
 
 function irrOnOff () {
@@ -44,13 +44,14 @@ function readLevel {
 
   log "turn pump on in order to have power supply for level sensor relais" 
   irrOnOff 1
-  while [ $oldVal -ne $newVal ] || [ $count -lt $MAX_READ_COUNT  ]
-  do
-    oldVal=$(gpio -g read $LEVEL_SENSOR_PORT)
-    sleep 2
-    newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
-    ((count++))
-  done
+  #while [ $oldVal -ne $newVal ] || [ $count -lt $MAX_READ_COUNT  ]
+  #do
+  #  oldVal=$(gpio -g read $LEVEL_SENSOR_PORT)
+  sleep 2
+  newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
+  newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
+  #  ((count++))
+  #done
   irrOnOff 0
   log "turn pump OFF"
   log "readLevel EXIT "

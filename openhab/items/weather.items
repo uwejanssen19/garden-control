@@ -19,6 +19,6 @@ Switch Fill_Switch  {expire="130s,OFF"}
 
 Number display_level_out
 
-String  logreaderIrrOnOff "Last Custom [%s]" { channel="logreader:reader:irrOnOffThing:lastCustomEvent" }
-String  logreaderWaterOnOff "Last Custom [%s]" { channel="logreader:reader:waterOnOffThing:lastCustomEvent" }
+//String  logreaderIrrOnOff "Last Custom [%s]" { channel="logreader:reader:irrOnOffThing:lastCustomEvent" }
+//String  logreaderWaterOnOff "Last Custom [%s]" { channel="logreader:reader:waterOnOffThing:lastCustomEvent" }
 //String  logreaderLevel "Last Custom [%s]" { channel="logreader:reader:levelThing:lastCustomEvent" }
