@@ -53,6 +53,7 @@ function readLevel {
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   #  ((count++))
   #done
+  # do not turn off here, will be done elsewhere
   irrOnOff 0
   #log "turn pump OFF"
   #log "readLevel EXIT "

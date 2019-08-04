@@ -102,16 +102,19 @@ end
 
 rule "Level"
     when
-        Channel "weatherstation_waterlevel" triggered
-        //Item level_out changed
+        //Channel "weatherstation_waterlevel" received comand
+        Item level_out changed from 1 or
+        Item level_out changed from 0
     then
-        logInfo("level rule", "Level changed:\n" + level_out.state)
+        logInfo("level rule", "Level triggered: " + level_out.state)
         logInfo("level rule", "irrigating is: " + irrigating)
         display_level_out.postUpdate(level_out.state)
-    if (irrigating) {
-      irr_on_off.sendCommand("1")
+    if (irrigating == false) {
+        logInfo("level rule", "set irrigation OFF since it is not irrigating")
+        Irr_Switch.sendCommand(OFF)
+        irr_on_off.sendCommand("0")
     }
-        //sendMail("uwe@janssen-muenchen.de","Garden Control/Wasserstand: ", level_out.state.toString)
+    //sendMail("uwe@janssen-muenchen.de","Level trigger detected","")
 end
 
 rule "Depressure"
@@ -130,16 +133,22 @@ rule "Depressure"
     Valve_Switch.sendCommand(ON)
     water_on_off.sendCommand("1")
 
-    level = level_out.state.toString
-    logInfo("Rule Depressure", "level = " + level)
-    display_level_out.postUpdate(level)
-    logInfo("Depressure rule", "irrigating is: " + irrigating)
-    if (irrigating  == true) {
-      logInfo("Rule Depressure", "found irrgation is active, so keep it on")
-      irr_on_off.sendCommand("1")
-    }
 
     createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
+end
+
+rule "Supervise irrigation state"
+  // if someone left irrgation on although it was not supposed to 
+  // -> turn OFF
+  when 
+    Time cron "0 * * * * ?" // every minute check
+  then
+    logInfo("Supervise irrigation state rule", "Cron event is due, turn irrigation off if needed") 
+    if (!irrigating) {
+      logInfo("rule Supervise irrigation state", "found irrgation is inactive, so turn it off")
+      irr_on_off.sendCommand("0")
+      Irr_Switch.sendCommand(OFF)
+    }
 end
 
 
