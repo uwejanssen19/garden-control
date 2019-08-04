@@ -100,22 +100,6 @@ rule "Fill barrel for next irrigation"
     }
 end
 
-// rule "LogReaderIrrOnOff"
-//     when
-//         Channel "logreader:reader:irrOnOffThing:newCustomEvent" triggered
-//     then
-//         logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderIrrOnOff.state)
-//         sendMail("uwe@janssen-muenchen.de","Bewaesserung: ", logreaderIrrOnOff.state.toString+ "\nWasserstand: "+level_out.state.toString)
-// end
-
-// rule "LogReaderWaterOnOff"
-//     when
-//         Channel "logreader:reader:waterOnOffThing:newCustomEvent" triggered
-//     then
-//         logInfo("waterOnOff.log rule", "Event found in log:\n" + logreaderWaterOnOff.state)
-//         //sendMail("uwe@janssen-muenchen.de","Fuellen: ", logreaderWaterOnOff.state.toString)
-// end
-
 rule "Level"
     when
         Channel "weatherstation_waterlevel" triggered

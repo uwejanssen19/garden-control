@@ -49,6 +49,7 @@ function readLevel {
   #  oldVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   sleep 2
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
+  sleep 2
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   #  ((count++))
   #done
