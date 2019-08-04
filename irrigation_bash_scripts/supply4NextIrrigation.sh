@@ -30,9 +30,9 @@ EMPTY="1"
 	      then
           log "start filling barrel with tap water"
           waterOnOff 1
-          log "Start waiting $FILL_UNITS secs"
+          #log "Start waiting $FILL_UNITS secs"
           sleep $FILL_UNITS # wait for water level to rise
-          log "End   waiting $FILL_UNITS secs"
+          #log "End   waiting $FILL_UNITS secs"
           ((counter++))
           logp "counter = $counter"
         else 

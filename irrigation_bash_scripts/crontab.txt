@@ -20,11 +20,11 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-00 05 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
-00 06 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
-00 07 * * * /home/pi/scripts/irrOnOff.sh 0
-00 18 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
-00 19 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
-00 20 * * * /home/pi/scripts/irrOnOff.sh 0
+#00 05 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
+#00 06 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
+#00 07 * * * /home/pi/scripts/irrOnOff.sh 0
+#00 18 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
+#00 19 * * * /home/pi/scripts/supply4NextIrrigation.sh;/home/pi/scripts/irrOnOff.sh 1
+#00 20 * * * /home/pi/scripts/irrOnOff.sh 0
 # note: &>/dev/null only works with bash >= 4.x
-*/20 9-17 * * * /home/pi/scripts/depressure.sh   &>/dev/null
+#*/20 9-17 * * * /home/pi/scripts/depressure.sh   &>/dev/null

@@ -176,14 +176,14 @@ rule "Irrigation ON"
     
     logInfo("Irrigation ON rule", "Cron event is due, start irrigation")
     irrigating = true
-    logInfo("Irrigation ON rule","irrigating set to" + irrigating)
+    logInfo("Irrigation ON rule","irrigating set to " + irrigating)
 
     // first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
     // then irrigate
     Irr_Switch.sendCommand(ON)
     irr_on_off.sendCommand("1")            
-    sendMail("uwe@janssen-muenchen.de","Bewaesserung: ", "\nWasserstand: "+level_out.state.toString)
+    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
     
 end
 
@@ -198,4 +198,5 @@ rule "Irrigation OFF"
     Irr_Switch.sendCommand(OFF)
     irr_on_off.sendCommand("0")
     irrigating = false
+    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+level_out.state.toString)
 end

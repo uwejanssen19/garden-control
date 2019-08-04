@@ -34,7 +34,7 @@ function readLevel {
   # When high water mark is reached the GPIO pin $LEVEL_SENSOR_PORT values will be 0
   # Thus '1' means low water and '0' means high water
   # set mode of port to input
-  log "readLevel ENTRY"
+  #log "readLevel ENTRY"
   gpio -g mode $LEVEL_SENSOR_PORT up
 
   #read until value is stable
@@ -42,7 +42,7 @@ function readLevel {
   oldVal=1
   count=0
 
-  log "turn pump on in order to have power supply for level sensor relais" 
+  #log "turn pump on in order to have power supply for level sensor relais" 
   irrOnOff 1
   #while [ $oldVal -ne $newVal ] || [ $count -lt $MAX_READ_COUNT  ]
   #do
@@ -53,8 +53,8 @@ function readLevel {
   #  ((count++))
   #done
   irrOnOff 0
-  log "turn pump OFF"
-  log "readLevel EXIT "
+  #log "turn pump OFF"
+  #log "readLevel EXIT "
   echo $newVal
 }
 
@@ -80,10 +80,10 @@ function isRaining() {
   ret=$(python -mjson.tool $CURRENT_WEATHER_RESPONSE | grep -i regen)
   if [ $? == "0" ]
   then 
-    log 'currently raining' 
+    #log 'currently raining' 
     ret=1
   else 
-    log 'Not raining' 
+    #log 'Not raining' 
     ret=0
   fi
   echo $ret
@@ -102,7 +102,7 @@ function willRain() {
   for line in $(python -mjson.tool $FORECAST | grep '3h":' | cut -d ':' -f 2 | tr -d ' ')
   do PREC=$(python -c "print $PREC+$line")
   done
-  logp "precipitation forecast = $PREC"
+  #logp "precipitation forecast = $PREC"
   # use bc since bash cannot do floats
   ret=$(bc <<< "$PREC > 3.0")
   # return only the result

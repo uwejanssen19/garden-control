@@ -1,8 +1,8 @@
 #!/bin/bash
 source ~pi/scripts/irrLib.sh
-log "irrOnOff ENTRY ------------------" 
+log "irrOnOff ENTRY $1 ---------------" 
 #set -x 
-log "Parameter for $0 : $1" 
+#log "Parameter for $0 : $1" 
 if [ $1 -eq 1 ]
 then
   ISRAINING=$(isRaining )
@@ -20,7 +20,7 @@ if [ $1 -eq 1 ]
 then 
   if [ $ISRAINING -ne 0 ]
   then 
-        log "It is raining, do NOT irrigate" 
+    log "It is raining, do NOT irrigate" 
   fi
   if [ $WILLRAIN -ne 0 ]  
   then 

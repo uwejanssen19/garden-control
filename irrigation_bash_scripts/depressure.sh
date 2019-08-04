@@ -3,7 +3,7 @@ source ~/scripts/irrLib.sh
 ISRAINING=$(isRaining )
 #WILLRAIN=$(willRain | awk 'END {print $NF}')
 # only do it if good weather now or expected
-log "depressure ENTRY -------" 
+#log "depressure ENTRY -------" 
 if [ $ISRAINING -eq 0 ]
 #if [ $ISRAINING -eq 0  -a  $WILLRAIN -eq 0 ]
 then
@@ -12,4 +12,4 @@ then
   sleep 3
   ~/scripts/waterOnOff.sh 0
 fi
-log "depressure EXIT  -------" 
+#log "depressure EXIT  -------" 
