@@ -121,7 +121,7 @@ rule "Supervise irrigation state"
   // if someone left irrgation on although it was not supposed to 
   // -> turn OFF
   when 
-    Time cron "0 * * * * ?" // every minute check
+    Time cron "0 0/5 * * * ?" // every minute check
   then
     logInfo("Supervise irrigation state rule", "Cron event is due, turn irrigation ON if needed, irrigating = "+irrigating) 
     if (irrigating) {
