@@ -34,26 +34,18 @@ function readLevel {
   # When high water mark is reached the GPIO pin $LEVEL_SENSOR_PORT values will be 0
   # Thus '1' means low water and '0' means high water
   # set mode of port to input
-  #log "readLevel ENTRY"
   gpio -g mode $LEVEL_SENSOR_PORT up
 
   #read until value is stable
   newVal=0
-  oldVal=1
-  count=0
 
   #log "turn pump on in order to have power supply for level sensor relais" 
   irrOnOff 1
-  #while [ $oldVal -ne $newVal ] || [ $count -lt $MAX_READ_COUNT  ]
-  #do
-  #  oldVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   sleep 2
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   sleep 2
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
-  #  ((count++))
-  #done
-  # do not turn off here, will be done elsewhere
+  # turn off here
   irrOnOff 0
   #log "turn pump OFF"
   #log "readLevel EXIT "

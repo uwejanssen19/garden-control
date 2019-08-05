@@ -15,6 +15,8 @@
 
 val DEPRESSURE_TIME = 10
 val String LEVEL_EMPTY = "1"
+val String SCRIPT_DIR="/home/pi/scripts/"
+
 var String level = LEVEL_EMPTY
 var irrigating = false
 
@@ -22,23 +24,22 @@ var irrigating = false
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure rule", "onDepressureTimer invoked")
         water_on_off.sendCommand("0")
-        Valve_Switch.sendCommand(OFF)
+        Valve_Switch.postUpdate(OFF)
 ]
 
-val Procedures$Procedure1<String> onIrrTimer = [ 
-    onOff |
-                 logInfo("Irr rule", "onIrrTimer invoked")
-                 irr_on_off.sendCommand(onOff)
-                 Irr_Switch.sendCommand(onOff)
+val irrOnOffProc = [ 
+    String onOff, String SCRIPT_DIR |
+                 executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 10000)
+                 logInfo("irrOnOffProc", " invoked irrOnOff with parameter " + onOff)
 ]
 
-// val Functions$Function0<String> readLevel = [ 
+val Functions$Function0<String> readLevel = [ 
     
-//                  logInfo("Read level", "readLevel invoked")
-//                  level = level_out.state.toString
-//                  logInfo("Read level", "readLevel level = " + level)
-//                  return level
-// ]
+                  logInfo("Read level", "readLevel invoked")
+                  var String level = executeCommandLine(SCRIPT_DIR+"Level.sh", 1000)
+                  logInfo("Read level", "readLevel level = " + level)
+                  return level
+]
 
 rule "Trigger irrigation pump"
   when Item Irr_Switch received command
@@ -87,10 +88,6 @@ rule "Fill barrel for next irrigation"
             // since fill_barrel measures level  irrigation might have stopped, so turn it on 
             // else leave it off 
                 logInfo("Fill barrel for next irrigation","irrigating is " + irrigating)
-
-            if (irrigating == true) {
-              irr_on_off.sendCommand("1")
-            }
         }
 
         // logInfo("FILL barrel rule", "script supply4NextIrr... executed")
@@ -98,23 +95,6 @@ rule "Fill barrel for next irrigation"
         case OFF: fill_barrel.sendCommand("0")
         default: logError("FILL barrel", "I Do not know how to handle " + receivedCommand.toString)
     }
-end
-
-rule "Level"
-    when
-        //Channel "weatherstation_waterlevel" received comand
-        Item level_out changed from 1 or
-        Item level_out changed from 0
-    then
-        logInfo("level rule", "Level triggered: " + level_out.state)
-        logInfo("level rule", "irrigating is: " + irrigating)
-        display_level_out.postUpdate(level_out.state)
-    if (irrigating == false) {
-        logInfo("level rule", "set irrigation OFF since it is not irrigating")
-        Irr_Switch.sendCommand(OFF)
-        irr_on_off.sendCommand("0")
-    }
-    //sendMail("uwe@janssen-muenchen.de","Level trigger detected","")
 end
 
 rule "Depressure"
@@ -143,11 +123,10 @@ rule "Supervise irrigation state"
   when 
     Time cron "0 * * * * ?" // every minute check
   then
-    logInfo("Supervise irrigation state rule", "Cron event is due, turn irrigation off if needed") 
-    if (!irrigating) {
-      logInfo("rule Supervise irrigation state", "found irrgation is inactive, so turn it off")
-      irr_on_off.sendCommand("0")
-      Irr_Switch.sendCommand(OFF)
+    logInfo("Supervise irrigation state rule", "Cron event is due, turn irrigation ON if needed, irrigating = "+irrigating) 
+    if (irrigating) {
+      logInfo("rule Supervise irrigation state", "found irrigation is active, so turn it ON")
+      irrOnOffProc.apply("1", SCRIPT_DIR)
     }
 end
 
@@ -168,14 +147,14 @@ rule "Irrigation ON"
     // }
     
     logInfo("Irrigation ON rule", "Cron event is due, start irrigation")
-    irrigating = true
     logInfo("Irrigation ON rule","irrigating set to " + irrigating)
 
     // first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
     // then irrigate
     Irr_Switch.sendCommand(ON)
-    irr_on_off.sendCommand("1")            
+    irr_on_off.sendCommand("1")
+    irrigating = true
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
     
 end
