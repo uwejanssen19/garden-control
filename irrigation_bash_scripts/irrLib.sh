@@ -104,6 +104,7 @@ function willRain() {
   for line in $(python -mjson.tool $FORECAST | grep '3h":' | cut -d ':' -f 2 | tr -d ' ')
   do PREC=$(python -c "print $PREC+$line")
   done
+  echo "precipitation forecast = $PREC"
   #logp "precipitation forecast = $PREC"
   # use bc since bash cannot do floats
   ret=$(bc <<< "$PREC > 3.0")
