@@ -2,7 +2,8 @@ String localStationId "ID [%s]" { channel="openweathermap:weather-and-forecast:a
 String localStationName "Name [%s]" { channel="openweathermap:weather-and-forecast:api:local:station#name" }
 Location localStationLocation "Location [%2$s°N %3$s°E]" <location> { channel="openweathermap:weather-and-forecast:api:local:station#location" }
 
-DateTime localLastMeasurement "Timestamp of last measurement [%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS]" <time> { channel="openweathermap:weather-and-forecast:api:local:current#time-stamp" }
+//DateTime localLastMeasurement "Timestamp of last measurement [%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS]" <time> { channel="openweathermap:weather-and-forecast:api:local:current#time-stamp" }
+DateTime localLastMeasurement "Timestamp of last measurement " <time> { channel="openweathermap:weather-and-forecast:api:local:current#time-stamp" }
 String localCurrentCondition "Current condition [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:current#condition" }
 Image localCurrentConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:current#icon" }
 Number:Temperature localCurrentTemperature "Current temperature [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:current#temperature" }
@@ -15,9 +16,22 @@ Number:Length localCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> 
 Number:Length localCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
 
 
+//DateTime localDailyForecastTodayTimestamp "Timestamp of forecast [%1$tY-%1$tm-%1$td]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#time-stamp" }
+DateTime localDailyForecastTodayTimestamp "Timestamp of forecast " <time> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#time-stamp" }
+String localDailyForecastTodayCondition "Condition for today [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#condition" }
+Image localDailyForecastTodayConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastToday#icon" }
+Number:Temperature localDailyForecastTodayMinTemperature "Minimum temperature for today [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#min-temperature" }
+Number:Temperature localDailyForecastTodayMaxTemperature "Maximum temperature for today [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#max-temperature" }
+Number:Pressure localDailyForecastTodayPressure "Barometric pressure for today [%.1f %unit%]" <pressure> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#pressure" }
+Number:Dimensionless localDailyForecastTodayHumidity "Atmospheric humidity for today [%d %unit%]" <humidity> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#humidity" }
+Number:Speed localDailyForecastTodayWindSpeed "Wind speed for today [%.1f km/h]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#wind-speed" }
+Number:Angle localDailyForecastTodayWindDirection "Wind direction for today [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#wind-direction" }
+Number:Dimensionless localDailyForecastTodayCloudiness "Cloudiness for today [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#cloudiness" }
+Number:Length localDailyForecastTodayRainVolume "Rain volume for today [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#rain" }
+Number:Length localDailyForecastTodaySnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastToday#snow" }
 
 
-
-String miamiCurrentCondition "Current condition in Miami [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:miami:current#condition" }
-Image miamiCurrentConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:miami:current#icon" }
-Number:Temperature miamiCurrentTemperature "Current temperature in Miami [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:miami:current#temperature" }
+String localHourlyForecast12Condition "Condition locally for next 12 hours [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#condition" }
+Image localHourlyForecast12ConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#icon" }
+Number:Temperature localHourlyForecast06Temperature "Temperature locally for next 12 hours [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#temperature" }
+Number:Length localHourlyForecastTodayRainVolume "Rain volume for next 12 hours [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }

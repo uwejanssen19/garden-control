@@ -13,7 +13,7 @@
 // import org.eclipse.xtext.xbase.lib.Procedures // not needed ???
 
 
-val DEPRESSURE_TIME = 10
+val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 

@@ -4,6 +4,20 @@ sitemap ow label="OpenWeatherMap" {
         Text item=localStationName
         Mapview item=localStationLocation
     }
+
+    Frame label="Local forecast for today" {
+        Text item=localHourlyForecast06Condition
+        Text item=localHourlyForecast06Temperature
+        Image item=localHourlyForecast06ConditionIcon
+        Text item=localHourlyForecastTodayRainVolume
+        // Text item=localDailyForecastTodayMaxTemperature
+        // Text item=localDailyForecastTodayPressure
+        // Text item=localDailyForecastTodayHumidity
+        // Text item=localDailyForecastTodayWindSpeed
+        // Text item=localDailyForecastTodayWindDirection
+        // Text item=localDailyForecastTodayCloudiness
+        // Text item=localDailyForecastTodaySnowVolume
+    }
     Frame label="Current local weather" {
         Text item=localLastMeasurement
         Text item=localCurrentCondition
@@ -15,9 +29,8 @@ sitemap ow label="OpenWeatherMap" {
         Text item=localCurrentWindDirection
         Text item=localCurrentCloudiness
         Text item=localCurrentRainVolume
-        Text item=localCurrentSnowVolume
+//        Text item=localCurrentSnowVolume
     }
-    
     //     Frame label="Current weather in Miami" {
     //     Text item=miamiCurrentCondition
     //     Image item=miamiCurrentConditionIcon
