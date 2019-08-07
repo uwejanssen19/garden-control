@@ -5,23 +5,27 @@ sitemap ow label="OpenWeatherMap" {
         Mapview item=localStationLocation
     }
 
+
     Frame label="Local forecast for today" {
-        Text item=localHourlyForecast06Condition
-        Text item=localHourlyForecast06Temperature
-        Image item=localHourlyForecast06ConditionIcon
-        Text item=localHourlyForecastTodayRainVolume
-        // Text item=localDailyForecastTodayMaxTemperature
-        // Text item=localDailyForecastTodayPressure
-        // Text item=localDailyForecastTodayHumidity
-        // Text item=localDailyForecastTodayWindSpeed
-        // Text item=localDailyForecastTodayWindDirection
-        // Text item=localDailyForecastTodayCloudiness
-        // Text item=localDailyForecastTodaySnowVolume
+        Image item=localForecastHours12ConditionIcon
+        Text item=localForecastHours12Timestamp
+    //     Text item=localForecastHours12Condition
+    //     // Text item=localForecastHours12MinTemperature
+    //     // Text item=localForecastHours12MaxTemperature
+    //     Text item=localForecastHours12Pressure
+    //     Text item=localForecastHours12Humidity
+    //     Text item=localForecastHours12WindSpeed
+    //     Text item=localForecastHours12WindDirection
+    //     Text item=localForecastHours12Cloudiness
+         Text item=localForecastHours12RainVolume
+    //     // Text item=localForecastHours12SnowVolume
+    //
     }
+
     Frame label="Current local weather" {
         Text item=localLastMeasurement
-        Text item=localCurrentCondition
-        Image item=localCurrentConditionIcon
+        // Text item=localCurrentCondition
+        // Image item=localCurrentConditionIcon
         Text item=localCurrentTemperature
         Text item=localCurrentPressure
         Text item=localCurrentHumidity
