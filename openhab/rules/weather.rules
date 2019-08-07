@@ -44,14 +44,19 @@ val Functions$Function0<String> readLevel = [
 rule "Trigger irrigation pump"
   when Item Irr_Switch received command
   then
+    var String rcv = receivedCommand.toString
     var String cmd = null
-    if (receivedCommand == ON){
+    
+    
+    if (rcv == ON){
         cmd = "1"
         irrigating = true
     } else if (receivedCommand == OFF) {
         cmd = "0"
         irrigating = false
     }
+    logInfo("Trigger irrigation pump","received command = "+rcv+", cmd set to = "+cmd)
+
     logInfo("Trigger irrigation pump","irrigating set to " + irrigating)
 
     if(cmd !== null) 
@@ -123,7 +128,6 @@ rule "Supervise irrigation state"
   when 
     Time cron "0 0/5 * * * ?" // every minute check
   then
-    logInfo("Supervise irrigation state rule", "Cron event is due, turn irrigation ON if needed, irrigating = "+irrigating) 
     if (irrigating) {
       logInfo("rule Supervise irrigation state", "found irrigation is active, so turn it ON")
       irrOnOffProc.apply("1", SCRIPT_DIR)

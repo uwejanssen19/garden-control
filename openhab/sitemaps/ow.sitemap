@@ -1,0 +1,26 @@
+sitemap ow label="OpenWeatherMap" {
+    Frame label="Local Weather Station" {
+        Text item=localStationId
+        Text item=localStationName
+        Mapview item=localStationLocation
+    }
+    Frame label="Current local weather" {
+        Text item=localLastMeasurement
+        Text item=localCurrentCondition
+        Image item=localCurrentConditionIcon
+        Text item=localCurrentTemperature
+        Text item=localCurrentPressure
+        Text item=localCurrentHumidity
+        Text item=localCurrentWindSpeed
+        Text item=localCurrentWindDirection
+        Text item=localCurrentCloudiness
+        Text item=localCurrentRainVolume
+        Text item=localCurrentSnowVolume
+    }
+    
+    //     Frame label="Current weather in Miami" {
+    //     Text item=miamiCurrentCondition
+    //     Image item=miamiCurrentConditionIcon
+    //     Text item=miamiCurrentTemperature
+    // }
+}

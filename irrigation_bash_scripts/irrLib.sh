@@ -10,6 +10,7 @@ LOG_FILE=/tmp/waterOnOff.log
 CURRENT_WEATHER_RESPONSE=/tmp/weather.json
 MAX_READ_COUNT=4
 FORECAST=/tmp/forecast.json
+OW_API='19617de07bcc959ff8dc5e0caffce590'
 
 function irrOnOff () {
   # Irrigation Punp Control
@@ -65,7 +66,7 @@ function init () {
 }
 function getWeather() {
 # get current weather
-  wget 'http://api.openweathermap.org/data/2.5/weather?id=2886446&units=metric&lang=de&appid=19617de07bcc959ff8dc5e0caffce590' -O $CURRENT_WEATHER_RESPONSE
+  wget "http://api.openweathermap.org/data/2.5/weather?id=2886446&units=metric&lang=de&appid=$OW_API" -O $CURRENT_WEATHER_RESPONSE
 }
 
 function isRaining() {
@@ -85,7 +86,7 @@ function isRaining() {
 
 function getForeCast() {
   # retrieve 3*8 hours' forecast , i.e. 24h 
-  wget 'http://api.openweathermap.org/data/2.5/forecast?id=2886446&units=metric&lang=de&cnt=8&appid=19617de07bcc959ff8dc5e0caffce590' -O $FORECAST
+  wget "http://api.openweathermap.org/data/2.5/forecast?id=2886446&units=metric&lang=de&cnt=8&appid=$OW_API" -O $FORECAST
 }
 function willRain() {
   getForeCast
