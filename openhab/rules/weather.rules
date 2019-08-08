@@ -132,7 +132,7 @@ end
 // This rule serves as a steady bgackground task
 rule "daemon"
   when 
-    Time cron "0 0/1 * * * ?" // every minute check
+    Time cron "0 0/5 * * * ?" // every minute check
   then
 
   var Number r03  = localForecastHoursRainVolume03.state
