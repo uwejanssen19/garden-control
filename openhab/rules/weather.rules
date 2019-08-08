@@ -166,20 +166,17 @@ rule "Irrigation ON"
     Time cron "0 00 18 * * ? " or
     Time cron "0 00 19 * * ? "  
   then
-    // the following check actually should be done here but at present is done in low level bash script
-    // if (isRaining || willRain) 
-    // { 
-    //     logInfo("Irrigation rule", "Cron event is due, start irrigation")
-    // }
     
-
-    // first make sure barrel has enough water 
+    // TODO BEGIN first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
-    // then irrigate except forecast tells otherwise
+    // TODO END
+
+    // Irrigate except forecast tells otherwise
     logInfo("Irrigation ON rule","isRaining = " + localCurrentRainVolume.state +", rainForeCast 24hrs  = "+rainSum)
     if (localCurrentRainVolume.state > 0 || rainSum >  DONT_IRRIGATE_BEYOND) {
+      logInfo("Irrigation ON rule","NO irrigating , either raining: ("+localCurrentRainVolume+", or future rain = " + rainSum)
       irrigating = false
-      sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "Keine Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + rainSum + " angesagt ")
+      sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + rainSum + " angesagt ")
     } else {
       logInfo("Irrigation ON rule","irrigating set to " + irrigating)
       Irr_Switch.sendCommand(ON)
