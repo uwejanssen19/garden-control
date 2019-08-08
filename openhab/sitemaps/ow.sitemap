@@ -2,13 +2,36 @@ sitemap ow label="OpenWeatherMap" {
     Frame label="Local Weather Station" {
         Text item=localStationId
         Text item=localStationName
-        Mapview item=localStationLocation
+        Mapview item=localStationLocation height=6
     }
 
 
     Frame label="Local forecast for today" {
         Image item=localForecastHours12ConditionIcon
-        Text item=localForecastHours12Timestamp
+
+        Text item=RainDetails {
+            Text item=localForecastHoursTimestamp03
+            Text item=localForecastHoursRainVolume03
+            Text item=localForecastHoursTimestamp06
+            Text item=localForecastHoursRainVolume06
+            Text item=localForecastHoursTimestamp09
+            Text item=localForecastHoursRainVolume09
+            Text item=localForecastHoursTimestamp12
+            Text item=localForecastHoursRainVolume12
+            Text item=localForecastHoursTimestamp15
+            Text item=localForecastHoursRainVolume15
+            Text item=localForecastHoursTimestamp18
+            Text item=localForecastHoursRainVolume18
+            Text item=localForecastHoursTimestamp21
+            Text item=localForecastHoursRainVolume21
+            Text item=localForecastHoursTimestamp24
+            Text item=localForecastHoursRainVolume24
+        }
+
+        Text item=localRainForecastSum
+
+        Webview item=DHV url= "http://dhv.de/web/wetter"  height=10
+ 
     //     Text item=localForecastHours12Condition
     //     // Text item=localForecastHours12MinTemperature
     //     // Text item=localForecastHours12MaxTemperature
@@ -17,7 +40,6 @@ sitemap ow label="OpenWeatherMap" {
     //     Text item=localForecastHours12WindSpeed
     //     Text item=localForecastHours12WindDirection
     //     Text item=localForecastHours12Cloudiness
-         Text item=localForecastHours12RainVolume
     //     // Text item=localForecastHours12SnowVolume
     //
     }

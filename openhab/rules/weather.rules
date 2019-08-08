@@ -16,9 +16,11 @@
 val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
+val Number DONT_IRRIGATE_BEYOND = 3.0
 
 var String level = LEVEL_EMPTY
 var irrigating = false
+var Number rainSum = 0 
 
 // use procedure since nothing is returned
 val Procedures$Procedure0 onDepressureTimer = [ 
@@ -44,20 +46,25 @@ val Functions$Function0<String> readLevel = [
 rule "Trigger irrigation pump"
   when Item Irr_Switch received command
   then
-    var String rcv = receivedCommand.toString
+
     var String cmd = null
     
-    
-    if (rcv == ON){
-        cmd = "1"
-        irrigating = true
-    } else if (receivedCommand == OFF) {
-        cmd = "0"
-        irrigating = false
+    switch (receivedCommand){
+        case ON: {
+          cmd = "1"
+          irrigating = true
+          logInfo("Trigger irrigation pump","received command = "+receivedCommand+", cmd set to = "+cmd)
+          }
+        case OFF: {
+          cmd = "0"
+          irrigating = false
+          logInfo("Trigger irrigation pump","received command = "+receivedCommand+", cmd set to = "+cmd)
+        }
+        default: 
+          logInfo("Trigger irrigation pump","received command neither ON nor OFF")
     }
-    logInfo("Trigger irrigation pump","received command = "+rcv+", cmd set to = "+cmd)
 
-    logInfo("Trigger irrigation pump","irrigating set to " + irrigating)
+    logInfo("Trigger irrigation pump","irrigating_ set to " + irrigating)
 
     if(cmd !== null) 
     {
@@ -122,23 +129,38 @@ rule "Depressure"
     createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
 end
 
-rule "Supervise irrigation state"
-  // if someone left irrgation on although it was not supposed to 
-  // -> turn OFF
+// This rule serves as a steady bgackground task
+rule "daemon"
   when 
-    Time cron "0 0/5 * * * ?" // every minute check
+    Time cron "0 0/1 * * * ?" // every minute check
   then
-    if (irrigating) {
+
+  var Number r03  = localForecastHoursRainVolume03.state
+  var Number r06  = localForecastHoursRainVolume06.state
+  var Number r09  = localForecastHoursRainVolume09.state
+  var Number r12  = localForecastHoursRainVolume12.state
+  var Number r15  = localForecastHoursRainVolume15.state
+  var Number r18  = localForecastHoursRainVolume18.state
+  var Number r21  = localForecastHoursRainVolume21.state
+  var Number r24  = localForecastHoursRainVolume24.state
+
+  rainSum =  r03 +  r06 + r09 + r12 + r15 + r18 + r21 + r24
+  
+  localRainForecastSum.postUpdate(rainSum)
+    
+  // if someone ( e.g. low level script ) turned OFF irrigation on although it was not supposed to 
+  // -> turn ON again 
+  if (irrigating) {
       logInfo("rule Supervise irrigation state", "found irrigation is active, so turn it ON")
       irrOnOffProc.apply("1", SCRIPT_DIR)
-    }
+  }
 end
 
 
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    //Time cron "0 0/2 * * * ? " or // near future test 
+    //Time cron "0 0/1 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -150,16 +172,21 @@ rule "Irrigation ON"
     //     logInfo("Irrigation rule", "Cron event is due, start irrigation")
     // }
     
-    logInfo("Irrigation ON rule", "Cron event is due, start irrigation")
-    logInfo("Irrigation ON rule","irrigating set to " + irrigating)
 
     // first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
-    // then irrigate
-    Irr_Switch.sendCommand(ON)
-    irr_on_off.sendCommand("1")
-    irrigating = true
-    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
+    // then irrigate except forecast tells otherwise
+    logInfo("Irrigation ON rule","isRaining = " + localCurrentRainVolume.state +", rainForeCast 24hrs  = "+rainSum)
+    if (localCurrentRainVolume.state > 0 || rainSum >  DONT_IRRIGATE_BEYOND) {
+      irrigating = false
+      sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "Keine Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + rainSum + " angesagt ")
+    } else {
+      logInfo("Irrigation ON rule","irrigating set to " + irrigating)
+      Irr_Switch.sendCommand(ON)
+      irr_on_off.sendCommand("1")
+      irrigating = true
+      sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
+    }
     
 end
 
