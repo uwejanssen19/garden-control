@@ -132,7 +132,8 @@ end
 // This rule serves as a steady bgackground task
 rule "daemon"
   when 
-    Time cron "0 0/1 * * * ?" // every minute check
+    //  Time cron "0 0/1 * * * ?" //near future test
+    Time cron "0 0/5 * * * ?" // every 5 minutes check
   then
 
   logInfo("ForecastRainVolumesGroup ( SUM )  = ",ForecastRainVolumesGroup.state.toString)
@@ -149,7 +150,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    Time cron "0 0/1 * * * ? " or // near future test 
+//    Time cron "0 0/1 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -165,7 +166,7 @@ rule "Irrigation ON"
     if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {
       irrigating = false
       logInfo("Irrigation ON rule","NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
-      //sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
+      sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
     } else {
       Irr_Switch.sendCommand(ON)
       irr_on_off.sendCommand("1")
