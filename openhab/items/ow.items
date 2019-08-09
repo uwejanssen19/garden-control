@@ -1,51 +1,53 @@
-String localStationId "ID [%s]" { channel="openweathermap:weather-and-forecast:api:local:station#id" }
-String localStationName "Name [%s]" { channel="openweathermap:weather-and-forecast:api:local:station#name" }
-Location localStationLocation "Location [%2$s°N %3$s°E]" <location> { channel="openweathermap:weather-and-forecast:api:local:station#location" }
+String LocalStationId "ID [%s]" { channel="openweathermap:weather-and-forecast:api:local:station#id" }
+String LocalStationName "Name [%s]" { channel="openweathermap:weather-and-forecast:api:local:station#name" }
+Location LocalStationLocation "Location [%2$s°N %3$s°E]" <location> { channel="openweathermap:weather-and-forecast:api:local:station#location" }
 
-DateTime localForecastHoursTimestamp03 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours03#time-stamp" }
-DateTime localForecastHoursTimestamp06 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#time-stamp" }
-DateTime localForecastHoursTimestamp09 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#time-stamp" }
-DateTime localForecastHoursTimestamp12 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#time-stamp" }
-DateTime localForecastHoursTimestamp15 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#time-stamp" }
-DateTime localForecastHoursTimestamp18 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#time-stamp" }
-DateTime localForecastHoursTimestamp21 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#time-stamp" }
-DateTime localForecastHoursTimestamp24 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#time-stamp" }
-String localForecastHours12Condition "Condition for today [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#condition" }
-Image localForecastHours12ConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#icon" }
-Number:Temperature localForecastHours12MinTemperature "Minimum temperature for today [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#min-temperature" }
-Number:Temperature localForecastHours12MaxTemperature "Maximum temperature for today [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#max-temperature" }
-Number:Pressure localForecastHours12Pressure "Barometric pressure for today [%.1f %unit%]" <pressure> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#pressure" }
-Number:Dimensionless localForecastHours12Humidity "Atmospheric humidity for today [%d %unit%]" <humidity> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#humidity" }
-Number:Speed localForecastHours12WindSpeed "Wind speed for today [%.1f km/h]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#wind-speed" }
-Number:Angle localForecastHours12WindDirection "Wind direction for today [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#wind-direction" }
-Number:Dimensionless localForecastHours12Cloudiness "Cloudiness for today [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#cloudiness" }
-Number:Length localForecastHoursRainVolume03 "Rain volume for  3 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours03#rain" }
-Number:Length localForecastHoursRainVolume06 "Rain volume for  6 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#rain" }
-Number:Length localForecastHoursRainVolume09 "Rain volume for  9 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#rain" }
-Number:Length localForecastHoursRainVolume12 "Rain volume for 12 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
-Number:Length localForecastHoursRainVolume15 "Rain volume for 15 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#rain" }
-Number:Length localForecastHoursRainVolume18 "Rain volume for 18 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#rain" }
-Number:Length localForecastHoursRainVolume21 "Rain volume for 21 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#rain" }
-Number:Length localForecastHoursRainVolume24 "Rain volume for 24 hours [%.2f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#rain" }
-Number:Length localForecastHours12SnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#snow" }
+DateTime LocalForecastHoursTimestamp03 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours03#time-stamp" }
+DateTime LocalForecastHoursTimestamp06 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#time-stamp" }
+DateTime LocalForecastHoursTimestamp09 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#time-stamp" }
+DateTime LocalForecastHoursTimestamp12 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#time-stamp" }
+DateTime LocalForecastHoursTimestamp15 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#time-stamp" }
+DateTime LocalForecastHoursTimestamp18 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#time-stamp" }
+DateTime LocalForecastHoursTimestamp21 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#time-stamp" }
+DateTime LocalForecastHoursTimestamp24 "Forecast for [%1$td.%1$tm.%1$tY Time: %1$tH:%1$tM]" <time> { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#time-stamp" }
+String LocalForecastHours12Condition "Condition for today [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#condition" }
+Image LocalForecastHours12ConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#icon" }
+Number:Temperature LocalForecastHours12MinTemperature "Minimum temperature for today [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#min-temperature" }
+Number:Temperature LocalForecastHours12MaxTemperature "Maximum temperature for today [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#max-temperature" }
+Number:Pressure LocalForecastHours12Pressure "Barometric pressure for today [%.1f %unit%]" <pressure> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#pressure" }
+Number:Dimensionless LocalForecastHours12Humidity "Atmospheric humidity for today [%d %unit%]" <humidity> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#humidity" }
+Number:Speed LocalForecastHours12WindSpeed "Wind speed for today [%.1f km/h]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#wind-speed" }
+Number:Angle LocalForecastHours12WindDirection "Wind direction for today [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#wind-direction" }
+Number:Dimensionless LocalForecastHours12Cloudiness "Cloudiness for today [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#cloudiness" }
 
+Group:Number:SUM ForecastRainVolumesGroup "Forecasts from 03-24 hrs in the future: [%.2f]"
 
-DateTime localLastMeasurement "Timestamp of last measurement [%1$td.%1$tm.%1$tY %1$tH:%1$tM:%1$tS]" <time> { channel="openweathermap:weather-and-forecast:api:local:current#time-stamp" }
-String localCurrentCondition "Current condition [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:current#condition" }
-Image localCurrentConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:current#icon" }
-Number:Temperature localCurrentTemperature "Current temperature [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:current#temperature" }
-Number:Pressure localCurrentPressure "Current barometric pressure [%.1f %unit%]" <pressure> { channel="openweathermap:weather-and-forecast:api:local:current#pressure" }
-Number:Dimensionless localCurrentHumidity "Current atmospheric humidity [%d %unit%]" <humidity> { channel="openweathermap:weather-and-forecast:api:local:current#humidity" }
-Number:Speed localCurrentWindSpeed "Current wind speed [%.1f km/h]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-speed" }
-Number:Angle localCurrentWindDirection "Current wind direction [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-direction" }
-Number:Dimensionless localCurrentCloudiness "Current cloudiness [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:current#cloudiness" }
-Number:Length localCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:current#rain" }
-//Number:Length localCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
+    Number:Length LocalForecastHoursRainVolume03  "Rain volume for  3 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours03#rain" }
+    Number:Length LocalForecastHoursRainVolume06  "Rain volume for  6 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#rain" }
+    Number:Length LocalForecastHoursRainVolume09  "Rain volume for  9 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#rain" }
+    Number:Length LocalForecastHoursRainVolume12  "Rain volume for 12 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
+    Number:Length LocalForecastHoursRainVolume15  "Rain volume for 15 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#rain" }
+    Number:Length LocalForecastHoursRainVolume18  "Rain volume for 18 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#rain" }
+    Number:Length LocalForecastHoursRainVolume21  "Rain volume for 21 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#rain" }
+    Number:Length LocalForecastHoursRainVolume24  "Rain volume for 24 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#rain" }
+    Number:Length LocalForecastHours12SnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#snow" }
 
-Number:Length localRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
+DateTime LocalLastMeasurement "Timestamp of last measurement [%1$td.%1$tm.%1$tY %1$tH:%1$tM:%1$tS]" <time> { channel="openweathermap:weather-and-forecast:api:local:current#time-stamp" }
+String LocalCurrentCondition "Current condition [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:current#condition" }
+Image LocalCurrentConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:current#icon" }
+Number:Temperature LocalCurrentTemperature "Current temperature [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:current#temperature" }
+Number:Pressure LocalCurrentPressure "Current barometric pressure [%.1f %unit%]" <pressure> { channel="openweathermap:weather-and-forecast:api:local:current#pressure" }
+Number:Dimensionless LocalCurrentHumidity "Current atmospheric humidity [%d %unit%]" <humidity> { channel="openweathermap:weather-and-forecast:api:local:current#humidity" }
+Number:Speed LocalCurrentWindSpeed "Current wind speed [%.1f km/h]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-speed" }
+Number:Angle LocalCurrentWindDirection "Current wind direction [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-direction" }
+Number:Dimensionless LocalCurrentCloudiness "Current cloudiness [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:current#cloudiness" }
+Number:Length LocalCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:current#rain" }
+//Number:Length LocalCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
+
+Number:Length LocalRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
 Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
 
-String DHV
+String Dhv
 
 //String localHourlyForecast12Condition "Condition locally for next 12 hours [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#condition" }
 //Image localHourlyForecast12ConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#icon" }

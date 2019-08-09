@@ -132,21 +132,10 @@ end
 // This rule serves as a steady bgackground task
 rule "daemon"
   when 
-    Time cron "0 0/5 * * * ?" // every minute check
+    Time cron "0 0/1 * * * ?" // every minute check
   then
 
-  var Number r03  = localForecastHoursRainVolume03.state
-  var Number r06  = localForecastHoursRainVolume06.state
-  var Number r09  = localForecastHoursRainVolume09.state
-  var Number r12  = localForecastHoursRainVolume12.state
-  var Number r15  = localForecastHoursRainVolume15.state
-  var Number r18  = localForecastHoursRainVolume18.state
-  var Number r21  = localForecastHoursRainVolume21.state
-  var Number r24  = localForecastHoursRainVolume24.state
-
-  rainSum =  r03 +  r06 + r09 + r12 + r15 + r18 + r21 + r24
-  
-  localRainForecastSum.postUpdate(rainSum)
+  logInfo("ForecastRainVolumesGroup ( SUM )  = ",ForecastRainVolumesGroup.state.toString)
     
   // if someone ( e.g. low level script ) turned OFF irrigation on although it was not supposed to 
   // -> turn ON again 
@@ -160,7 +149,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    //Time cron "0 0/1 * * * ? " or // near future test 
+    Time cron "0 0/1 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -172,16 +161,16 @@ rule "Irrigation ON"
     // TODO END
 
     // Irrigate except forecast tells otherwise
-    logInfo("Irrigation ON rule","isRaining = " + localCurrentRainVolume.state +", rainForeCast 24hrs  = "+rainSum)
-    if (localCurrentRainVolume.state > 0 || rainSum >  DONT_IRRIGATE_BEYOND) {
-      logInfo("Irrigation ON rule","NO irrigating , either raining: ("+localCurrentRainVolume+", or future rain = " + rainSum)
+    logInfo("Irrigation ON rule","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {
       irrigating = false
-      sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + rainSum + " angesagt ")
+      logInfo("Irrigation ON rule","NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+      //sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
     } else {
-      logInfo("Irrigation ON rule","irrigating set to " + irrigating)
       Irr_Switch.sendCommand(ON)
       irr_on_off.sendCommand("1")
       irrigating = true
+      logInfo("Irrigation ON rule","irrigating set to " + irrigating)
       sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
     }
     
