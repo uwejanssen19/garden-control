@@ -16,9 +16,8 @@ String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input", au
 Switch Irr_Switch 
 Switch Valve_Switch {expire="600s,OFF"} 
 Switch Fill_Switch  {expire="130s,OFF"} 
+// using this as a global variable within a rule
+Switch FillTimerActive
 
 Number display_level_out
 
-//String  logreaderIrrOnOff "Last Custom [%s]" { channel="logreader:reader:irrOnOffThing:lastCustomEvent" }
-//String  logreaderWaterOnOff "Last Custom [%s]" { channel="logreader:reader:waterOnOffThing:lastCustomEvent" }
-//String  logreaderLevel "Last Custom [%s]" { channel="logreader:reader:levelThing:lastCustomEvent" }
