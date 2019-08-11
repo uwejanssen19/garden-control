@@ -101,11 +101,11 @@ rule "High level fill barrel for next irrigation"
     var String level = LEVEL_EMPTY
     switch(receivedCommand){
         case ON: {
-          // if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
-          //   logInfo("Fill barrel rule","NO refill, either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
-          // } else {
-          //   logInfo("FILL barrel rule", "starting fill barrel cycle")
-          {
+          if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
+             logInfo("Fill barrel rule","NO refill, either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+           } else {
+             logInfo("FILL barrel rule", "starting fill barrel cycle")
+          
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(60), onFillTimer) // at most 200 filling time whatever level indicator tells
             while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
@@ -122,9 +122,9 @@ rule "High level fill barrel for next irrigation"
                 Fill_Switch.postUpdate(OFF)
                 water_on_off.sendCommand("0")
               } // full
-              logInfo("FILL barrel rule","START waiting 10 s")
+              //logInfo("FILL barrel rule","START waiting 10 s")
               Thread::sleep(10000)
-              logInfo("FILL barrel rule","STOP waiting 10 s")
+              //logInfo("FILL barrel rule","STOP waiting 10 s")
             } // end while
             logInfo("FILL barrel rule","END while loop since level is no longer empty or filltimer expired")
             maxTimer?.cancel()
@@ -142,8 +142,8 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 3/8 9-17 * * ?"
-    //Time cron "0 0/2 9-20 * * ?"
+    Time cron "0 3/20 9-17 * * ?"
+    //Time cron "0 3/8 9-20 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer") 
     var String isRaining = executeCommandLine("/home/pi/scripts/isRaining.sh", 1000)
@@ -214,6 +214,9 @@ rule "Irrigation ON"
       logInfo("Irrigation ON rule","NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
     } else {
+      // trigger fill barrel rule,
+      // this serves as a subroutine call here
+      Fill_Switch.postUpdate(ON)
       Irr_Switch.sendCommand(ON)
       irr_on_off.sendCommand("1")
       irrigating = true
