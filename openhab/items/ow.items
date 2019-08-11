@@ -44,8 +44,8 @@ Number:Dimensionless LocalCurrentCloudiness "Current cloudiness [%d %unit%]" <cl
 Number:Length LocalCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:current#rain" }
 //Number:Length LocalCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
 
-Number:Length LocalRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
-Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
+//Number:Length LocalRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
+//Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
 
 String Dhv
 

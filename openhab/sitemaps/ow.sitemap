@@ -9,26 +9,26 @@ sitemap ow label="OpenWeatherMap" {
     Frame label="Local forecast for today" {
         Image item=LocalForecastHours12ConditionIcon
 
-        Text item=RainDetails {
-            Text item=LocalForecastHoursTimestamp03
-            Text item=LocalForecastHoursRainVolume03
-            Text item=LocalForecastHoursTimestamp06
-            Text item=LocalForecastHoursRainVolume06
-            Text item=LocalForecastHoursTimestamp09
-            Text item=LocalForecastHoursRainVolume09
-            Text item=LocalForecastHoursTimestamp12
-            Text item=LocalForecastHoursRainVolume12
-            Text item=LocalForecastHoursTimestamp15
-            Text item=LocalForecastHoursRainVolume15
-            Text item=LocalForecastHoursTimestamp18
-            Text item=LocalForecastHoursRainVolume18
-            Text item=LocalForecastHoursTimestamp21
-            Text item=LocalForecastHoursRainVolume21
-            Text item=LocalForecastHoursTimestamp24
-            Text item=LocalForecastHoursRainVolume24
-        }
+        // Text item=RainDetails {
+        //     Text item=LocalForecastHoursTimestamp03
+        //     Text item=LocalForecastHoursRainVolume03
+        //     Text item=LocalForecastHoursTimestamp06
+        //     Text item=LocalForecastHoursRainVolume06
+        //     Text item=LocalForecastHoursTimestamp09
+        //     Text item=LocalForecastHoursRainVolume09
+        //     Text item=LocalForecastHoursTimestamp12
+        //     Text item=LocalForecastHoursRainVolume12
+        //     Text item=LocalForecastHoursTimestamp15
+        //     Text item=LocalForecastHoursRainVolume15
+        //     Text item=LocalForecastHoursTimestamp18
+        //     Text item=LocalForecastHoursRainVolume18
+        //     Text item=LocalForecastHoursTimestamp21
+        //     Text item=LocalForecastHoursRainVolume21
+        //     Text item=LocalForecastHoursTimestamp24
+        //     Text item=LocalForecastHoursRainVolume24
+        // }
 
-        Text item=ForecastRainVolumesGroup
+        Group item=ForecastRainVolumesGroup
 
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
  

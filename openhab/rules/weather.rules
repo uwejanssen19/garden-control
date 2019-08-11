@@ -12,6 +12,7 @@
 // import org.eclipse.xtext.xbase.lib.Functions
 // import org.eclipse.xtext.xbase.lib.Procedures // not needed ???
 
+import java.util.Map
 
 val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
@@ -21,26 +22,34 @@ val Number DONT_IRRIGATE_BEYOND = 3.0
 var String level = LEVEL_EMPTY
 var irrigating = false
 var Number rainSum = 0 
+var fillTimerActive = false
 
-// use procedure since nothing is returned
 val Procedures$Procedure0 onDepressureTimer = [ 
-        logInfo("Depressure rule", "onDepressureTimer invoked")
+        logInfo("Depressure", "onDepressureTimer invoked")
         water_on_off.sendCommand("0")
         Valve_Switch.postUpdate(OFF)
 ]
 
+val Procedures$Procedure0 onFillTimer = [ 
+        logInfo("Filling over", "onFillTimer invoked, fillTimerActive = {}", fillTimerActive)
+        fillTimerActive = false
+        water_on_off.sendCommand("0")
+        Fill_Switch.postUpdate(OFF)
+]
+
 val irrOnOffProc = [ 
     String onOff, String SCRIPT_DIR |
-                 executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 10000)
+                 executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
                  logInfo("irrOnOffProc", " invoked irrOnOff with parameter " + onOff)
 ]
 
-val Functions$Function0<String> readLevel = [ 
-    
-                  logInfo("Read level", "readLevel invoked")
-                  var String level = executeCommandLine(SCRIPT_DIR+"Level.sh", 1000)
-                  logInfo("Read level", "readLevel level = " + level)
-                  return level
+val readLevel = [ 
+  String SCRIPT_DIR
+                    |
+                  logInfo("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
+                  var level = executeCommandLine(SCRIPT_DIR+"Level.sh", 6000)
+                  logInfo("Read level", "readLevel() result = {}",level)
+                  level.toString
 ]
 
 rule "Trigger irrigation pump"
@@ -85,26 +94,36 @@ rule "Trigger water valve"
     if(cmd !== null) water_on_off.sendCommand(cmd)
 end
 
-rule "Fill barrel for next irrigation"
-// finally invokes low level script 
-// this script checks whether it makes sense to fill up the barrel (see /~pi/scripts/supply4NextIrrigation.sh )
-
+rule "High level fill barrel for next irrigation"
+// fill up barrel except when raining or rain has been forecast
   when Item Fill_Switch received command
   then
-    //logInfo("FILL barrel rule", "received command = " + receivedCommand.toString)
+    logInfo("FILL barrel rule", "received command = " + receivedCommand.toString)
+    var String level = LEVEL_EMPTY
     switch(receivedCommand){
         case ON: {
-            logInfo("FILL barrel rule", "launching script supply4NextIrr...")
-            // WORKING with water_on_off_script: 
-            fill_barrel.sendCommand("1")
-            // since fill_barrel measures level  irrigation might have stopped, so turn it on 
-            // else leave it off 
-                logInfo("Fill barrel for next irrigation","irrigating is " + irrigating)
-        }
-
-        // logInfo("FILL barrel rule", "script supply4NextIrr... executed")
-        
-        case OFF: fill_barrel.sendCommand("0")
+          if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
+            logInfo("Irrigation ON rule","NO refill, either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+          } else {
+            logInfo("FILL barrel rule", "starting fill barrel cycle")
+            fillTimerActive = true
+            createTimer (now.plusSeconds(120), onFillTimer) // at most 200 filling time whatever level indicator tells
+            while (level == LEVEL_EMPTY && fillTimerActive) {
+              water_on_off.sendCommand("1")
+              level = readLevel.apply(SCRIPT_DIR)
+              logInfo("FILL barrel rule","level = " + level)
+              if (level == "0" ) // 0=full 
+              {
+                logInfo("FILL barrel rule","Found barrel full")
+                fillTimerActive = false
+                water_on_off.sendCommand("0")
+              } // full
+              Thread::sleep(10000)
+            } // end while
+            logInfo("FILL barrel rule","END while loop since level is no longer empty or filltimer expired")
+          } // end if rain condition
+        } // end case ON
+        case OFF: water_on_off.sendCommand("0")
         default: logError("FILL barrel", "I Do not know how to handle " + receivedCommand.toString)
     }
 end
@@ -116,7 +135,7 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 0/20 9-17 * * ?"
+    Time cron "0 3/20 9-17 * * ?"
     //Time cron "0 0/2 9-20 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer") 
@@ -124,12 +143,10 @@ rule "Depressure"
     logInfo("Rule Depressure", "isRaining = " + isRaining)
     Valve_Switch.sendCommand(ON)
     water_on_off.sendCommand("1")
-
-
     createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
 end
 
-// This rule serves as a steady bgackground task
+// This rule serves as a steady bgackground task running all five minutes
 rule "daemon"
   when 
     //  Time cron "0 0/1 * * * ?" //near future test
@@ -138,12 +155,16 @@ rule "daemon"
 
   logInfo("ForecastRainVolumesGroup ( SUM )  = ",ForecastRainVolumesGroup.state.toString)
     
-  // if someone ( e.g. low level script ) turned OFF irrigation on although it was not supposed to 
+  // if someone ( e.g. low level script ) turned OFF irrigation on inadvertedly
   // -> turn ON again 
   if (irrigating) {
       logInfo("rule Supervise irrigation state", "found irrigation is active, so turn it ON")
       irrOnOffProc.apply("1", SCRIPT_DIR)
   }
+  // save water: 
+  // never let water running for more than five minutes
+  Valve_Switch.sendCommand(OFF)
+  water_on_off.sendCommand("0")
 end
 
 
@@ -160,8 +181,24 @@ rule "Irrigation ON"
     // TODO BEGIN first make sure barrel has enough water 
     // fill_barrel.sendCommand("1")
     // TODO END
+    var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
+    val String TRUE_STRING  = "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString
+    val String FALSE_STRING = "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
+    
+    irrigationMap.put("IRROFF", 
+      newHashMap(
+       false -> FALSE_STRING
+       ) as Map<Boolean,String>
+       )
 
+    irrigationMap.put("IRRON" , 
+      newHashMap(
+         true  -> TRUE_STRING
+         ) as Map<Boolean,String>
+      )
     // Irrigate except forecast tells otherwise
+
+
     logInfo("Irrigation ON rule","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {
       irrigating = false
