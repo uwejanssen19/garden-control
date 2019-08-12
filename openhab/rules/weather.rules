@@ -239,3 +239,15 @@ rule "Irrigation OFF"
     irrigating = false
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+level_out.state.toString)
 end
+
+rule "Update Manual Water Level Display"
+when 
+  Item UpdateLevelSwitch received command
+then 
+  logInfo("Rule: Update Manual Water Level Display", "UpdateLevelSwitch has been pushed: {} ", receivedCommand)
+  if (receivedCommand == ON) {
+    level = readLevel.apply(SCRIPT_DIR)
+    Display_level_out.postUpdate(level)
+    //UpdateLevelSwitch.postUpdate(OFF)
+  }
+end

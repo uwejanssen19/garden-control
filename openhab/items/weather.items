@@ -19,5 +19,7 @@ Switch Fill_Switch  {expire="130s,OFF"}
 // using this as a global variable within a rule
 Switch FillTimerActive
 
-Number display_level_out
+Number Display_level_out
+// reading level will not take more than 8 s
+Switch UpdateLevelSwitch {expire="1m,OFF"} 
 
