@@ -8,6 +8,7 @@
 // 14.05.2019 | Creation                                           | Janssen
 // 26.05.2019 | comments changed                                   | Janssen
 // 31.07.2019 | attempt to do some real programming                | Janssen
+// 12.08.2019 | added rule for handling test mode                  | Janssen
 // -----------------------------------------------------------------------------
 
 import java.util.Map
@@ -21,6 +22,18 @@ var String level = LEVEL_EMPTY
 var irrigating = false
 var Number rainSum = 0 
 
+val Functions$Function0<Boolean> takeCareOfWeather = [ 
+  logInfo("takeCareOfWeather::","LocalCurrentRainVolume = {}",LocalCurrentRainVolume.state)
+  logInfo("takeCareOfWeather::","ForecastRainVolumesGroup = {}",ForecastRainVolumesGroup.state)
+  logInfo("takeCareOfWeather::","NoWeatherSwitch = {}",NoWeatherSwitch.state)
+  
+  if (NoWeatherSwitch.state == ON || (LocalCurrentRainVolume.state == 0 && ForecastRainVolumesGroup.state < DONT_IRRIGATE_BEYOND)) {
+    return false
+  }
+  else {
+    return true
+  }
+]
 
 val Procedures$Procedure0 onFillTimer = [ 
         FillTimerActive.postUpdate(OFF)
@@ -51,28 +64,34 @@ val readLevel = [
                   level.toString
 ]
 
-rule "Trigger irrigation pump"
+rule "Manual Trigger irrigation pump"
   when Item Irr_Switch received command
   then
 
-    var String cmd = null
-    
+    var String cmd = "0"
+    irrigating=false
+    var String text = "ignored manual irrigation command = "+receivedCommand+" beacause of the weather"
+       
     switch (receivedCommand){
         case ON: {
-          cmd = "1"
-          irrigating = true
-          logInfo("Trigger irrigation pump","received command = "+receivedCommand+", cmd set to = "+cmd)
+          if (takeCareOfWeather.apply() == false) {
+            cmd = "1"
+            irrigating = true
+          } else { // else leave cmd and irrigating state as defined above
+            logInfo("Manual Trigger irrigation pump","ignored manual irrigation command = "+receivedCommand+" beacause of the weather")
+            StatusText.postUpdate(text)
+            Irr_Switch.sendCommand(OFF)
           }
+        }
         case OFF: {
-          cmd = "0"
-          irrigating = false
-          logInfo("Trigger irrigation pump","received command = "+receivedCommand+", cmd set to = "+cmd)
+          logInfo("Manual Trigger irrigation pump","turned irrigation OFF")
         }
         default: 
           logInfo("Trigger irrigation pump","received command neither ON nor OFF")
     }
 
-    logInfo("Trigger irrigation pump","irrigating_ set to " + irrigating)
+    logInfo("Manual Trigger irrigation pump","received command = "+receivedCommand+", cmd set to = "+cmd)
+    logInfo("Manual Trigger irrigation pump","irrigating state set to " + irrigating)
 
     if(cmd !== null) 
     {
@@ -101,7 +120,8 @@ rule "High level fill barrel for next irrigation"
     var String level = LEVEL_EMPTY
     switch(receivedCommand){
         case ON: {
-          if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
+          if (takeCareOfWeather.apply()) {
+          //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
              logInfo("Fill barrel rule","NO refill, either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
            } else {
              logInfo("FILL barrel rule", "starting fill barrel cycle")
@@ -172,6 +192,9 @@ rule "daemon"
   // never let water running for more than five minutes
   Valve_Switch.sendCommand(OFF)
   water_on_off.sendCommand("0")
+  level = readLevel.apply(SCRIPT_DIR)
+  Display_level_out?.postUpdate(level)    
+  StatusText.sendCommand("DAEMON ran, level = "+level)
 end
 
 
@@ -203,11 +226,10 @@ rule "Irrigation ON"
          true  -> TRUE_MAIL_TEXT
          ) as Map<Boolean,String>
       )
+
     // Irrigate except forecast tells otherwise
-
-
     logInfo("Irrigation ON rule","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
-    if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {
+    if (!(takeCareOfWeather.apply())) {
       Irr_Switch.sendCommand(OFF)
       irr_on_off.sendCommand("0")
       irrigating = false
@@ -245,9 +267,10 @@ when
   Item UpdateLevelSwitch received command
 then 
   logInfo("Rule: Update Manual Water Level Display", "UpdateLevelSwitch has been pushed: {} ", receivedCommand)
-  if (receivedCommand == ON) {
+//  if (receivedCommand == ON) {
     level = readLevel.apply(SCRIPT_DIR)
-    Display_level_out.postUpdate(level)
-    //UpdateLevelSwitch.postUpdate(OFF)
-  }
+    Display_level_out?.postUpdate(level) 
+    StatusText.sendCommand("Update Level - waiting for level value ...")
+    StatusText.sendCommand("Update Level, level = "+level)
+  //}
 end

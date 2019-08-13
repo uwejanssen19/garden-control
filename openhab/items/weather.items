@@ -17,9 +17,11 @@ Switch Irr_Switch
 Switch Valve_Switch {expire="600s,OFF"} 
 Switch Fill_Switch  {expire="130s,OFF"} 
 // using this as a global variable within a rule
-Switch FillTimerActive
+Switch FillTimerActive 
 
 Number Display_level_out
 // reading level will not take more than 8 s
-Switch UpdateLevelSwitch {expire="1m,OFF"} 
+Switch UpdateLevelSwitch {expire="60s,OFF"} 
+
+String StatusText
 

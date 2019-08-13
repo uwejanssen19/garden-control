@@ -1,0 +1,4 @@
+{
+    "openhab.host":"garden-control.speedport.ip",
+    "openhab.port":8080
+}

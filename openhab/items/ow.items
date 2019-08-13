@@ -22,6 +22,7 @@ Number:Dimensionless LocalForecastHours12Cloudiness "Cloudiness for today [%d %u
 
 Group:Number:SUM ForecastRainVolumesGroup "Forecasts from 03-24 hrs in the future: [%.2f]"
 
+
     Number:Length LocalForecastHoursRainVolume03  "Rain volume for  3 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours03#rain" }
     Number:Length LocalForecastHoursRainVolume06  "Rain volume for  6 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#rain" }
     Number:Length LocalForecastHoursRainVolume09  "Rain volume for  9 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#rain" }
@@ -53,3 +54,9 @@ String Dhv
 //Image localHourlyForecast12ConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#icon" }
 //Number:Temperature localHourlyForecast12Temperature "Temperature locally for next 12 hours [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#temperature" }
 //Number:Length localHourlyForecastTodayRainVolume "Rain volume for next 12 hours [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
+
+// maybe in a future version links will be supported, at least to other sitemaps
+// String LinkToGC "<a href='http://garden-control.speedport.ip:8080/basicui/app?sitemap=weather>garden-control</a>"
+
+// if NoWeatherSwitch = ON the rules will disregard current or coming rain 
+Switch NoWeatherSwitch  {expire="60s,OFF"} 
