@@ -42,7 +42,7 @@ Number:Dimensionless LocalCurrentHumidity "Current atmospheric humidity [%d %uni
 Number:Speed LocalCurrentWindSpeed "Current wind speed [%.1f km/h]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-speed" }
 Number:Angle LocalCurrentWindDirection "Current wind direction [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-direction" }
 Number:Dimensionless LocalCurrentCloudiness "Current cloudiness [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:current#cloudiness" }
-Number:Length LocalCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:current#rain" }
+Number LocalCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:current#rain" }
 //Number:Length LocalCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
 
 //Number:Length LocalRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
@@ -58,5 +58,5 @@ String Dhv
 // maybe in a future version links will be supported, at least to other sitemaps
 // String LinkToGC "<a href='http://garden-control.speedport.ip:8080/basicui/app?sitemap=weather>garden-control</a>"
 
-// if NoWeatherSwitch = ON the rules will disregard current or coming rain 
-Switch NoWeatherSwitch  {expire="60s,OFF"} 
+// if IgnoreWeatherSwitch = ON the rules will disregard current or coming rain 
+Switch IgnoreWeatherSwitch  {expire="60s,OFF"} 

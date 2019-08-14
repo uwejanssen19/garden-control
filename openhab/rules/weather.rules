@@ -17,22 +17,47 @@ val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 val Number DONT_IRRIGATE_BEYOND = 3.0
+val Number RAIN_TRESHOLD = DONT_IRRIGATE_BEYOND
 
 var String level = LEVEL_EMPTY
 var irrigating = false
 var Number rainSum = 0 
 
-val Functions$Function0<Boolean> takeCareOfWeather = [ 
-  logInfo("takeCareOfWeather::","LocalCurrentRainVolume = {}",LocalCurrentRainVolume.state)
-  logInfo("takeCareOfWeather::","ForecastRainVolumesGroup = {}",ForecastRainVolumesGroup.state)
-  logInfo("takeCareOfWeather::","NoWeatherSwitch = {}",NoWeatherSwitch.state)
+val Functions$Function0<Boolean> shallIrrigate = [ 
+  // if switch is = ON OR either not raining or coming rain less than defined amount
+  logInfo("shallIrrigate::","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
+  logInfo("shallIrrigate::","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
+  logInfo("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
-  if (NoWeatherSwitch.state == ON || (LocalCurrentRainVolume.state == 0 && ForecastRainVolumesGroup.state < DONT_IRRIGATE_BEYOND)) {
-    return false
-  }
+  val currentRainVal = (LocalCurrentRainVolume?.state as DecimalType).floatValue
+  if (currentRainVal == 0.0)  return true // for test
   else {
-    return true
+    val comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
+
+    val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
+    
+    val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)
+    val Boolean isNotRaining = (currentRainVal == 0.0)
+    
+    val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain)
+    
+    logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+    logInfo("shallIrrigate::","currentRainVal = {} ",currentRainVal)
+    logInfo("shallIrrigate::","comingRainVal = {} ",comingRainVal)
+    logInfo("shallIrrigate::","willNotRain = {} ",willNotRain)
+    logInfo("shallIrrigate::","isNotRaining = {} ",isNotRaining)
+    logInfo("shallIrrigate::","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
+    
+    if (IgnoreWeatherSwitch.state == ON || (isNotRaining && willNotRain)) {
+      logInfo("shallIrrigate::","return true")
+      return true
+    }
+    else {
+      logInfo("shallIrrigate::","return false")
+      return false 
+    }
   }
+   
 ]
 
 val Procedures$Procedure0 onFillTimer = [ 
@@ -58,7 +83,7 @@ val irrOnOffProc = [
 val readLevel = [ 
   String SCRIPT_DIR
                     |
-                  logInfo("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
+                  //logInfo("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
                   var level = executeCommandLine(SCRIPT_DIR+"Level.sh", 6000)
                   logInfo("Read level", "readLevel() result = {}",level)
                   level.toString
@@ -74,14 +99,14 @@ rule "Manual Trigger irrigation pump"
        
     switch (receivedCommand){
         case ON: {
-          if (takeCareOfWeather.apply() == false) {
+          //if (shallIrrigate.apply() == true) {
             cmd = "1"
             irrigating = true
-          } else { // else leave cmd and irrigating state as defined above
-            logInfo("Manual Trigger irrigation pump","ignored manual irrigation command = "+receivedCommand+" beacause of the weather")
-            StatusText.postUpdate(text)
-            Irr_Switch.sendCommand(OFF)
-          }
+          // } else { // else leave cmd and irrigating state as defined above
+          //   logInfo("Manual Trigger irrigation pump","ignored manual irrigation command = "+receivedCommand+" because of the weather")
+             StatusText.postUpdate("Irrigation started")
+          //   Irr_Switch.sendCommand(OFF)
+          // }
         }
         case OFF: {
           logInfo("Manual Trigger irrigation pump","turned irrigation OFF")
@@ -120,7 +145,7 @@ rule "High level fill barrel for next irrigation"
     var String level = LEVEL_EMPTY
     switch(receivedCommand){
         case ON: {
-          if (takeCareOfWeather.apply()) {
+          if (shallIrrigate.apply()) {
           //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
              logInfo("Fill barrel rule","NO refill, either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
            } else {
@@ -201,7 +226,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-//    Time cron "0 0/1 * * * ? " or // near future test 
+    //Time cron "0 0/2 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -212,8 +237,8 @@ rule "Irrigation ON"
     // fill_barrel.sendCommand("1")
     // TODO END
     var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
-    val String TRUE_MAIL_TEXT  = "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString
-    val String FALSE_MAIL_TEXT = "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
+    val String TRUE_MAIL_TEXT  = "Irrigation via CRON: Bewaesserung: EIN \nWasserstand: "+level_out.state.toString
+    val String FALSE_MAIL_TEXT = "Irrigation via CRON: KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
     
     irrigationMap.put("IRROFF", 
       newHashMap(
@@ -228,22 +253,23 @@ rule "Irrigation ON"
       )
 
     // Irrigate except forecast tells otherwise
-    logInfo("Irrigation ON rule","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
-    if (!(takeCareOfWeather.apply())) {
+    logInfo("Irrigation via CRON","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    if (shallIrrigate.apply() == true ) {
+      // trigger fill barrel rule,
+      logInfo("Irrigation via CRON", "turn on fill_switch")
+      // tripping the fillswitch serves as a subroutine call here
+      Fill_Switch.sendCommand(ON)
+      Irr_Switch.sendCommand(ON)
+      irr_on_off.sendCommand("1")
+      irrigating = true
+      logInfo("Irrigation via CRON","irrigating set to " + irrigating)
+      sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
+    } else {
       Irr_Switch.sendCommand(OFF)
       irr_on_off.sendCommand("0")
       irrigating = false
       logInfo("Irrigation ON rule","NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
-    } else {
-      // trigger fill barrel rule,
-      // this serves as a subroutine call here
-      Fill_Switch.postUpdate(ON)
-      Irr_Switch.sendCommand(ON)
-      irr_on_off.sendCommand("1")
-      irrigating = true
-      logInfo("Irrigation ON rule","irrigating set to " + irrigating)
-      sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
     }
     
 end
