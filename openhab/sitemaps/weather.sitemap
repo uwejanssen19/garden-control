@@ -12,14 +12,13 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
         
         Frame label="Wasserstand" {
             Default item=UpdateLevelSwitch label="Aktualisieren"    icon="cistern"
-            Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[level_out == "1"]
-            Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[level_out == "0"] 
-            Default item=level_out label="level = [%s]"
+            Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
+            Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
+            Default item=Level_out label="level = [%s]"
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {
-            Default item=NoWeatherSwitch icon="sun_clouds" label="Einschalten, um Wetter zu ignorieren"
-
+            Default item=IgnoreWeatherSwitch icon="sun_clouds" label="Einschalten, um Wetter zu ignorieren"
             Default item=Irr_Switch icon="water" label= "Bewässerung"
             Default item=Valve_Switch icon="faucet" label=  "Regentonne fuellen"
             Default item=Fill_Switch icon="cistern" label=  "Fuellen fuer die naechste Bewaesserung"

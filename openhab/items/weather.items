@@ -3,7 +3,7 @@ String temperature_out <temperature> { channel="exec:command:weatherstation_temp
 String willRain_out <rain> { channel="exec:command:weatherstation_willRain:output" }
 String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
 String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
-String level_out  { channel="exec:command:weatherstation_waterlevel:output" }
+String Level_out // { channel="exec:command:weatherstation_waterlevel:output", autorun="false" }
 
 
 String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }

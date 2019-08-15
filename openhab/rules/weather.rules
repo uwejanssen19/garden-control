@@ -30,13 +30,15 @@ val Functions$Function0<Boolean> shallIrrigate = [
   logInfo("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
   val currentRainVal = (LocalCurrentRainVolume?.state as DecimalType).floatValue
-  if (currentRainVal == 0.0)  return true // for test
-  else {
-    val comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
+  logInfo("shallIrrigate::","currentRainVal = {}", currentRainVal)
+  var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
+  logInfo("shallIrrigate::","comingRainVal = {}", comingRainVal)
 
     val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     
-    val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)
+    //val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)
+  // fake cominRainValue to be zero
+    val Boolean willNotRain = (0 < RAIN_TRESHOLD)
     val Boolean isNotRaining = (currentRainVal == 0.0)
     
     val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain)
@@ -56,7 +58,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
       logInfo("shallIrrigate::","return false")
       return false 
     }
-  }
+  
    
 ]
 
@@ -211,15 +213,15 @@ rule "daemon"
   // -> turn ON again 
   if (irrigating) {
       logInfo("rule Supervise irrigation state", "found irrigation is active, so turn it ON")
-      irrOnOffProc.apply("1", SCRIPT_DIR)
+      irrOnOffProc?.apply("1", SCRIPT_DIR)
   }
   // save water: 
   // never let water running for more than five minutes
-  Valve_Switch.sendCommand(OFF)
-  water_on_off.sendCommand("0")
-  level = readLevel.apply(SCRIPT_DIR)
-  Display_level_out?.postUpdate(level)    
-  StatusText.sendCommand("DAEMON ran, level = "+level)
+  Valve_Switch?.sendCommand(OFF)
+  water_on_off?.sendCommand("0")
+  level = readLevel?.apply(SCRIPT_DIR)
+  Level_out.sendCommand(level)    
+  StatusText?.sendCommand("DAEMON ran, level = "+level)
 end
 
 
@@ -237,7 +239,7 @@ rule "Irrigation ON"
     // fill_barrel.sendCommand("1")
     // TODO END
     var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
-    val String TRUE_MAIL_TEXT  = "Irrigation via CRON: Bewaesserung: EIN \nWasserstand: "+level_out.state.toString
+    val String TRUE_MAIL_TEXT  = "Irrigation via CRON: Bewaesserung: EIN \nWasserstand: "+Level_out.state.toString
     val String FALSE_MAIL_TEXT = "Irrigation via CRON: KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
     
     irrigationMap.put("IRROFF", 
@@ -263,7 +265,7 @@ rule "Irrigation ON"
       irr_on_off.sendCommand("1")
       irrigating = true
       logInfo("Irrigation via CRON","irrigating set to " + irrigating)
-      sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+level_out.state.toString)
+      sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: EIN \nWasserstand: "+Level_out.state.toString)
     } else {
       Irr_Switch.sendCommand(OFF)
       irr_on_off.sendCommand("0")
@@ -285,18 +287,22 @@ rule "Irrigation OFF"
     Irr_Switch.sendCommand(OFF)
     irr_on_off.sendCommand("0")
     irrigating = false
-    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+level_out.state.toString)
+    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
 end
 
 rule "Update Manual Water Level Display"
 when 
   Item UpdateLevelSwitch received command
 then 
-  logInfo("Rule: Update Manual Water Level Display", "UpdateLevelSwitch has been pushed: {} ", receivedCommand)
-//  if (receivedCommand == ON) {
+  logInfo("Rule: Manual Water Level Update", "UpdateLevelSwitch has been pushed: {} ", receivedCommand)
+  // just for test since we do not want to wait for some timer to occur
+  if (receivedCommand == ON) {
+    val willIrrigate = shallIrrigate.apply()
+    logInfo("Rule: Manual Water Level Update", "willIrrigate = {} ",willIrrigate)
     level = readLevel.apply(SCRIPT_DIR)
-    Display_level_out?.postUpdate(level) 
+    //Display_level_out?.postUpdate(level) 
+    Level_out.postUpdate(level)
     StatusText.sendCommand("Update Level - waiting for level value ...")
     StatusText.sendCommand("Update Level, level = "+level)
-  //}
+  }
 end
