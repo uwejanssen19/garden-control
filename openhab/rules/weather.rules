@@ -343,5 +343,11 @@ when
   Item Level_from_periodic_script received command
 then 
   logInfo("Level by script", "receivedCommand = {} ", receivedCommand)
-  Display_level_out.postUpdate(receivedCommand)
+  var cmd = "0"
+    switch(receivedCommand){
+        case ON: cmd = "1"
+        case OFF: cmd = "0"
+        default: logError("rule Level by script", "Do not know how to handle " + receivedCommand.toString)
+  }
+  Display_level_out.postUpdate(cmd)
 end
