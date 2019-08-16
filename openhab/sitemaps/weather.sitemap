@@ -14,7 +14,9 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
             Default item=UpdateLevelSwitch label="Aktualisieren"    icon="cistern"
             Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
             Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
-            Default item=Level_out label="level = [%s]"
+            Default item=Level_out label="level_from_rule = [%s]"
+            Default item=Level_from_periodic_script label="level_from_script = [%s]"
+
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {
@@ -24,8 +26,9 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
             Default item=Fill_Switch icon="cistern" label=  "Fuellen fuer die naechste Bewaesserung"
         }
 
-        Frame label="Status" {
+        Frame label="Status/Init" {
             Default item=StatusText label="[%s]"
+            Default item=InitSwitch label="Druecken zum Test der System STart Rule"
         }
 
         // Frame label="Event from private Log" {

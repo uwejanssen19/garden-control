@@ -64,14 +64,14 @@ val Functions$Function0<Boolean> shallIrrigate = [
 
 val Procedures$Procedure0 onFillTimer = [ 
         FillTimerActive.postUpdate(OFF)
-        logInfo("Filling is over", "onFillTimer invoked, fillTimerActive = {}", FillTimerActive.state.toString)
+        logInfo("Filling is over", "onFillTimer invoked, fillTimerActive = {}", FillTimerActive?.state.toString)
         water_on_off.sendCommand("0")
         Fill_Switch.postUpdate(OFF)
 ]
 
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure Timer", "onDepressureTimer invoked")
-        logInfo("Depressure Timer", "just for test if this varibale is accessible: fillTimerActive = {} ", FillTimerActive.state.toString)
+        logInfo("Depressure Timer", "just for test if this varibale is accessible: fillTimerActive = {} ", FillTimerActive?.state.toString)
         water_on_off.sendCommand("0")
         Valve_Switch.postUpdate(OFF)
 ]
@@ -97,7 +97,7 @@ rule "Manual Trigger irrigation pump"
 
     var String cmd = "0"
     irrigating=false
-    var String text = "ignored manual irrigation command = "+receivedCommand+" beacause of the weather"
+    // var String text = "ignored manual irrigation command = "+receivedCommand+" beacause of the weather"
        
     switch (receivedCommand){
         case ON: {
@@ -105,7 +105,7 @@ rule "Manual Trigger irrigation pump"
             cmd = "1"
             irrigating = true
           // } else { // else leave cmd and irrigating state as defined above
-          //   logInfo("Manual Trigger irrigation pump","ignored manual irrigation command = "+receivedCommand+" because of the weather")
+          //   logInfo("Manual Trigger irrigation pump",text)
              StatusText.postUpdate("Irrigation started")
           //   Irr_Switch.sendCommand(OFF)
           // }
@@ -189,8 +189,8 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 3/20 9-17 * * ?"
-    //Time cron "0 3/8 9-20 * * ?"
+    //Time cron "0 3/20 9-17 * * ?"
+    Time cron "0 3/10 9-20 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer") 
     var String isRaining = executeCommandLine("/home/pi/scripts/isRaining.sh", 1000)
@@ -207,21 +207,22 @@ rule "daemon"
     Time cron "0 0/5 * * * ?" // every 5 minutes check
   then
 
-  logInfo("ForecastRainVolumesGroup ( SUM )  = ",ForecastRainVolumesGroup.state.toString)
+  logInfo("Daemon:","ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
     
   // if someone ( e.g. low level script ) turned OFF irrigation on inadvertedly
   // -> turn ON again 
   if (irrigating) {
-      logInfo("rule Supervise irrigation state", "found irrigation is active, so turn it ON")
+      logInfo("Daemon:", "found irrigation is active, so turn it ON")
       irrOnOffProc?.apply("1", SCRIPT_DIR)
   }
   // save water: 
-  // never let water running for more than five minutes
+  // never let water running for more than daemon run time interval (see above)
   Valve_Switch?.sendCommand(OFF)
   water_on_off?.sendCommand("0")
-  level = readLevel?.apply(SCRIPT_DIR)
-  Level_out.sendCommand(level)    
-  StatusText?.sendCommand("DAEMON ran, level = "+level)
+  // logInfo("Daemon:", "reading level ...")
+  // level = readLevel?.apply(SCRIPT_DIR)
+  // Level_out.sendCommand(level)    
+  // StatusText?.sendCommand("DAEMON ran, level = "+level)
 end
 
 
@@ -305,4 +306,31 @@ then
     StatusText.sendCommand("Update Level - waiting for level value ...")
     StatusText.sendCommand("Update Level, level = "+level)
   }
+end
+
+rule "SysStart"
+when System started or
+  Item InitSwitch changed to ON
+then 
+  InitSwitch.sendCommand(OFF)
+  Irr_Switch.sendCommand(OFF)
+  Valve_Switch.sendCommand(OFF)
+  Fill_Switch.sendCommand(OFF)
+  FillTimerActive.sendCommand(OFF) 
+
+  Display_level_out.sendCommand("0")
+  UpdateLevelSwitch.sendCommand(OFF)
+
+  StatusText.sendCommand("System started")
+
+  Level_out.sendCommand("0")
+
+end 
+
+rule "SysStop"
+when System shuts down
+
+then
+    logInfo("SysStop:", "system shutting down")
+
 end
