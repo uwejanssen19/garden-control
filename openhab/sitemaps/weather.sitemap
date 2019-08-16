@@ -14,8 +14,6 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
             Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern"
             Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
             Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
-            Default item=Level_out label="level_from_rule = [%s]" visibility=[TestModeSwitch == ON]
-            Default item=Level_from_periodic_script label="level_from_script = [%s]" visibility=[TestModeSwitch == ON]
 
         }
 
@@ -27,9 +25,12 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
         }
 
         Frame label="Test section" visibility=[TestModeSwitch == ON] {
-            Default item=StatusText label="[%s]" visibility=[TestModeSwitch == ON]
-            Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
+            Default item=StatusText label="Last Message: [%s]" visibility=[TestModeSwitch == ON]
+            Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
+            Default item=Level_from_periodic_script label="Water level set by script [%s]" visibility=[TestModeSwitch == ON]
+            //Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
         }
+
         Frame label="Expert Mode Control" {
             Default item=TestModeSwitch label="Expert Mode"
         }

@@ -305,8 +305,15 @@ then
     Level_out.postUpdate(level)
     StatusText.sendCommand("Update Level - waiting for level value ...")
     StatusText.sendCommand("Update Level, level = "+level)
+    InitSwitch?.postUpdate(OFF)
   }
 end
+
+rule  "Test Mode Switch handling"
+  when Item TestModeSwitch changed to ON 
+  then 
+    InitSwitch.postUpdate(OFF)
+  end 
 
 rule "SysStart"
 when System started or
