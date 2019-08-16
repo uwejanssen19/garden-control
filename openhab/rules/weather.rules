@@ -320,11 +320,11 @@ then
 
   Display_level_out.sendCommand("0")
   UpdateLevelSwitch.sendCommand(OFF)
-
   StatusText.sendCommand("System started")
 
   Level_out.sendCommand("0")
-
+  // make all fields visible
+  TestModeSwitch.sendCommand(ON)
 end 
 
 rule "SysStop"

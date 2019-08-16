@@ -11,24 +11,27 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
         }
         
         Frame label="Wasserstand" {
-            Default item=UpdateLevelSwitch label="Aktualisieren"    icon="cistern"
+            Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern"
             Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
             Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
-            Default item=Level_out label="level_from_rule = [%s]"
-            Default item=Level_from_periodic_script label="level_from_script = [%s]"
+            Default item=Level_out label="level_from_rule = [%s]" visibility=[TestModeSwitch == ON]
+            Default item=Level_from_periodic_script label="level_from_script = [%s]" visibility=[TestModeSwitch == ON]
 
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {
-            Default item=IgnoreWeatherSwitch icon="sun_clouds" label="Einschalten, um Wetter zu ignorieren"
+            Default item=IgnoreWeatherSwitch icon="sun_clouds" label="Gießen trotz Regen in der Wettervorhersage"
             Default item=Irr_Switch icon="water" label= "Bewässerung"
             Default item=Valve_Switch icon="faucet" label=  "Regentonne fuellen"
-            Default item=Fill_Switch icon="cistern" label=  "Fuellen fuer die naechste Bewaesserung"
+            Default item=Fill_Switch icon="cistern" label=  "Füllen fuer die naechste Bewässerung"
         }
 
-        Frame label="Status/Init" {
-            Default item=StatusText label="[%s]"
-            Default item=InitSwitch label="Druecken zum Test der System STart Rule"
+        Frame label="Test section" visibility=[TestModeSwitch == ON] {
+            Default item=StatusText label="[%s]" visibility=[TestModeSwitch == ON]
+            Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
+        }
+        Frame label="Expert Mode Control" {
+            Default item=TestModeSwitch label="Expert Mode"
         }
 
         // Frame label="Event from private Log" {
