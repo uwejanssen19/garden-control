@@ -16,8 +16,7 @@ import java.util.Map
 val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
-val Number DONT_IRRIGATE_BEYOND = 3.0
-val Number RAIN_TRESHOLD = DONT_IRRIGATE_BEYOND
+
 
 var String level = LEVEL_EMPTY
 var irrigating = false
@@ -27,37 +26,34 @@ val Functions$Function0<Boolean> shallIrrigate = [
   // if switch is = ON OR either not raining or coming rain less than defined amount
   logInfo("shallIrrigate::","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
   logInfo("shallIrrigate::","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
-  logInfo("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
+  // logInfo("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
   val currentRainVal = (LocalCurrentRainVolume?.state as DecimalType).floatValue
-  logInfo("shallIrrigate::","currentRainVal = {}", currentRainVal)
+  // logInfo("shallIrrigate::","currentRainVal = {}", currentRainVal)
   var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
-  logInfo("shallIrrigate::","comingRainVal = {}", comingRainVal)
+  // logInfo("shallIrrigate::","comingRainVal = {}", comingRainVal)
 
-    val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
+  val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     
-    //val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)
-  // fake cominRainValue to be zero
-    val Boolean willNotRain = (0 < RAIN_TRESHOLD)
-    val Boolean isNotRaining = (currentRainVal == 0.0)
+  val Number RAIN_TRESHOLD = 3.0
+  val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
+  val Boolean isNotRaining = (currentRainVal == 0.0)    
+  val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain)
     
-    val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain)
+  // logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+  // logInfo("shallIrrigate::","comingRainVal = {} ",comingRainVal)
+  // logInfo("shallIrrigate::","willNotRain = {} ",willNotRain)
+  // logInfo("shallIrrigate::","isNotRaining = {} ",isNotRaining)
+  logInfo("shallIrrigate::","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
     
-    logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
-    logInfo("shallIrrigate::","currentRainVal = {} ",currentRainVal)
-    logInfo("shallIrrigate::","comingRainVal = {} ",comingRainVal)
-    logInfo("shallIrrigate::","willNotRain = {} ",willNotRain)
-    logInfo("shallIrrigate::","isNotRaining = {} ",isNotRaining)
-    logInfo("shallIrrigate::","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
-    
-    if (IgnoreWeatherSwitch.state == ON || (isNotRaining && willNotRain)) {
-      logInfo("shallIrrigate::","return true")
-      return true
-    }
-    else {
-      logInfo("shallIrrigate::","return false")
-      return false 
-    }
+  if (switchStateSetToIgnore || (weatherSuitableForIrrigating)) {
+    logInfo("shallIrrigate::","return true")
+    return true
+  }
+  else {
+    logInfo("shallIrrigate::","return false")
+    return false 
+  }
   
    
 ]
@@ -340,4 +336,12 @@ when System shuts down
 then
     logInfo("SysStop:", "system shutting down")
 
+end
+
+rule "Level by script"
+when 
+  Item Level_from_periodic_script received command
+then 
+  logInfo("Level by script", "receivedCommand = {} ", receivedCommand)
+  Display_level_out.postUpdate(receivedCommand)
 end

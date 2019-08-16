@@ -31,7 +31,7 @@ sitemap weather label="Raspberry Pi Garden Irrigation Control"
             //Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
         }
 
-        Frame label="Expert Mode Control" {
+        Frame label="Expert Mode" {
             Default item=TestModeSwitch label="Expert Mode"
         }
 
