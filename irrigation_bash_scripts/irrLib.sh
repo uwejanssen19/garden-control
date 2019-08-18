@@ -86,7 +86,7 @@ function isRaining() {
 
 function getForeCast() {
   # retrieve 3*8 hours' forecast , i.e. 24h 
-  wget "http://api.openweathermap.org/data/2.5/forecast?id=2886446&units=metric&lang=de&cnt=4&appid=$OW_API" -O $FORECAST
+  wget "http://api.openweathermap.org/data/2.5/forecast?id=2886446&units=metric&lang=de&cnt=8&appid=$OW_API" -O $FORECAST
 }
 function willRain() {
   getForeCast
