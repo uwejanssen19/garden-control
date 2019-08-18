@@ -11,16 +11,36 @@
 // 12.08.2019 | added rule for handling test mode                  | Janssen
 // -----------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
+//  imports
+// -----------------------------------------------------------------------------
+
 import java.util.Map
+
+// -----------------------------------------------------------------------------
+// constants
+// -----------------------------------------------------------------------------
 
 val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 
 
+// -----------------------------------------------------------------------------
+//  file global variables
+// -----------------------------------------------------------------------------
+
 var String level = LEVEL_EMPTY
 var irrigating = false
 var Number rainSum = 0 
+
+// -----------------------------------------------------------------------------
+//  Functions and procedures section
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+//  Function shallIrrigate
+// -----------------------------------------------------------------------------
 
 val Functions$Function0<Boolean> shallIrrigate = [ 
   // if switch is = ON OR either not raining or coming rain less than defined amount
@@ -57,6 +77,9 @@ val Functions$Function0<Boolean> shallIrrigate = [
   
    
 ]
+// -----------------------------------------------------------------------------
+//  Timer onFillTimer
+// -----------------------------------------------------------------------------
 
 val Procedures$Procedure0 onFillTimer = [ 
         FillTimerActive.postUpdate(OFF)
@@ -65,18 +88,30 @@ val Procedures$Procedure0 onFillTimer = [
         Fill_Switch.postUpdate(OFF)
 ]
 
+// -----------------------------------------------------------------------------
+//  Timer onDepressureTimer
+// -----------------------------------------------------------------------------
+
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure Timer", "onDepressureTimer invoked")
-        logInfo("Depressure Timer", "just for test if this varibale is accessible: fillTimerActive = {} ", FillTimerActive?.state.toString)
+        logInfo("Depressure Timer", "just for test if this variable is accessible: fillTimerActive = {} ", FillTimerActive.state.toString)
         water_on_off.sendCommand("0")
         Valve_Switch.postUpdate(OFF)
 ]
+
+// -----------------------------------------------------------------------------
+//  Procedure irrOnOffProc, turn on or off irrigation
+// -----------------------------------------------------------------------------
 
 val irrOnOffProc = [ 
     String onOff, String SCRIPT_DIR |
                  executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
                  logInfo("irrOnOffProc", " invoked irrOnOff with parameter " + onOff)
 ]
+
+// -----------------------------------------------------------------------------
+//  lambda readLevel
+// -----------------------------------------------------------------------------
 
 val readLevel = [ 
   String SCRIPT_DIR
@@ -86,6 +121,10 @@ val readLevel = [
                   logInfo("Read level", "readLevel() result = {}",level)
                   level.toString
 ]
+
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
 
 rule "Manual Trigger irrigation pump"
   when Item Irr_Switch received command
@@ -97,6 +136,7 @@ rule "Manual Trigger irrigation pump"
        
     switch (receivedCommand){
         case ON: {
+          // always irrigate manually, do not caare of the weather
           //if (shallIrrigate.apply() == true) {
             cmd = "1"
             irrigating = true
@@ -122,6 +162,10 @@ rule "Manual Trigger irrigation pump"
     }
 end
 
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
+
 rule "Trigger water valve"
   when Item Valve_Switch received command
   then
@@ -135,6 +179,10 @@ rule "Trigger water valve"
     if(cmd !== null) water_on_off.sendCommand(cmd)
 end
 
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
+
 rule "High level fill barrel for next irrigation"
 // fill up barrel except when raining or rain has been forecast
   when Item Fill_Switch received command
@@ -146,6 +194,7 @@ rule "High level fill barrel for next irrigation"
           if (!(shallIrrigate.apply())) {
           //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
              logInfo("Fill barrel rule","NO refill, either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+             StatusText.postUpdate("NO refill due to weather, future rain = "+ForecastRainVolumesGroup.state)
            } else {
              logInfo("FILL barrel rule", "starting fill barrel cycle")
           
@@ -178,6 +227,10 @@ rule "High level fill barrel for next irrigation"
     }
 end
 
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
+
 rule "Depressure"
 // Takes away pressure from supply water hose
 // This is done by turning on tap water for a few seconds, then turn off again 
@@ -185,8 +238,8 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 3/20 9-17 * * ?"
-    //Time cron "0 3/10 9-20 * * ?"
+    Time cron "0 1/5 9-17 * * ?"
+    //Time cron "0 3/20 9-17 * * ?"
   then
     logInfo("Depressure rule", "Cron event is due, start depressuring and timer") 
     var String isRaining = executeCommandLine("/home/pi/scripts/isRaining.sh", 1000)
@@ -195,6 +248,10 @@ rule "Depressure"
     water_on_off.sendCommand("1")
     createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
 end
+
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
 
 // This rule serves as a steady bgackground task running all five minutes
 rule "daemon"
@@ -221,6 +278,10 @@ rule "daemon"
   // StatusText?.sendCommand("DAEMON ran, level = "+level)
 end
 
+
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
 
 rule "Irrigation ON"
 // time based beginning of irrigation
@@ -273,6 +334,10 @@ rule "Irrigation ON"
     
 end
 
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
+
 rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
@@ -286,6 +351,10 @@ rule "Irrigation OFF"
     irrigating = false
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
 end
+
+// -----------------------------------------------------------------------------
+//  text
+// -----------------------------------------------------------------------------
 
 rule "Update Manual Water Level Display"
 when 
@@ -304,6 +373,10 @@ then
     InitSwitch?.postUpdate(OFF)
   }
 end
+
+// -----------------------------------------------------------------------------
+//  rule  "Test Mode Switch handling"
+// -----------------------------------------------------------------------------
 
 rule  "Test Mode Switch handling"
   when Item TestModeSwitch changed to ON 
@@ -330,6 +403,10 @@ then
   TestModeSwitch.sendCommand(ON)
 end 
 
+// -----------------------------------------------------------------------------
+// rule "SysStop" 
+// -----------------------------------------------------------------------------
+
 rule "SysStop"
 when System shuts down
 
@@ -337,6 +414,10 @@ then
     logInfo("SysStop:", "system shutting down")
 
 end
+
+// -----------------------------------------------------------------------------
+//  rule "Level by script"
+// -----------------------------------------------------------------------------
 
 rule "Level by script"
 when 

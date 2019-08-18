@@ -13,7 +13,7 @@ String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input", au
 
 // Virtual variable section
 
-Switch Irr_Switch 
+Switch Irr_Switch {expire="3h,OFF"} 
 Switch Valve_Switch {expire="600s,OFF"} 
 Switch Fill_Switch  {expire="130s,OFF"} 
 // using this as a global variable within a rule
