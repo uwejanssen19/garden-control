@@ -84,7 +84,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
 
 val Procedures$Procedure0 onFillTimer = [ 
         FillTimerActive.postUpdate(OFF)
-        logInfo("Filling is over", "onFillTimer invoked, fillTimerActive = {}", FillTimerActive?.state.toString)
+        logInfo("Filling is over", "onFillTimer invoked")
         water_on_off.sendCommand("0")
         Fill_Switch.postUpdate(OFF)
 ]
@@ -95,7 +95,6 @@ val Procedures$Procedure0 onFillTimer = [
 
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure Timer", "onDepressureTimer invoked")
-        logInfo("Depressure Timer", "just for test if this variable is accessible: fillTimerActive = {} ", FillTimerActive.state.toString)
         water_on_off.sendCommand("0")
         Valve_Switch.postUpdate(OFF)
 ]
@@ -229,7 +228,7 @@ rule "Fill barrel for next irrigation"
 end
 
 // -----------------------------------------------------------------------------
-//  text
+//  Depressure task. Needed to take away pressure from the hose when exposed to the sun
 // -----------------------------------------------------------------------------
 
 rule "Depressure"
@@ -239,15 +238,20 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    Time cron "0 1/5 9-17 * * ?"
-    //Time cron "0 3/20 9-17 * * ?"
+    //Time cron "0 0/2 9-23 * * ?" // for TEST
+    Time cron "0 3/20 9-17 * * ?"
   then
-    logInfo("Depressure rule", "Cron event is due, start depressuring and timer") 
-    var String isRaining = executeCommandLine("/home/pi/scripts/isRaining.sh", 1000)
-    logInfo("Rule Depressure", "isRaining = " + isRaining)
-    Valve_Switch.postUpdate(ON)
-    water_on_off.sendCommand("1")
-    createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
+    val cloudiness = LocalCurrentCloudiness.state as Number
+    logInfo("Depressure", "LocalCurrentCloudiness = {}", cloudiness) 
+    StatusText.sendCommand("Depr since cloudy = "+cloudiness)
+    if (cloudiness >= 0.5) {
+      logInfo("Depressure", "cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
+    } else {
+      logInfo("Depressure", "cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
+      Valve_Switch.postUpdate(ON)
+      water_on_off.sendCommand("1")
+      createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
+    }
 end
 
 // -----------------------------------------------------------------------------
@@ -367,8 +371,18 @@ then
     Level_out.postUpdate(level)
     StatusText.sendCommand("Update Level - waiting for level value ...")
     StatusText.sendCommand("Update Level, level = "+level)
+    // val cloudiness = LocalCurrentCloudiness.state as Number
+    // logInfo("Depressure rule", "LocalCurrentCloudiness = {}", cloudiness) 
+    // StatusText.sendCommand("Update LocalCurrentCloudiness = "+cloudiness)
+    // if (cloudiness < 0.5) {
+    //   logInfo("", "cloudiness < 50%") 
+
+    // } else {
+    //   logInfo("", "cloudiness >= 50%") 
+    // }
     InitSwitch?.postUpdate(OFF)
   }
+  
 end
 
 // -----------------------------------------------------------------------------
