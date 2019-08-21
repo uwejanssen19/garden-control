@@ -17,14 +17,14 @@ sitemap ow label="OpenWeatherMap" {
             Text item=LocalForecastHoursRainVolume09
             Text item=LocalForecastHoursTimestamp12
             Text item=LocalForecastHoursRainVolume12
-            Text item=LocalForecastHoursTimestamp15
-            Text item=LocalForecastHoursRainVolume15
-            Text item=LocalForecastHoursTimestamp18
-            Text item=LocalForecastHoursRainVolume18
-            Text item=LocalForecastHoursTimestamp21
-            Text item=LocalForecastHoursRainVolume21
-            Text item=LocalForecastHoursTimestamp24
-            Text item=LocalForecastHoursRainVolume24
+            // Text item=LocalForecastHoursTimestamp15
+            // Text item=LocalForecastHoursRainVolume15
+            // Text item=LocalForecastHoursTimestamp18
+            // Text item=LocalForecastHoursRainVolume18
+            // Text item=LocalForecastHoursTimestamp21
+            // Text item=LocalForecastHoursRainVolume21
+            // Text item=LocalForecastHoursTimestamp24
+            // Text item=LocalForecastHoursRainVolume24
         }
     
         Group item=ForecastRainVolumesGroup

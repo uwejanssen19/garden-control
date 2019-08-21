@@ -27,10 +27,10 @@ Group:Number:SUM ForecastRainVolumesGroup "Forecasts from 03-24 hrs in the futur
     Number:Length LocalForecastHoursRainVolume06  "Rain volume for  6 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#rain" }
     Number:Length LocalForecastHoursRainVolume09  "Rain volume for  9 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#rain" }
     Number:Length LocalForecastHoursRainVolume12  "Rain volume for 12 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
-    Number:Length LocalForecastHoursRainVolume15  "Rain volume for 15 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#rain" }
-    Number:Length LocalForecastHoursRainVolume18  "Rain volume for 18 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#rain" }
-    Number:Length LocalForecastHoursRainVolume21  "Rain volume for 21 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#rain" }
-    Number:Length LocalForecastHoursRainVolume24  "Rain volume for 24 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#rain" }
+    // Number:Length LocalForecastHoursRainVolume15  "Rain volume for 15 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#rain" }
+    // Number:Length LocalForecastHoursRainVolume18  "Rain volume for 18 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#rain" }
+    // Number:Length LocalForecastHoursRainVolume21  "Rain volume for 21 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#rain" }
+    // Number:Length LocalForecastHoursRainVolume24  "Rain volume for 24 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#rain" }
     
     Number:Length LocalForecastHours12SnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#snow" }
 

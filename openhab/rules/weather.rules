@@ -9,6 +9,7 @@
 // 26.05.2019 | comments changed                                   | Janssen
 // 31.07.2019 | attempt to do some real programming                | Janssen
 // 12.08.2019 | added rule for handling test mode                  | Janssen
+// 20.08.2019 | added comments                                     | Janssen
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -24,7 +25,7 @@ import java.util.Map
 val DEPRESSURE_TIME = 5
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
-
+val MAX_FILL_BARREL_TIME = 240
 
 // -----------------------------------------------------------------------------
 //  file global variables
@@ -110,7 +111,7 @@ val irrOnOffProc = [
 ]
 
 // -----------------------------------------------------------------------------
-//  lambda readLevel
+//  lambda readLevel>
 // -----------------------------------------------------------------------------
 
 val readLevel = [ 
@@ -123,7 +124,7 @@ val readLevel = [
 ]
 
 // -----------------------------------------------------------------------------
-//  text
+//  Manual irrigation
 // -----------------------------------------------------------------------------
 
 rule "Manual Trigger irrigation pump"
@@ -163,7 +164,7 @@ rule "Manual Trigger irrigation pump"
 end
 
 // -----------------------------------------------------------------------------
-//  text
+//  Manual fill barrel trigger
 // -----------------------------------------------------------------------------
 
 rule "Trigger water valve"
@@ -180,10 +181,10 @@ rule "Trigger water valve"
 end
 
 // -----------------------------------------------------------------------------
-//  text
+//  Fill barrel for next irrigation
 // -----------------------------------------------------------------------------
 
-rule "High level fill barrel for next irrigation"
+rule "Fill barrel for next irrigation"
 // fill up barrel except when raining or rain has been forecast
   when Item Fill_Switch received command
   then
@@ -199,7 +200,7 @@ rule "High level fill barrel for next irrigation"
              logInfo("FILL barrel rule", "starting fill barrel cycle")
           
             FillTimerActive.postUpdate( ON )
-            var maxTimer = createTimer (now.plusSeconds(60), onFillTimer) // at most 200 filling time whatever level indicator tells
+            var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // at most 200 filling time whatever level indicator tells
             while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
               logInfo("FILL barrel rule","INSIDE while loop since level is empty or filltimer active")
 
@@ -250,7 +251,7 @@ rule "Depressure"
 end
 
 // -----------------------------------------------------------------------------
-//  text
+//  Background daemon for various tasks
 // -----------------------------------------------------------------------------
 
 // This rule serves as a steady bgackground task running all five minutes
@@ -272,15 +273,11 @@ rule "daemon"
   // never let water running for more than daemon run time interval (see above)
   Valve_Switch?.sendCommand(OFF)
   water_on_off?.sendCommand("0")
-  // logInfo("Daemon:", "reading level ...")
-  // level = readLevel?.apply(SCRIPT_DIR)
-  // Level_out.sendCommand(level)    
-  // StatusText?.sendCommand("DAEMON ran, level = "+level)
 end
 
 
 // -----------------------------------------------------------------------------
-//  text
+//  Irrigation ON
 // -----------------------------------------------------------------------------
 
 rule "Irrigation ON"
@@ -335,7 +332,7 @@ rule "Irrigation ON"
 end
 
 // -----------------------------------------------------------------------------
-//  text
+//  Irrigation OFF
 // -----------------------------------------------------------------------------
 
 rule "Irrigation OFF"
@@ -353,7 +350,7 @@ rule "Irrigation OFF"
 end
 
 // -----------------------------------------------------------------------------
-//  text
+//  Trigger Update Water Level
 // -----------------------------------------------------------------------------
 
 rule "Update Manual Water Level Display"
