@@ -221,6 +221,7 @@ rule "Fill barrel for next irrigation"
             logInfo("FILL barrel rule","END while loop since level is no longer empty or filltimer expired")
             maxTimer?.cancel()
           } // end if rain condition
+          Fill_Switch.postUpdate(OFF)
         } // end case ON
         case OFF: water_on_off.sendCommand("0")
         default: logError("FILL barrel", "I Do not know how to handle " + receivedCommand.toString)
@@ -243,7 +244,7 @@ rule "Depressure"
   then
     val cloudiness = LocalCurrentCloudiness.state as Number
     logInfo("Depressure", "LocalCurrentCloudiness = {}", cloudiness) 
-    StatusText.sendCommand("Depr since cloudy = "+cloudiness)
+    StatusText.sendCommand("Depr since cloudiness = "+cloudiness)
     if (cloudiness >= 0.5) {
       logInfo("Depressure", "cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
     } else {
@@ -396,7 +397,8 @@ rule  "Test Mode Switch handling"
   end 
 
 rule "SysStart"
-when System started or
+when 
+  System started                 or
   Item InitSwitch changed to ON
 then 
   InitSwitch.sendCommand(OFF)

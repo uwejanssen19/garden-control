@@ -1,5 +1,5 @@
 // Name of file and name of sitemap has to be the same
-sitemap weather label="Raspberry Pi Garden Irrigation Control"
+sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
 {
 //        Frame label="Testanzeige" {
 //            Text item=temperature_out label= "Fiktive Temperatur: [%d Grad Celsius]"
