@@ -206,7 +206,7 @@ rule "Fill barrel for next irrigation"
             while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
               logInfo("FILL barrel rule","INSIDE while loop since level is empty or filltimer active")
               GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-
+              Thread::sleep(2000)
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR)
               logInfo("FILL barrel rule","level = " + level)
@@ -394,6 +394,7 @@ then
     //   logInfo("", "cloudiness >= 50%") 
     // }
     InitSwitch?.postUpdate(OFF)
+    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
   }
   
 end
