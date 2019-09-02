@@ -249,6 +249,7 @@ rule "Depressure"
       logInfo("Depressure", "cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
     } else {
       logInfo("Depressure", "cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
+      GardencontrolPowerSupply.postUpdate(ON) // activate PowerSupply for pump and valve
       Valve_Switch.postUpdate(ON)
       water_on_off.sendCommand("1")
       createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
@@ -317,6 +318,7 @@ rule "Irrigation ON"
     // Irrigate except forecast tells otherwise
     logInfo("Irrigation via CRON","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
+      GardencontrolPowerSupply.postUpdate(ON) // activate PoweSupply for pump and valve
       // trigger fill barrel rule,
       logInfo("Irrigation via CRON", "turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
@@ -349,6 +351,7 @@ rule "Irrigation OFF"
   then   
     logInfo("Irrigation OFF rule", "Cron event is due, stop irrigation")
     Irr_Switch.sendCommand(OFF)
+    GardencontrolPowerSupply.postUpdate(OFF)
     irr_on_off.sendCommand("0")
     irrigating = false
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
@@ -414,6 +417,7 @@ then
   Level_out.sendCommand("0")
   // make all fields visible
   TestModeSwitch.sendCommand(ON)
+  GardencontrolPowerSupply.postUpdate(ON)
 end 
 
 // -----------------------------------------------------------------------------
@@ -424,6 +428,7 @@ rule "SysStop"
 when System shuts down
 
 then
+    InitSwitch.postUpdate(ON)
     logInfo("SysStop:", "system shutting down")
 
 end
