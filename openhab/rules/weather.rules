@@ -278,6 +278,7 @@ rule "daemon"
   // -> turn ON again 
   if (irrigating) {
       logInfo("Daemon:", "found irrigation is active, so turn it ON")
+      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       irrOnOffProc?.apply("1", SCRIPT_DIR)
   }
   // save water: 
@@ -324,8 +325,8 @@ rule "Irrigation ON"
 
     // Irrigate except forecast tells otherwise
     logInfo("Irrigation via CRON","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
     if (shallIrrigate.apply() == true ) {
-      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
       logInfo("Irrigation via CRON", "turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
