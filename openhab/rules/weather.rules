@@ -96,6 +96,7 @@ val Procedures$Procedure0 onFillTimer = [
 val Procedures$Procedure0 onDepressureTimer = [ 
         logInfo("Depressure Timer", "onDepressureTimer invoked")
         water_on_off.sendCommand("0")
+        GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
         Valve_Switch.postUpdate(OFF)
 ]
 
@@ -117,6 +118,8 @@ val readLevel = [
   String SCRIPT_DIR
                     |
                   //logInfo("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
+                  GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+                  Thread::sleep(2000)
                   var level = executeCommandLine(SCRIPT_DIR+"Level.sh", 6000)
                   logInfo("Read level", "readLevel() result = {}",level)
                   level.toString
@@ -202,6 +205,7 @@ rule "Fill barrel for next irrigation"
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // at most 200 filling time whatever level indicator tells
             while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
               logInfo("FILL barrel rule","INSIDE while loop since level is empty or filltimer active")
+              GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
 
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR)
@@ -249,7 +253,8 @@ rule "Depressure"
       logInfo("Depressure", "cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
     } else {
       logInfo("Depressure", "cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
-      GardencontrolPowerSupply.postUpdate(ON) // activate PowerSupply for pump and valve
+      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+      Thread::sleep(2000)
       Valve_Switch.postUpdate(ON)
       water_on_off.sendCommand("1")
       createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
@@ -279,6 +284,8 @@ rule "daemon"
   // never let water running for more than daemon run time interval (see above)
   Valve_Switch?.sendCommand(OFF)
   water_on_off?.sendCommand("0")
+  // tunr on power since we need power for the background 20 minutes Level measuring
+  GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
 end
 
 
@@ -318,7 +325,7 @@ rule "Irrigation ON"
     // Irrigate except forecast tells otherwise
     logInfo("Irrigation via CRON","isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
-      GardencontrolPowerSupply.postUpdate(ON) // activate PoweSupply for pump and valve
+      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
       logInfo("Irrigation via CRON", "turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
@@ -351,7 +358,7 @@ rule "Irrigation OFF"
   then   
     logInfo("Irrigation OFF rule", "Cron event is due, stop irrigation")
     Irr_Switch.sendCommand(OFF)
-    GardencontrolPowerSupply.postUpdate(OFF)
+    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     irr_on_off.sendCommand("0")
     irrigating = false
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
@@ -370,6 +377,8 @@ then
   if (receivedCommand == ON) {
     val willIrrigate = shallIrrigate.apply()
     logInfo("Rule: Manual Water Level Update", "willIrrigate = {} ",willIrrigate)
+    GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+    Thread::sleep(2000)
     level = readLevel.apply(SCRIPT_DIR)
     //Display_level_out?.postUpdate(level) 
     Level_out.postUpdate(level)
@@ -417,7 +426,7 @@ then
   Level_out.sendCommand("0")
   // make all fields visible
   TestModeSwitch.sendCommand(ON)
-  GardencontrolPowerSupply.postUpdate(ON)
+  GardencontrolPowerSupply.sendCommand(ON)
 end 
 
 // -----------------------------------------------------------------------------
@@ -428,7 +437,7 @@ rule "SysStop"
 when System shuts down
 
 then
-    InitSwitch.postUpdate(ON)
+    InitSwitch.sendCommand(ON)
     logInfo("SysStop:", "system shutting down")
 
 end
