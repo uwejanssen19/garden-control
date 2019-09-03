@@ -34,6 +34,7 @@ val MAX_FILL_BARREL_TIME = 240
 var String level = LEVEL_EMPTY
 var irrigating = false
 var Number rainSum = 0 
+var maxTimer = null
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
@@ -174,11 +175,17 @@ rule "Trigger water valve"
   then
     var String cmd = null
     switch(receivedCommand){
-        case ON: cmd = "1"
-        case OFF: cmd = "0"
+        case ON: {
+          cmd = "1"
+          GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+        }
+        case OFF:
+        { 
+          cmd = "0"
+          GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+        }
         default: logError("water valve", "Do not know how to handle " + receivedCommand.toString)
     }
-
     if(cmd !== null) water_on_off.sendCommand(cmd)
 end
 
@@ -192,6 +199,7 @@ rule "Fill barrel for next irrigation"
   then
     logInfo("FILL barrel rule", "received command = " + receivedCommand.toString)
     var String level = LEVEL_EMPTY
+
     switch(receivedCommand){
         case ON: {
           if (!(shallIrrigate.apply())) {
@@ -226,10 +234,14 @@ rule "Fill barrel for next irrigation"
             maxTimer?.cancel()
           } // end if rain condition
           Fill_Switch.postUpdate(OFF)
+
         } // end case ON
         case OFF: water_on_off.sendCommand("0")
         default: logError("FILL barrel", "I Do not know how to handle " + receivedCommand.toString)
     }
+    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+
+
 end
 
 // -----------------------------------------------------------------------------
