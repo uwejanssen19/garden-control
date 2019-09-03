@@ -3,13 +3,13 @@ String temperature_out <temperature> { channel="exec:command:weatherstation_temp
 String willRain_out <rain> { channel="exec:command:weatherstation_willRain:output" }
 String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
 String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
-String Level_from_periodic_script { channel="exec:command:weatherstation_waterlevel:output", autorun="false" } // set by thing's exec script
+//String Level_from_periodic_script { channel="exec:command:weatherstation_waterlevel:output", autorun="false" } // set by thing's exec script
 
 
 String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }
 String water_on_off { channel="exec:command:weatherstation_water_on_off:input" }
 
-String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input", autoupdate = "false" }
+//String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input", autoupdate = "false" }
 
 // Virtual variable section
 
@@ -29,8 +29,7 @@ String Level_out //  set by rule
 Switch InitSwitch {expire="60s,OFF"} // only for test of the 'system started' rule 
 Switch TestModeSwitch {expire="1500s,OFF"} // expert mode, makes diagnostic switches and fields visible
 Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mqtt:topic:myUnsecureBroker:powerSupply:PowerSupply" }
-// does not work with mqtt.2 
-
+// does not work with mqtt.2 (as of openhab 2.4) :
 // Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" 
 // {
 //      mqtt=">[broker:cmnd/PowersupplyGardenControl/POWER:command:ON:1], >[broker:cmnd/PowersupplyGardenControl/POWER:command:OFF:0], <[broker:stat/PowersupplyGardenControl/POWER:state:default]" 

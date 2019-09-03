@@ -27,7 +27,6 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
         Frame label="Test section" visibility=[TestModeSwitch == ON] {
             Default item=StatusText label="Last Message: [%s]" visibility=[TestModeSwitch == ON]
             Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
-            Default item=Level_from_periodic_script label="Water level set by script [%s]" visibility=[TestModeSwitch == ON]
             Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
             Default item=GardencontrolPowerSupply visibility=[TestModeSwitch == ON]
         }
@@ -35,9 +34,4 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
         Frame label="Expert Mode" {
             Default item=TestModeSwitch label="Expert Mode"
         }
-
-        // Frame label="Event from private Log" {
-    	// 	Text item=logreaderIrrOnOff icon="water" label="Bewaesserungs Event" 
-	    // 	Text item=logreaderWaterOnOff icon="faucet" label="Fuell Event" 
-	    // }
 }

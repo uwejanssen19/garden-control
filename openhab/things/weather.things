@@ -1,15 +1,11 @@
 Thing exec:command:weatherstation_willRain [command="/home/pi/scripts/willRain.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
 Thing exec:command:weatherstation_howMuchRain [command="/home/pi/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
 Thing exec:command:weatherstation_isRaining [command="/home/pi/scripts/isRaining.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
-Thing exec:command:weatherstation_waterlevel [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=1200, autorun=true]
+Thing exec:command:weatherstation_waterlevel [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=0, autorun=true]
 
 Thing exec:command:weatherstation_irr_on_off [ command="/home/pi/scripts/irrOnOff.sh %2$s", interval = 0, autorun=true ]
 Thing exec:command:weatherstation_water_on_off [ command="/home/pi/scripts/waterOnOff.sh %2$s", interval = 0, autorun=true ]
-Thing exec:command:weatherstation_fill_barrel [ command="/home/pi/scripts/supply4NextIrrigation.sh %2$s", interval = 0, autorun=true ]
-
-//Thing logreader:reader:irrOnOffThing[ refreshRate=60, customPatterns="/home/pi/scripts/irrOnOff.sh : 1", filePath="/tmp/waterOnOff.log",interval=1 ]
-//Thing logreader:reader:waterOnOffThing[ refreshRate=60, customPatterns="set to", filePath="/tmp/waterOnOff.log",interval=1 ]
-//Thing logreader:reader:levelThing[ refreshRate=60, customPatterns="HIGH|low", filePath="/tmp/waterOnOff.log",interval=1 ]
+//Thing exec:command:weatherstation_fill_barrel [ command="/home/pi/scripts/supply4NextIrrigation.sh %2$s", interval = 0, autorun=true ]
 
 // location id  for Kolbermoor =  2886446
 Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="19617de07bcc959ff8dc5e0caffce590", refreshInterval=10, language="de"] {
@@ -17,6 +13,7 @@ Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="19617de0
     Thing weather-and-forecast miami "Weather And Forecast In Miami" [location="25.782403,-80.264563", forecastHours=24, forecastDays=0]
     //Thing uvindex local "Local UV Index" [location="XXX,YYY", forecastDays=7]
 }
+
 Bridge mqtt:broker:myUnsecureBroker [ host="localhost", username="pi", password="uwe45678", secure=false ]
 {   // Steckdose mit Versorgung für Pumpe und Ventil
     Thing topic powerSupply {

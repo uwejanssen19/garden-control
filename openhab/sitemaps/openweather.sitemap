@@ -17,30 +17,12 @@ sitemap openweather label="OpenWeather Overview" {
             Text item=LocalForecastHoursRainVolume09
             Text item=LocalForecastHoursTimestamp12
             Text item=LocalForecastHoursRainVolume12
-            // Text item=LocalForecastHoursTimestamp15
-            // Text item=LocalForecastHoursRainVolume15
-            // Text item=LocalForecastHoursTimestamp18
-            // Text item=LocalForecastHoursRainVolume18
-            // Text item=LocalForecastHoursTimestamp21
-            // Text item=LocalForecastHoursRainVolume21
-            // Text item=LocalForecastHoursTimestamp24
-            // Text item=LocalForecastHoursRainVolume24
         }
     
         Group item=ForecastRainVolumesGroup
 
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
  
-    //     Text item=LocalForecastHours12Condition
-    //     // Text item=LocalForecastHours12MinTemperature
-    //     // Text item=LocalForecastHours12MaxTemperature
-    //     Text item=LocalForecastHours12Pressure
-    //     Text item=LocalForecastHours12Humidity
-    //     Text item=LocalForecastHours12WindSpeed
-    //     Text item=LocalForecastHours12WindDirection
-    //     Text item=LocalForecastHours12Cloudiness
-    //     // Text item=LocalForecastHours12SnowVolume
-    //
     }
 
     Frame label="Current local weather" {
@@ -54,11 +36,6 @@ sitemap openweather label="OpenWeather Overview" {
         Text item=LocalCurrentWindDirection
         Text item=LocalCurrentCloudiness
         Text item=LocalCurrentRainVolume
-//        Text item=LocalCurrentSnowVolume
+        Text item=LocalCurrentSnowVolume
     }
-    //     Frame label="Current weather in Miami" {
-    //     Text item=miamiCurrentCondition
-    //     Image item=miamiCurrentConditionIcon
-    //     Text item=miamiCurrentTemperature
-    // }
 }

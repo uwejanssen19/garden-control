@@ -115,14 +115,18 @@ val irrOnOffProc = [
 // -----------------------------------------------------------------------------
 
 val readLevel = [ 
-  String SCRIPT_DIR
+  String SCRIPT_DIR, Boolean powerOff
                     |
                   //logInfo("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
                   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
                   Thread::sleep(2000)
                   var level = executeCommandLine(SCRIPT_DIR+"Level.sh", 6000)
                   logInfo("Read level", "readLevel() result = {}",level)
-                  GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+                  if (powerOff) {
+                    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+                  }
+                  Level_out.postUpdate(level.toString)
+                  // return value to caller
                   level.toString
 ]
 
@@ -140,15 +144,10 @@ rule "Manual Trigger irrigation pump"
        
     switch (receivedCommand){
         case ON: {
-          // always irrigate manually, do not caare of the weather
-          //if (shallIrrigate.apply() == true) {
+          // always irrigate manually, do not care of the weather
             cmd = "1"
             irrigating = true
-          // } else { // else leave cmd and irrigating state as defined above
-          //   logInfo("Manual Trigger irrigation pump",text)
              StatusText.postUpdate("Irrigation started")
-          //   Irr_Switch.sendCommand(OFF)
-          // }
         }
         case OFF: {
           logInfo("Manual Trigger irrigation pump","turned irrigation OFF")
@@ -209,7 +208,7 @@ rule "Fill barrel for next irrigation"
               GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
               Thread::sleep(2000)
               water_on_off.sendCommand("1")
-              level = readLevel.apply(SCRIPT_DIR)
+              level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
               logInfo("FILL barrel rule","level = " + level)
               if (level == "0" ) // 0=full 
               {
@@ -286,8 +285,6 @@ rule "daemon"
   // never let water running for more than daemon run time interval (see above)
   Valve_Switch?.sendCommand(OFF)
   water_on_off?.sendCommand("0")
-  // tunr on power since we need power for the background 20 minutes Level measuring
-  GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
 end
 
 
@@ -305,9 +302,6 @@ rule "Irrigation ON"
     Time cron "0 00 19 * * ? "  
   then
     
-    // TODO BEGIN first make sure barrel has enough water 
-    // fill_barrel.sendCommand("1")
-    // TODO END
     var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
     val String TRUE_MAIL_TEXT  = "Irrigation via CRON: Bewaesserung: EIN \nWasserstand: "+Level_out.state.toString
     val String FALSE_MAIL_TEXT = "Irrigation via CRON: KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
@@ -379,26 +373,13 @@ then
   if (receivedCommand == ON) {
     val willIrrigate = shallIrrigate.apply()
     logInfo("Rule: Manual Water Level Update", "willIrrigate = {} ",willIrrigate)
-    GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-    Thread::sleep(2000)
-    level = readLevel.apply(SCRIPT_DIR)
+    level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
     //Display_level_out?.postUpdate(level) 
     Level_out.postUpdate(level)
     StatusText.sendCommand("Update Level - waiting for level value ...")
     StatusText.sendCommand("Update Level, level = "+level)
-    // val cloudiness = LocalCurrentCloudiness.state as Number
-    // logInfo("Depressure rule", "LocalCurrentCloudiness = {}", cloudiness) 
-    // StatusText.sendCommand("Update LocalCurrentCloudiness = "+cloudiness)
-    // if (cloudiness < 0.5) {
-    //   logInfo("", "cloudiness < 50%") 
-
-    // } else {
-    //   logInfo("", "cloudiness >= 50%") 
-    // }
-    InitSwitch?.postUpdate(OFF)
-    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
   }
-  
+
 end
 
 // -----------------------------------------------------------------------------
@@ -429,7 +410,7 @@ then
   Level_out.sendCommand("0")
   // make all fields visible
   TestModeSwitch.sendCommand(ON)
-  GardencontrolPowerSupply.sendCommand(ON)
+  GardencontrolPowerSupply.sendCommand(OFF)
 end 
 
 // -----------------------------------------------------------------------------
@@ -441,24 +422,7 @@ when System shuts down
 
 then
     InitSwitch.sendCommand(ON)
+    GardencontrolPowerSupply.sendCommand(OFF)
     logInfo("SysStop:", "system shutting down")
 
-end
-
-// -----------------------------------------------------------------------------
-//  rule "Level by script"
-// -----------------------------------------------------------------------------
-
-rule "Level by script"
-when 
-  Item Level_from_periodic_script received command
-then 
-  logInfo("Level by script", "receivedCommand = {} ", receivedCommand)
-  var cmd = "0"
-    switch(receivedCommand){
-        case ON: cmd = "1"
-        case OFF: cmd = "0"
-        default: logError("rule Level by script", "Do not know how to handle " + receivedCommand.toString)
-  }
-  Display_level_out.postUpdate(cmd)
 end

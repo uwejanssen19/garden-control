@@ -27,10 +27,6 @@ Group:Number:SUM ForecastRainVolumesGroup "Forecasts from 03-24 hrs in the futur
     Number:Length LocalForecastHoursRainVolume06  "Rain volume for  6 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours06#rain" }
     Number:Length LocalForecastHoursRainVolume09  "Rain volume for  9 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#rain" }
     Number:Length LocalForecastHoursRainVolume12  "Rain volume for 12 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
-    // Number:Length LocalForecastHoursRainVolume15  "Rain volume for 15 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours15#rain" }
-    // Number:Length LocalForecastHoursRainVolume18  "Rain volume for 18 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours18#rain" }
-    // Number:Length LocalForecastHoursRainVolume21  "Rain volume for 21 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours21#rain" }
-    // Number:Length LocalForecastHoursRainVolume24  "Rain volume for 24 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours24#rain" }
     
     Number:Length LocalForecastHours12SnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#snow" }
 
@@ -44,7 +40,7 @@ Number:Speed LocalCurrentWindSpeed "Current wind speed [%.1f km/h]" <wind> { cha
 Number:Angle LocalCurrentWindDirection "Current wind direction [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:current#wind-direction" }
 Number:Dimensionless LocalCurrentCloudiness "Current cloudiness [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:current#cloudiness" }
 Number LocalCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:current#rain" }
-//Number:Length LocalCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
+Number:Length LocalCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
 
 //Number:Length LocalRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
 //Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
@@ -57,7 +53,6 @@ String Dhv
 //Number:Length localHourlyForecastTodayRainVolume "Rain volume for next 12 hours [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
 
 // maybe in a future version links will be supported, at least to other sitemaps
-// String LinkToGC "<a href='http://garden-control.speedport.ip:8080/basicui/app?sitemap=weather>garden-control</a>"
 
 // if IgnoreWeatherSwitch = ON the rules will disregard current or coming rain 
 Switch IgnoreWeatherSwitch  {expire="2h,OFF"} 
