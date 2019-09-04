@@ -300,10 +300,6 @@ rule "daemon"
       logInfo("Daemon:", "found irrigation is active, so turn it ON")
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       irrOnOffProc?.apply("1", SCRIPT_DIR)
-  } else {
-      irrOnOffProc?.apply("0", SCRIPT_DIR)
-      GardencontrolPowerSupply.sendCommand(OFF) // activate PowerSupply for pump and valve
-
   }
   // save water: 
   // never let water running for more than daemon run time interval (see above)
@@ -320,7 +316,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    Time cron "0 0/10 * * * ? " or // near future test 
+    Time cron "0 0/30 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -373,7 +369,7 @@ end
 rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
-    Time cron "0 5/10 * * * ? " or // near future test 
+    Time cron "0 5/30 * * * ? " or // near future test 
     Time cron "0 00 07 * * ? " or
     Time cron "0 00 20 * * ? " 
   then   
