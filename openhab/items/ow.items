@@ -28,7 +28,7 @@ Group:Number:SUM ForecastRainVolumesGroup "Forecasts from 03-24 hrs in the futur
     Number:Length LocalForecastHoursRainVolume09  "Rain volume for  9 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours09#rain" }
     Number:Length LocalForecastHoursRainVolume12  "Rain volume for 12 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }
     
-    Number:Length LocalForecastHours12SnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#snow" }
+    //Number:Length LocalForecastHours12SnowVolume "Snow volume for today [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#snow" }
 
 DateTime LocalLastMeasurement "Timestamp of last measurement [%1$td.%1$tm.%1$tY %1$tH:%1$tM:%1$tS]" <time> { channel="openweathermap:weather-and-forecast:api:local:current#time-stamp" }
 String LocalCurrentCondition "Current condition [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:current#condition" }
@@ -43,7 +43,7 @@ Number LocalCurrentRainVolume "Current rain volume [%.1f %unit%]" <rain> { chann
 Number:Length LocalCurrentSnowVolume "Current snow volume [%.1f %unit%]" <snow> { channel="openweathermap:weather-and-forecast:api:local:current#snow" }
 
 //Number:Length LocalRainForecastSum "Sum of 24 hrs rain forecast [%.2f mm/qm (1mm bedeutet = 1Liter)]" <rain>
-//Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
+Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
 
 String Dhv
 
