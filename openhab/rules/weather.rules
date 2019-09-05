@@ -351,8 +351,8 @@ rule "Irrigation ON"
 
     // Irrigate except forecast tells otherwise
     logInfo("","Irrigation ON: ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
-    GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
     if (shallIrrigate.apply() == true ) {
+      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
       logInfo("", "Irrigation ON: turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
