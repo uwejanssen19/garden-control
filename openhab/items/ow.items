@@ -20,7 +20,7 @@ Number:Speed LocalForecastHours12WindSpeed "Wind speed for today [%.1f km/h]" <w
 Number:Angle LocalForecastHours12WindDirection "Wind direction for today [%d %unit%]" <wind> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#wind-direction" }
 Number:Dimensionless LocalForecastHours12Cloudiness "Cloudiness for today [%d %unit%]" <clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#cloudiness" }
 
-Group:Number:SUM ForecastRainVolumesGroup "Forecasts from 03-24 hrs in the future: [%.2f]"
+Group:Number:SUM ForecastRainVolumesGroup "Forecasts from now until 12 hrs in the future: [%.2f]"
 
 
     Number:Length LocalForecastHoursRainVolume03  "Rain volume for  3 hours [%.2f %unit%]" <rain> ( ForecastRainVolumesGroup )  { channel="openweathermap:weather-and-forecast:api:local:forecastHours03#rain" }
