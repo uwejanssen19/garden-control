@@ -21,3 +21,5 @@ Bridge mqtt:broker:myUnsecureBroker [ host="localhost", username="pi", password=
         Type switch : PowerSupply "PowerSupply" [ stateTopic="stat/PowersupplyGardenControl/POWER", commandTopic="cmnd/PowersupplyGardenControl/POWER", allowedStates="ON,OFF" ]
     }
 }
+Thing exec:command:getwan [command="/home/pi/scripts/getwan.sh", transform="REGEX((.*?))", interval=0, autorun=true]
+

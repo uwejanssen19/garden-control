@@ -4,6 +4,7 @@ String willRain_out <rain> { channel="exec:command:weatherstation_willRain:outpu
 String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
 String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
 //String Level_from_periodic_script { channel="exec:command:weatherstation_waterlevel:output", autorun="false" } // set by thing's exec script
+String WanAddress <settings> { channel="exec:command:getwan:output" } // set by thing's exec script
 
 
 String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }
