@@ -164,8 +164,8 @@ end
 // This rule serves as a steady bgackground task running all five minutes
 rule "daemon"
   when 
-    Time cron "0 0/1 * * * ?" //near future test
-    //Time cron "0 1/5 * * * ?" // every 5 minutes check
+    //Time cron "0 0/1 * * * ?" //near future test
+    Time cron "0 1/5 * * * ?" // every 5 minutes check
   then
   val irrigating = (Irrigating.state == ON)
 

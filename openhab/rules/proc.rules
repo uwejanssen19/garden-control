@@ -182,7 +182,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    Time cron "0 0/10 * * * ? " or // near future test 
+    //Time cron "0 0/10 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -239,7 +239,7 @@ end
 rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
-    Time cron "0 5/10 * * * ? " or // near future test 
+    //Time cron "0 5/10 * * * ? " or // near future test 
     Time cron "0 00 07 * * ? " or
     Time cron "0 00 20 * * ? " 
   then   
