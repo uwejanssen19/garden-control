@@ -77,6 +77,7 @@ rule "Manual irrigation"
     switch (receivedCommand){
         case ON: {
           // always irrigate manually, do not care of the weather
+            GardencontrolPowerSupply.sendCommand(ON)
             cmd = "1"
             Irrigating.postUpdate(ON)
             StatusText.postUpdate("Irrigation started")
@@ -163,22 +164,26 @@ end
 // This rule serves as a steady bgackground task running all five minutes
 rule "daemon"
   when 
-    //  Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 1/5 * * * ?" // every 5 minutes check
+    Time cron "0 0/1 * * * ?" //near future test
+    //Time cron "0 1/5 * * * ?" // every 5 minutes check
   then
   val irrigating = (Irrigating.state == ON)
 
   logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
     
-  // if someone ( e.g. low level script ) turned OFF irrigation on inadvertedly
+  // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
   if (irrigating) {
-      logInfo("Daemon:", "found irrigation is active, so turn it ON")
+      logInfo("", "Daemon: found irrigation is active, so turn or leave it ON")
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       irrOnOffProc?.apply("1", SCRIPT_DIR)
+  } else {
+      logInfo("", "Daemon: found irrigation is inactive, so turn or leave it OFF")
+      irrOnOffProc?.apply("0", SCRIPT_DIR)
+      GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
   }
   // save water: 
-  // never let water running for more than daemon run time interval (see above)
+  // never let tap water run for more than daemon run time interval (see above)
   Valve_Switch?.sendCommand(OFF)
   water_on_off?.sendCommand("0")
   logInfo("","Daemon: EXIT")

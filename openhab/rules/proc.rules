@@ -114,9 +114,7 @@ then
     //Display_level_out?.postUpdate(level) 
     Level_out.postUpdate(level.toString)
     StatusText.sendCommand("level = "+level)
-    var wanAddress = WanAddress
-    //var String wanAddress = "233.33.111.67"
-    StatusText.sendCommand("wanAddress = "+wanAddress)
+    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     logInfo("", "WanAddress =  {} ",wanAddress)
   }
   logInfo("", "Update Level Switch: EXIT")
@@ -184,7 +182,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    //Time cron "0 0/10 * * * ? " or // near future test 
+    Time cron "0 0/10 * * * ? " or // near future test 
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
@@ -209,7 +207,6 @@ rule "Irrigation ON"
 
     // Irrigate except forecast tells otherwise
     logInfo("","Irrigation ON: ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
-    val wanAddress = WanAddress.state.toString
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
@@ -218,17 +215,20 @@ rule "Irrigation ON"
       Fill_Switch.sendCommand(ON)
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
-      Irrigating.postUpdate(ON)
+      Irrigating.sendCommand(ON)
       logInfo("","Irrigation ON: irrigating set to " + Irrigating.state.toString)
-      sendMail("uwe@janssen-muenchen.de","Bewaesserung von IP = "+wanAddress, "Bewaesserung: EIN \nWasserstand: "+Level_out.state.toString)
+      sendMail("uwe@janssen-muenchen.de",
+      "Bewaesserung", 
+      "Bewaesserung findet statt.\nIP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\nWasserstand: "+Level_out.state.toString)
     } else {
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
       logInfo("","Irrigation ON: NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
-      sendMail("uwe@janssen-muenchen.de","Keine Bewaesserung", "KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
+      sendMail("uwe@janssen-muenchen.de",
+      "Keine Bewaesserung",
+      "Bewaesserung.             \nIP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\nKEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
     }
-    
 end
 
 
@@ -239,7 +239,7 @@ end
 rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
-    //Time cron "0 5/10 * * * ? " or // near future test 
+    Time cron "0 5/10 * * * ? " or // near future test 
     Time cron "0 00 07 * * ? " or
     Time cron "0 00 20 * * ? " 
   then   

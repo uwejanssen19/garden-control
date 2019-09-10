@@ -2,8 +2,8 @@ sitemap openweather label="OpenWeather Overview" {
     Frame label="Local Weather Station" {
             Text item=LocalStationName {
             Text item=LocalStationId 
-            Mapview item=LocalStationLocation height=6
-            Text item=WanAddress label="Wan Address = [%s]"
+            //Mapview item=LocalStationLocation height=6
+            Text item=wanAddress
         }
     }
 
