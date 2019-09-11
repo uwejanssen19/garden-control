@@ -186,7 +186,7 @@ rule "Irrigation ON"
     Time cron "0 00 05 * * ? " or
     Time cron "0 00 06 * * ? " or 
     Time cron "0 00 18 * * ? " or
-    Time cron "0 00 19 * * ? "  
+    Time cron "0 00 19 * 4-8 ? "  
   then
     
     var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
@@ -241,7 +241,8 @@ rule "Irrigation OFF"
   when
     //Time cron "0 5/10 * * * ? " or // near future test 
     Time cron "0 00 07 * * ? " or
-    Time cron "0 00 20 * * ? " 
+    Time cron "0 00 19 * 3,9,10 ? " or
+    Time cron "0 00 20 * 4-8 ? " 
   then   
     logInfo("", "Irrigation OFF: ENTRY, Cron event is due, stop irrigation")
     Irr_Switch.postUpdate(OFF)
