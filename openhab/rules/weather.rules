@@ -138,7 +138,8 @@ rule "Depressure"
   when 
     //Time cron "0 0/2 9-23 * * ?" // for TEST
     // TODO: adapt to seasonal sun radiation
-    Time cron "0 3/10 9-17 * * ?"
+    Time cron "0 3/10 9-17 * 5-8 ?" or
+    Time cron "0 3/40 9-17 * 4,9 ?"
 
   then
     val cloudiness = LocalCurrentCloudiness.state as Number
