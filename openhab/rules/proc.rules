@@ -172,7 +172,7 @@ rule "Fill barrel FNI"
         case OFF: water_on_off.sendCommand("0")
         default: logError("", "FILL barrel I Do not know how to handle " + receivedCommand.toString)
     }
-    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+    GardencontrolPowerSupply.sendCommand("0") // deactivate PowerSupply for pump and valve
 
 end
 // -----------------------------------------------------------------------------
@@ -251,4 +251,17 @@ rule "Irrigation OFF"
     Irrigating.postUpdate(OFF)
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
     logInfo("", "Irrigation OFF: EXIT")
+end
+// -----------------------------------------------------------------------------
+//  WAN Address change
+// -----------------------------------------------------------------------------
+
+rule "WAN Address change"
+  when
+    Item wanAddress changed 
+  then   
+    var String msg = "WAN Address change: ENTRY, wanAddress changed to "+wanAddress.state
+    logInfo("", msg)
+    sendMail("uwe@janssen-muenchen.de","WAN Address change", msg)
+    logInfo("", "WAN Address change: EXIT")
 end
