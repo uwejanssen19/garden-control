@@ -8,7 +8,7 @@
 // 05.09.2019 | Creation                                           | Janssen
 // 07.09.2019 | Bugfix                                             | Janssen
 // -----------------------------------------------------------------------------
-import java.util.Map
+// import java.util.Map
 
 // -----------------------------------------------------------------------------
 // constants
@@ -188,23 +188,24 @@ rule "Irrigation ON"
     Time cron "0 00 18 * 3-10 ? " or
     Time cron "0 00 19 * 4-8 ? "  
   then
-    { 
-    var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
-    val String TRUE_MAIL_TEXT  = "Irrigation via CRON: Bewaesserung: EIN \nWasserstand: "+Level_out.state.toString
-    val String FALSE_MAIL_TEXT = "Irrigation via CRON: KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
+    // { 
+    // var Map <String, Map <Boolean,String>> irrigationMap = newHashMap()
+    // val String TRUE_MAIL_TEXT  = "Irrigation via CRON: Bewaesserung: EIN \nWasserstand: "+Level_out.state.toString
+    // val String FALSE_MAIL_TEXT = "Irrigation via CRON: KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt "
     
-    irrigationMap.put("IRROFF", 
-      newHashMap(
-       false -> FALSE_MAIL_TEXT
-       ) as Map<Boolean,String>
-       )
+    // irrigationMap.put("IRROFF", 
+    //   newHashMap(
+    //    false -> FALSE_MAIL_TEXT
+    //    ) as Map<Boolean,String>
+    //    )
 
-    irrigationMap.put("IRRON" , 
-      newHashMap(
-         true  -> TRUE_MAIL_TEXT
-         ) as Map<Boolean,String>
-      )
-    }
+    // irrigationMap.put("IRRON" , 
+    //   newHashMap(
+    //      true  -> TRUE_MAIL_TEXT
+    //      ) as Map<Boolean,String>
+    //   )
+    // }
+    var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
     // Irrigate except forecast tells otherwise
     logInfo("","Irrigation ON: ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
@@ -219,7 +220,7 @@ rule "Irrigation ON"
       logInfo("","Irrigation ON: irrigating set to " + Irrigating.state.toString)
       sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
-      "Bewaesserung findet statt.\nIP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\nWasserstand: "+Level_out.state.toString)
+      "Bewaesserung findet statt.\n"+linkText+"Wasserstand: "+Level_out.state.toString)
     } else {
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
@@ -227,7 +228,7 @@ rule "Irrigation ON"
       logInfo("","Irrigation ON: NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
-      "Bewaesserung.             \nIP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\nKEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
+      "Bewaesserung.             \n"+linkText+"KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
     }
 end
 
@@ -259,9 +260,9 @@ end
 rule "WAN Address change"
   when
     Item wanAddress changed 
-  then   
-    var String msg = "WAN Address change: ENTRY, wanAddress changed to "+wanAddress.state
-    logInfo("", msg)
-    sendMail("uwe@janssen-muenchen.de","WAN Address change", msg)
+  then 
+    var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
+    logInfo("", "WAN Address change: "+linkText)
+    sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+linkText)
     logInfo("", "WAN Address change: EXIT")
 end
