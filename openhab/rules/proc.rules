@@ -133,11 +133,7 @@ rule "Fill barrel FNI"
 
     switch(receivedCommand){
         case ON: {
-          if (!(shallIrrigate.apply())) {
-          //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
-             logInfo("","FILL barrel FNI: NO refill, either raining ("+isRaining_out.state.toString+") or future rain = "+ForecastRainVolumesGroup.state)
-             StatusText.postUpdate("FILL barrel NO refill due to weather, future rain = "+ForecastRainVolumesGroup.state)
-           } else {
+          if (shallIrrigate.apply()) { // will irrigate
              logInfo("", "FILL barrel FNI: starting fill barrel cycle")
           
             FillTimerActive.postUpdate( ON )
@@ -163,7 +159,12 @@ rule "Fill barrel FNI"
             } // end while
             logInfo("","FILL barrel FNI: END while loop since level is no longer empty or filltimer expired")
             maxTimer?.cancel()
-          } // end if rain condition
+          } else { // will not irrigate
+             //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
+             logInfo("","FILL barrel FNI: NO refill, either raining ("+isRaining_out.state.toString+") or future rain = "+ForecastRainVolumesGroup.state)
+             StatusText.postUpdate("FILL barrel NO refill due to weather, future rain = "+ForecastRainVolumesGroup.state)
+          }  // end if rain condition
+
           Fill_Switch.postUpdate(OFF)
           Level_out.postUpdate(level.toString)
 
