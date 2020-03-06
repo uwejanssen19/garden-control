@@ -9,5 +9,3 @@ openhab:                                current openhab config files for this pr
 openhab_from_others:                    Demos and samples from other projects
 UwesOpenhab_first_trials:               elder versions of folder 'openhab' BEFORE GIT has been used 
 
-Trying ssh
-
