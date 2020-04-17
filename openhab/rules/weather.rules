@@ -24,6 +24,7 @@ import java.util.Map
 // -----------------------------------------------------------------------------
 
 val DEPRESSURE_TIME = 5
+val LAWN_IRRIGATION_TIME = 480 // 8 minutes
 val String SCRIPT_DIR="/home/pi/scripts/"
 
 
@@ -124,6 +125,34 @@ rule "Trigger water valve"
     logInfo("","Trigger water valve: EXIT")
 end
 
+// -----------------------------------------------------------------------------
+//  Individual irrigation by valve. 
+//  NOTE: You need to detach the baarel hose and plugin the irrigation hose instead.
+//  TODO: Put ON/Off Switch into expert section of sitemap
+// -----------------------------------------------------------------------------
+
+rule "Lawn irrigation"
+// Lawn irrigation
+// This is done by turning on tap water for a 8 minutes every hour, then turn off again 
+
+  when 
+    //Time cron "0 0/2 9-23 * * ?" // for TEST every 2 minutes
+    Time cron "0/15 0 9-18 * 3-10 ?" 
+
+  then
+    val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
+    logInfo("", "Lawn irrigation: ENTRY lawnIrrigatinMode = {}", lawnIrrigatinMode) 
+    StatusText.sendCommand("Lawn irrigation mode = {}",lawnIrrigatinMode)
+    if (lawnIrrigatinMode) {
+      logInfo("", "Lawn irrigation: Mode = ON -> start Lawn irrigation", lawnIrrigatinMode) 
+      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+      Thread::sleep(2000)
+      Valve_Switch.postUpdate(ON)
+      water_on_off.sendCommand("1")
+      createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onDepressureTimer)
+    }
+end
+
 
 // -----------------------------------------------------------------------------
 //  Depressure task. Needed to take away pressure from the hose when exposed to the sun
@@ -171,6 +200,7 @@ rule "daemon"
   val irrigating = (Irrigating.state == ON)
 
   logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
+  val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
     
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
@@ -181,18 +211,17 @@ rule "daemon"
   } else {
       logInfo("", "Daemon: found irrigation is inactive, so turn or leave it OFF")
       irrOnOffProc?.apply("0", SCRIPT_DIR)
-      GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+      if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
+        // save water: 
+        // never let tap water run for more than daemon run time interval (see above)
+        Valve_Switch?.sendCommand(OFF)
+        water_on_off?.sendCommand("0")
+        GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+      }
   }
-  // save water: 
-  // never let tap water run for more than daemon run time interval (see above)
-  Valve_Switch?.sendCommand(OFF)
-  water_on_off?.sendCommand("0")
+
   logInfo("","Daemon: EXIT")
 end
-
-
-
-
 
 // -----------------------------------------------------------------------------
 //  rule  "Test Mode Switch handling"
@@ -234,6 +263,7 @@ then
   GardencontrolPowerSupply.sendCommand(OFF)
   // set Irrigating flag to false
   Irrigating.postUpdate(OFF)
+  LawnIrrigationSwitch.sendCommand(OFF)
   logInfo("", "SysStart or InitSwitch: EXIT")
 end 
 
