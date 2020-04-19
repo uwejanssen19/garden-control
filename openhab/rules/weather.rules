@@ -24,7 +24,7 @@ import java.util.Map
 // -----------------------------------------------------------------------------
 
 val DEPRESSURE_TIME = 5
-val LAWN_IRRIGATION_TIME = 480 // 8 minutes
+val LAWN_IRRIGATION_TIME = 240 // 4 minutes
 val String SCRIPT_DIR="/home/pi/scripts/"
 
 
@@ -136,13 +136,14 @@ rule "Lawn irrigation"
 // This is done by turning on tap water for a 8 minutes every hour, then turn off again 
 
   when 
-    //Time cron "0 0/2 9-23 * * ?" // for TEST every 2 minutes
-    Time cron "0/15 0 9-18 * 3-10 ?" 
+    //Time cron "0 0/10 8-17 * * ?" // for TEST
+    Time cron "0 1/20 8-15 * 3-10 ?"  or
+    Time cron "0 1/30 16-17 * 3-10 ?" 
 
   then
     val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
     logInfo("", "Lawn irrigation: ENTRY lawnIrrigatinMode = {}", lawnIrrigatinMode) 
-    StatusText.sendCommand("Lawn irrigation mode = {}",lawnIrrigatinMode)
+    StatusText.sendCommand("Lawn irrigation since lawnIrrigatinMode = "+lawnIrrigatinMode)
     if (lawnIrrigatinMode) {
       logInfo("", "Lawn irrigation: Mode = ON -> start Lawn irrigation", lawnIrrigatinMode) 
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
@@ -231,6 +232,7 @@ rule  "Test Mode Switch handling"
   when Item TestModeSwitch changed to ON 
   then 
     InitSwitch.postUpdate(OFF)
+    LawnIrrigationSwitch.postUpdate(OFF)
   end 
 
 // -----------------------------------------------------------------------------
@@ -255,6 +257,7 @@ then
 
   Display_level_out.sendCommand("0")
   UpdateLevelSwitch.sendCommand(OFF)
+  UpdateLevelSwitch.sendCommand(ON)
   StatusText.sendCommand("System started")
 
   Level_out.sendCommand("0")
@@ -263,7 +266,7 @@ then
   GardencontrolPowerSupply.sendCommand(OFF)
   // set Irrigating flag to false
   Irrigating.postUpdate(OFF)
-  LawnIrrigationSwitch.sendCommand(OFF)
+  LawnIrrigationSwitch.postUpdate(OFF)
   logInfo("", "SysStart or InitSwitch: EXIT")
 end 
 
