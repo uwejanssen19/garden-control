@@ -207,21 +207,11 @@ rule "daemon"
 
   logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
-
-// ----------------------
-
-        // calculate time left 
-        val hour	        = now.getHourOfDay
-        val minute	      = now.getMinuteOfHour
-        var minutesLeft = 99
-        if ((hour <= 15) || ( hour >= 8)) {
-          var modulo  = 10
-          minutesLeft = (modulo - (minute % modulo)+1) % modulo
-          LawnIrrigationTimeLeft.sendCommand(minutesLeft)
-        }
-// ----------------------
-
-
+  val hour	        = now.getHourOfDay
+  val minute	      = now.getMinuteOfHour
+  var minutesLeft = 99
+  var modulo = 0 
+        
 
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
@@ -234,21 +224,18 @@ rule "daemon"
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
         // save water: 
-        // never let tap water run for more than daemon run time interval (see above)
+        // never let tap water run for more than time interval below
+        if ((minute % 9) == 0 ) {
         Valve_Switch?.sendCommand(OFF)
         water_on_off?.sendCommand("0")
         GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+        }
       } else {
         // calculate time left 
-//        hour	        = now.getHourOfDay
-  //      minute	      = now.getMinuteOfHour
-        minutesLeft   = 99
-        var modulo  = 10
-        
-        if ((hour <= 15) || ( hour >= 8)) {
+        if ((hour <= 15) && ( hour >= 8)) {
           modulo  = 10
-        } else if ( hour == 16 || hour == 17) {
-          modulo  = 20
+        } else {
+          modulo = 20
         }
         minutesLeft = (modulo - (minute % modulo)+1) % modulo
         LawnIrrigationTimeLeft.sendCommand(minutesLeft)
