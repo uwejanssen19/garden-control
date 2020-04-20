@@ -11,20 +11,21 @@
 // 12.08.2019 | added rule for handling test mode                  | Janssen
 // 20.08.2019 | added comments                                     | Janssen
 // 04.09.2019 | improved control                                   | Janssen
+// 20.04.2020 | lawn irrigation via valve implementation           | Janssen
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 //  imports
 // -----------------------------------------------------------------------------
 
-import java.util.Map
+//import java.util.Map
 
 // -----------------------------------------------------------------------------
 // constants
 // -----------------------------------------------------------------------------
 
 val DEPRESSURE_TIME = 5
-val LAWN_IRRIGATION_TIME = 240 // 4 minutes
+val LAWN_IRRIGATION_TIME = 120 // 2 minutes
 val String SCRIPT_DIR="/home/pi/scripts/"
 
 
@@ -137,15 +138,17 @@ rule "Lawn irrigation"
 
   when 
     //Time cron "0 0/10 8-17 * * ?" // for TEST
-    Time cron "0 1/20 8-15 * 3-10 ?"  or
-    Time cron "0 1/30 16-17 * 3-10 ?" 
+    Time cron "0 1/10 8-15 * 3-10 ?"  or
+    Time cron "0 1/20 16-17 * 3-10 ?" 
 
   then
     val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
     logInfo("", "Lawn irrigation: ENTRY lawnIrrigatinMode = {}", lawnIrrigatinMode) 
-    StatusText.sendCommand("Lawn irrigation since lawnIrrigatinMode = "+lawnIrrigatinMode)
-    if (lawnIrrigatinMode) {
+    StatusText.sendCommand("Lawn irrigation = "+lawnIrrigatinMode)
+    // switch  = ON AND not raining
+    if (lawnIrrigatinMode && (isRaining_out.state.toString == "0")) {
       logInfo("", "Lawn irrigation: Mode = ON -> start Lawn irrigation", lawnIrrigatinMode) 
+      StatusText.sendCommand("Lawn irrigation starting  = "+lawnIrrigatinMode)
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       Thread::sleep(2000)
       Valve_Switch.postUpdate(ON)
@@ -174,12 +177,14 @@ rule "Depressure"
   then
     val cloudiness = LocalCurrentCloudiness.state as Number
     logInfo("", "Depressure: ENTRY LocalCurrentCloudiness = {}", cloudiness) 
-    StatusText.sendCommand("Depr since cloudiness = "+cloudiness)
+    StatusText.sendCommand("Cloudiness = "+cloudiness)
     if (cloudiness >= 0.5) {
       logInfo("", "Depressure: cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
       logInfo("", "Depressure: LocalCurrentCloudiness = {}", cloudiness) 
+      StatusText.sendCommand("No hose depressurizing since cloudiness = "+cloudiness)
     } else {
       logInfo("", "Depressure: cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
+      StatusText.sendCommand("Depressurizing due to cloudiness = "+cloudiness)
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       Thread::sleep(2000)
       Valve_Switch.postUpdate(ON)
@@ -195,14 +200,29 @@ end
 // This rule serves as a steady bgackground task running all five minutes
 rule "daemon"
   when 
-    //Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 1/5 * * * ?" // every 5 minutes check
+    Time cron "0 0/1 * * * ?" //near future test
+    //Time cron "0 1/5 * * * ?" // every 5 minutes check
   then
   val irrigating = (Irrigating.state == ON)
 
   logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
-    
+
+// ----------------------
+
+        // calculate time left 
+        val hour	        = now.getHourOfDay
+        val minute	      = now.getMinuteOfHour
+        var minutesLeft = 99
+        if ((hour <= 15) || ( hour >= 8)) {
+          var modulo  = 10
+          minutesLeft = (modulo - (minute % modulo)+1) % modulo
+          LawnIrrigationTimeLeft.sendCommand(minutesLeft)
+        }
+// ----------------------
+
+
+
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
   if (irrigating) {
@@ -218,6 +238,20 @@ rule "daemon"
         Valve_Switch?.sendCommand(OFF)
         water_on_off?.sendCommand("0")
         GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+      } else {
+        // calculate time left 
+//        hour	        = now.getHourOfDay
+  //      minute	      = now.getMinuteOfHour
+        minutesLeft   = 99
+        var modulo  = 10
+        
+        if ((hour <= 15) || ( hour >= 8)) {
+          modulo  = 10
+        } else if ( hour == 16 || hour == 17) {
+          modulo  = 20
+        }
+        minutesLeft = (modulo - (minute % modulo)+1) % modulo
+        LawnIrrigationTimeLeft.sendCommand(minutesLeft)
       }
   }
 
@@ -255,7 +289,7 @@ then
   Fill_Switch.sendCommand(OFF)
   FillTimerActive.sendCommand(OFF) 
 
-  Display_level_out.sendCommand("0")
+  Display_level_out.sendCommand(0)
   UpdateLevelSwitch.sendCommand(OFF)
   UpdateLevelSwitch.sendCommand(ON)
   StatusText.sendCommand("System started")
@@ -267,6 +301,8 @@ then
   // set Irrigating flag to false
   Irrigating.postUpdate(OFF)
   LawnIrrigationSwitch.postUpdate(OFF)
+  LawnIrrigationTimeLeft.sendCommand(99)
+
   logInfo("", "SysStart or InitSwitch: EXIT")
 end 
 

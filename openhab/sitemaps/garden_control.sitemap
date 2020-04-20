@@ -30,6 +30,7 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
             Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
             Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
             Default item=GardencontrolPowerSupply visibility=[TestModeSwitch == ON]
+            Default item=LawnIrrigationTimeLeft label="Minuten bis Gießen: [%s]" visibility=[TestModeSwitch == ON]
         }
 
         Frame label="Expert Mode" {

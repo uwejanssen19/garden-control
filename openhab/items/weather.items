@@ -33,4 +33,6 @@ Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mq
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 
 Switch Irrigating
+Number LawnIrrigationTimeLeft
+       
 // END
