@@ -211,8 +211,15 @@ rule "daemon"
   val minute	      = now.getMinuteOfHour
   var minutesLeft = 99
   var modulo = 0 
+        if ((hour <= 15) && ( hour >= 8)) {
+          LawnIrrigationSwitch.postUpdate(ON)
+          modulo  = 10
+        } else {
+          modulo = 20
+        }
+        minutesLeft = (modulo - (minute % modulo)+1) % modulo
+        LawnIrrigationTimeLeft.sendCommand(minutesLeft)
         
-
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
   if (irrigating) {
@@ -288,6 +295,7 @@ then
   // set Irrigating flag to false
   Irrigating.postUpdate(OFF)
   LawnIrrigationSwitch.postUpdate(OFF)
+  LawnIrrigationSwitch.sendCommand(OFF)
   LawnIrrigationTimeLeft.sendCommand(99)
 
   logInfo("", "SysStart or InitSwitch: EXIT")
@@ -305,3 +313,4 @@ then
     logInfo("", "SysStop: system shutting down")
 
 end
+
