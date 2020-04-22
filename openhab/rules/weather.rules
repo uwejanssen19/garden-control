@@ -139,7 +139,7 @@ rule "Lawn irrigation"
   when 
     //Time cron "0 0/10 8-17 * * ?" // for TEST
     Time cron "0 1/10 8-15 * 3-10 ?"  or
-    Time cron "0 1/20 16-17 * 3-10 ?" 
+    Time cron "0 1/10 16-20 * 3-10 ?" 
 
   then
     val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
@@ -207,19 +207,11 @@ rule "daemon"
 
   logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
-  val hour	        = now.getHourOfDay
+//  val hour	        = now.getHourOfDay
   val minute	      = now.getMinuteOfHour
   var minutesLeft = 99
-  var modulo = 0 
-        if ((hour <= 15) && ( hour >= 8)) {
-          LawnIrrigationSwitch.postUpdate(ON)
-          modulo  = 10
-        } else {
-          modulo = 20
-        }
-        minutesLeft = (modulo - (minute % modulo)+1) % modulo
-        LawnIrrigationTimeLeft.sendCommand(minutesLeft)
-        
+  val modulo = 10 
+
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
   if (irrigating) {
@@ -233,23 +225,16 @@ rule "daemon"
         // save water: 
         // never let tap water run for more than time interval below
         if ((minute % 9) == 0 ) {
-        Valve_Switch?.sendCommand(OFF)
-        water_on_off?.sendCommand("0")
-        GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
-        }
-      } else {
-        // calculate time left 
-        if ((hour <= 15) && ( hour >= 8)) {
-          modulo  = 10
+          Valve_Switch?.sendCommand(OFF)
+          water_on_off?.sendCommand("0")
+          GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve     
         } else {
-          modulo = 20
+          minutesLeft = (modulo - (minute % modulo)+1) % modulo
+          LawnIrrigationTimeLeft.sendCommand(minutesLeft)
         }
-        minutesLeft = (modulo - (minute % modulo)+1) % modulo
-        LawnIrrigationTimeLeft.sendCommand(minutesLeft)
       }
-  }
-
-  logInfo("","Daemon: EXIT")
+    }
+    logInfo("","Daemon: EXIT")
 end
 
 // -----------------------------------------------------------------------------
