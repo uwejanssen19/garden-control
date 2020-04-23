@@ -201,7 +201,7 @@ end
 rule "daemon"
   when 
     Time cron "0 0/1 * * * ?" //near future test
-    //Time cron "0 1/5 * * * ?" // every 5 minutes check
+    //Time cron "0 1/4 * * * ?" // release values
   then
   val irrigating = (Irrigating.state == ON)
 
@@ -228,10 +228,10 @@ rule "daemon"
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve     
-        } else {
-          minutesLeft = (modulo - (minute % modulo)+1) % modulo
-          LawnIrrigationTimeLeft.sendCommand(minutesLeft)
         }
+      } else {
+        minutesLeft = (modulo - (minute % modulo)+1) % modulo
+        LawnIrrigationTimeLeft.sendCommand(minutesLeft)
       }
     }
     logInfo("","Daemon: EXIT")
@@ -245,7 +245,6 @@ rule  "Test Mode Switch handling"
   when Item TestModeSwitch changed to ON 
   then 
     InitSwitch.postUpdate(OFF)
-    LawnIrrigationSwitch.postUpdate(OFF)
   end 
 
 // -----------------------------------------------------------------------------
