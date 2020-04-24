@@ -153,8 +153,12 @@ rule "Lawn irrigation"
       Thread::sleep(2000)
       Valve_Switch.postUpdate(ON)
       water_on_off.sendCommand("1")
+      LawnIrrigationTimeLeft.sendCommand(0)
       createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onDepressureTimer)
-    }
+      } else {
+          LawnIrrigationTimeLeft.sendCommand(-1)
+      }
+       
 end
 
 
@@ -228,6 +232,7 @@ rule "daemon"
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve     
+          LawnIrrigationTimeLeft.sendCommand(-1)
         }
       } else {
         minutesLeft = (modulo - (minute % modulo)+1) % modulo
