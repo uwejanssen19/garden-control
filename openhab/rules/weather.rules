@@ -145,8 +145,12 @@ rule "Lawn irrigation"
     val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
     logInfo("", "Lawn irrigation: ENTRY lawnIrrigatinMode = {}", lawnIrrigatinMode) 
     StatusText.sendCommand("Lawn irrigation = "+lawnIrrigatinMode)
-    // switch  = ON AND not raining
-    if (lawnIrrigatinMode && (isRaining_out.state.toString == "0")) {
+    val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
+    // switch  = ON AND (NOT raining OR IgnoreWeather = true)
+    val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
+    logInfo("", "Lawn irrigation: willDoLawn = {}", willDoLawn)
+    StatusText.sendCommand("willDoLawn = "+willDoLawn)
+    if (willDoLawn) {
       logInfo("", "Lawn irrigation: Mode = ON -> start Lawn irrigation", lawnIrrigatinMode) 
       StatusText.sendCommand("Lawn irrigation starting  = "+lawnIrrigatinMode)
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
@@ -211,6 +215,11 @@ rule "daemon"
 
   logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
+  val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
+  // switch  = ON AND (NOT raining OR IgnoreWeather = true)
+  val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
+  StatusText.sendCommand("willDoLawn: " + willDoLawn)
+
 //  val hour	        = now.getHourOfDay
   val minute	      = now.getMinuteOfHour
   var minutesLeft = 99
