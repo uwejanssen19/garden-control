@@ -138,8 +138,8 @@ rule "Lawn irrigation"
 
   when 
     //Time cron "0 0/10 8-17 * * ?" // for TEST
-    Time cron "0 1/10 8-15 * 3-10 ?"  or
-    Time cron "0 1/10 16-20 * 3-10 ?" 
+    Time cron "0 1/20 8-15 * 3-10 ?"  or
+    Time cron "0 1/10 16-22 * 3-10 ?" 
 
   then
     val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
@@ -220,10 +220,16 @@ rule "daemon"
   val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
   StatusText.sendCommand("willDoLawn: " + willDoLawn)
 
-//  val hour	        = now.getHourOfDay
+  val hour	        = now.getHourOfDay
   val minute	      = now.getMinuteOfHour
   var minutesLeft = 99
-  val modulo = 10 
+
+  var modulo = 10 
+
+  if (hour >=8 && hour <=15) {
+    modulo = 20
+  } else { 
+    modulo = 10}
 
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
