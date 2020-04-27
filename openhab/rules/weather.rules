@@ -25,7 +25,7 @@
 // -----------------------------------------------------------------------------
 
 val DEPRESSURE_TIME = 5
-val LAWN_IRRIGATION_TIME = 120 // 2 minutes
+val LAWN_IRRIGATION_TIME = 60 // seconds
 val String SCRIPT_DIR="/home/pi/scripts/"
 
 
@@ -226,11 +226,6 @@ rule "daemon"
 
   var modulo = 10 
 
-  if (hour >=8 && hour <=15) {
-    modulo = 20
-  } else { 
-    modulo = 10}
-
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
   if (irrigating) {
@@ -249,11 +244,11 @@ rule "daemon"
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve     
           LawnIrrigationTimeLeft.sendCommand(-1)
         }
-      } else {
-        minutesLeft = (modulo - (minute % modulo)+1) % modulo
-        LawnIrrigationTimeLeft.sendCommand(minutesLeft)
       }
     }
+    minutesLeft = (modulo - (minute % modulo)+1) % modulo
+    LawnIrrigationTimeLeft.sendCommand(minutesLeft)
+      
     logInfo("","Daemon: EXIT")
 end
 
