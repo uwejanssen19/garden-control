@@ -34,9 +34,9 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
             //                       >=25="orange", >=15="green", 0="white", <15="blue"]
 
             Default item=LawnIrrigationTimeLeft label="Minuten bis Gießen: [%s]"  labelcolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
-                                  >=8="black", >=6="blue", >=4="orange",>=2="yellow", >=1="red", 0="green"]
-            
-            visibility=[TestModeSwitch == ON]
+                                  >=8="black", >=6="blue", >=4="orange",>=2="yellow
+                                ", >=1="red", ==0="green"] visibility=[TestModeSwitch == ON]
+            Setpoint item=LawnIrrigationInterVal label="Rasen GiessIntervall [%s Minuten]" icon="time" minValue=5 maxValue=60 step=5 visibility=[TestModeSwitch == ON]
         }
 
         Frame label="Expert Mode" {

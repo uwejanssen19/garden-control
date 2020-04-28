@@ -173,7 +173,7 @@ rule "Fill barrel FNI"
         case OFF: water_on_off.sendCommand("0")
         default: logError("", "FILL barrel I Do not know how to handle " + receivedCommand.toString)
     }
-    GardencontrolPowerSupply.sendCommand("0") // deactivate PowerSupply for pump and valve
+    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
 
 end
 // -----------------------------------------------------------------------------

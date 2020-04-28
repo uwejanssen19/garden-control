@@ -34,5 +34,6 @@ Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mq
 Switch FillTimerActive 
 Switch Irrigating
 Number LawnIrrigationTimeLeft
-       
+Number LawnIrrigationInterVal
+Number LawnIrrigationCounter
 // END
