@@ -27,7 +27,7 @@ String StatusText
 String Level_out //  set by rule 
 Switch LawnIrrigationSwitch
 Switch InitSwitch {expire="60s,OFF"} // only for test of the 'system started' rule 
-Switch TestModeSwitch {expire="1500s,OFF"} // expert mode, makes diagnostic switches and fields visible
+Switch TestModeSwitch // expert mode, makes diagnostic switches and fields visible
 Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mqtt:topic:myUnsecureBroker:powerSupply:PowerSupply" }
 
 // BEGIN using this as a global variable within a rule

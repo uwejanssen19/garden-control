@@ -27,8 +27,8 @@ val MAX_FILL_BARREL_TIME = 180
 
 val Functions$Function0<Boolean> shallIrrigate = [ 
   // if switch is = ON OR either not raining or coming rain less than defined amount
-  logDebug("","shallIrrigate::LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
-  logDebug("","shallIrrigate::ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
+  logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
+  logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logInfo("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
   val isRaining = isRaining_out.state.toString
@@ -49,15 +49,15 @@ val Functions$Function0<Boolean> shallIrrigate = [
   logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
   // logInfo("shallIrrigate::","comingRainVal = {} ",comingRainVal)
   // logInfo("shallIrrigate::","willNotRain = {} ",willNotRain)
-  logInfo("","shallIrrigate::isNotRaining = {} ",isNotRaining)
-  logInfo("","shallIrrigate::weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
+  logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
+  logInfo("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
     
   if (switchStateSetToIgnore || weatherSuitableForIrrigating) {
-    logDebug("","shallIrrigate::return true")
+    logDebug("shallIrrigate:","return true")
     return true
   }
   else {
-    logDebug("","shallIrrigate::return false")
+    logDebug("shallIrrigate:","return false")
     return false 
   }
   
@@ -139,15 +139,15 @@ rule "Fill barrel FNI"
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // set time limit 
             while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
-              logInfo("","FILL barrel FNI: INSIDE while loop since level is empty or filltimer active")
+              logInfo("FILL barrel FNI"," INSIDE while loop since level is empty or filltimer active")
               GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
               Thread::sleep(2000)
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
-              logInfo("","FILL barrel FNI: level = " + level)
+              logInfo("FILL barrel FNI"," level = " + level)
               if (level == "0" ) // 0=full 
               {
-                logInfo("","FILL barrel FNI: Found barrel full")
+                logInfo("FILL barrel FNI"," Found barrel full")
                 FillTimerActive.postUpdate(OFF)
                 maxTimer?.cancel()
                 Fill_Switch.postUpdate(OFF)
@@ -157,11 +157,11 @@ rule "Fill barrel FNI"
               Thread::sleep(10000)
               //logInfo("FILL barrel","STOP waiting 10 s")
             } // end while
-            logInfo("","FILL barrel FNI: END while loop since level is no longer empty or filltimer expired")
+            logInfo("FILL barrel FNI"," END while loop since level is no longer empty or filltimer expired")
             maxTimer?.cancel()
           } else { // will not irrigate
              //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
-             logInfo("","FILL barrel FNI: NO refill, either raining ("+isRaining_out.state.toString+") or future rain = "+ForecastRainVolumesGroup.state)
+             logInfo("FILL barrel FNI"," NO refill, either raining ("+isRaining_out.state.toString+") or future rain = "+ForecastRainVolumesGroup.state)
              StatusText.postUpdate("FILL barrel NO refill due to weather, future rain = "+ForecastRainVolumesGroup.state)
           }  // end if rain condition
 
@@ -208,7 +208,7 @@ rule "Irrigation ON"
     // }
     var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
     // Irrigate except forecast tells otherwise
-    logInfo("","Irrigation ON: ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    logInfo("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
@@ -218,7 +218,7 @@ rule "Irrigation ON"
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
-      logInfo("","Irrigation ON: irrigating set to " + Irrigating.state.toString)
+      logInfo("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
       sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
       "Bewaesserung findet statt.\n"+linkText+"Wasserstand: "+Level_out.state.toString)
@@ -226,7 +226,7 @@ rule "Irrigation ON"
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
-      logInfo("","Irrigation ON: NO irrigating , either raining: ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+      logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
       "Bewaesserung.             \n"+linkText+"KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")

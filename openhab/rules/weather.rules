@@ -39,17 +39,17 @@ var String SCRIPT_DIR="/home/pi/scripts/"
 
 val Procedures$Procedure0 onDepressureTimer = [ 
         val irrigating = (Irrigating.state == ON)
-        logInfo("", "Procedure onDepressureTimer expired")
+        logInfo("Procedure onDepressureTimer", "ENTRY")
         water_on_off.sendCommand("0")
         if (!irrigating) {
-          logInfo("", "Procedure onDepressureTimer, irrigating state = "+ irrigating+", turn power OFF")
+          logInfo("Procedure onDepressureTimer", "irrigating state = "+ irrigating+", turn power OFF")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
         } else {
-          logInfo("", "Procedure onDepressureTimer, irrigating state = "+ irrigating+", leave power ON")
+          logInfo("Procedure onDepressureTimer", "irrigating state = "+ irrigating+", leave power ON")
         }
 
         Valve_Switch.postUpdate(OFF)
-        logInfo("", "Procedure DepressureTimer EXIT") 
+        logInfo("Procedure DepressureTimer", "EXIT") 
 ]
 
 // -----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ val Procedures$Procedure0 onDepressureTimer = [
 val irrOnOffProc = [ 
     String onOff, String SCRIPT_DIR |
                  executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
-                 logInfo("", "Procedure irrOnOffProc invoked irrOnOff with parameter " + onOff)
+                 logInfo("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
 ]
 
 
@@ -84,14 +84,14 @@ rule "Manual irrigation"
             StatusText.postUpdate("Irrigation started")
         }
         case OFF: {
-          logInfo("","Manual irrigation: irrigation OFF")
+          logInfo("Manual irrigation","irrigation OFF")
         }
         default: 
           logInfo("T","Manual irrigation: received command neither ON nor OFF")
     }
 
-    logInfo("","Manual irrigation: received command = "+receivedCommand+", cmd set to = "+cmd)
-    logInfo("","Manual irrigation: irrigating state set to " + Irrigating.state.toString)
+    logInfo("Manual irrigation","received command = "+receivedCommand+", cmd set to = "+cmd)
+    logInfo("Manual irrigation","irrigating state set to " + Irrigating.state.toString)
 
     if(cmd !== null) 
     {
@@ -107,7 +107,7 @@ rule "Trigger water valve"
   when Item Valve_Switch received command
   then
     var String cmd = null
-    logInfo("","Trigger water valve: ENTRY, command = "+receivedCommand)
+    logInfo("Trigger water valve","ENTRY, command = "+receivedCommand)
     switch(receivedCommand){
         case ON: {
 
@@ -121,8 +121,8 @@ rule "Trigger water valve"
         }
         default: logError("water valve", "Do not know how to handle " + receivedCommand.toString)
     }
-    logInfo("","Trigger water valve: state set to " + cmd)
-    logInfo("","Trigger water valve: EXIT")
+    logInfo("Trigger water valve","state set to " + cmd)
+    logInfo("Trigger water valve","EXIT")
 end
 rule "Enable Lawn irrigation"
 when Item LawnIrrigationSwitch changed to ON
@@ -145,15 +145,14 @@ rule "Lawn irrigation"
     // Time cron "0 1/10 16-22 * 3-10 ?" 
 
   then
-    logInfo("", "Lawn irrigation: ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
-    logInfo("", "Lawn irrigation: LawnIrrigationCounter = {}", LawnIrrigationCounter.state) 
+    logInfo("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
+    logInfo("Lawn irrigation","LawnIrrigationCounter = {}", LawnIrrigationCounter.state) 
 
-    val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
-    logInfo("", "Lawn irrigation: lawnIrrigatinMode = {}", lawnIrrigatinMode) 
-    val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
+    //val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     // switch  = ON AND (NOT raining OR IgnoreWeather = true)
-    val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
-    logInfo("", "Lawn irrigation: willDoLawn = {}", willDoLawn)
+    //val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
+    val Boolean willDoLawn = (LawnIrrigationSwitch?.state == ON)
+    logInfo("Lawn irrigation","willDoLawn = {}", willDoLawn)
     StatusText.sendCommand("willDoLawn = "+willDoLawn)
     val interval = LawnIrrigationInterVal.state as Number
     if (willDoLawn) {
@@ -161,10 +160,9 @@ rule "Lawn irrigation"
       var tmp = LawnIrrigationCounter.state as Number
       LawnIrrigationCounter.postUpdate(tmp-1)
       LawnIrrigationTimeLeft.sendCommand(tmp-1) // display
-      logInfo("", "Lawn irrigation: counter =  {}", tmp)
+      logInfo("Lawn irrigation","counter =  {}", tmp)
       if (LawnIrrigationCounter.state as Number == 0 ) {
-        logInfo("", "Lawn irrigation: Mode = ON -> start Lawn irrigation") 
-        StatusText.sendCommand("Lawn irrigation starting  = "+lawnIrrigatinMode)
+        logInfo("Lawn irrigation","Mode = ON -> start Lawn irrigation") 
         GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
         Thread::sleep(2000) // wait 2s
         Valve_Switch.postUpdate(ON)
@@ -182,9 +180,18 @@ rule "Lawn irrigation"
 rule "Time Interval Changed" 
 when Item LawnIrrigationInterVal changed 
 then 
-  val interval = LawnIrrigationInterVal.state as Number
-  LawnIrrigationCounter.postUpdate(interval-1)
-  LawnIrrigationTimeLeft.sendCommand(interval-1)
+    val interval = LawnIrrigationInterVal.state as Number
+    LawnIrrigationCounter.postUpdate(interval+1)
+    LawnIrrigationTimeLeft.sendCommand(interval)
+    LawnIrrigationSwitch.postUpdate(ON)
+end
+
+rule "LawnIrrigationSwitch" 
+when Item LawnIrrigationSwitch changed from ON to OFF
+then 
+  LawnIrrigationTimeLeft.sendCommand(-1)
+  // prevent from doing any action in the nex minute
+  LawnIrrigationCounter.postUpdate(1000)
 end
 
 // -----------------------------------------------------------------------------
@@ -205,14 +212,14 @@ rule "Depressure"
 
   then
     val cloudiness = LocalCurrentCloudiness.state as Number
-    logInfo("", "Depressure: ENTRY LocalCurrentCloudiness = {}", cloudiness) 
+    logInfo("Depressure","ENTRY LocalCurrentCloudiness = {}", cloudiness) 
     StatusText.sendCommand("Cloudiness = "+cloudiness)
     if (cloudiness >= 0.5) {
-      logInfo("", "Depressure: cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
-      logInfo("", "Depressure: LocalCurrentCloudiness = {}", cloudiness) 
+      logInfo("Depressure","cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
+      logInfo("Depressure","LocalCurrentCloudiness = {}", cloudiness) 
       StatusText.sendCommand("No hose depressurizing since cloudiness = "+cloudiness)
     } else {
-      logInfo("", "Depressure: cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
+      logInfo("Depressure","cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
       StatusText.sendCommand("Depressurizing due to cloudiness = "+cloudiness)
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       Thread::sleep(2000)
@@ -229,31 +236,29 @@ end
 // This rule serves as a steady bgackground task running all five minutes
 rule "daemon"
   when 
-    Time cron "0 0/1 * * * ?" //near future test
-    //Time cron "0 1/4 * * * ?" // release values
+    //Time cron "0 0/1 * * * ?" //near future test
+    Time cron "0 1/4 * * * ?" // release values
   then
   
   val irrigating = (Irrigating.state == ON)
+  val minute = now.getMinuteOfHour
 
 
-  logInfo("","Daemon: ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
+  logInfo("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
-  val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
-  // switch  = ON AND (NOT raining OR IgnoreWeather = true)
-  val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
-  StatusText.sendCommand("willDoLawn: " + willDoLawn)
-
-  //val hour	        = now.getHourOfDay
-  val minute	      = now.getMinuteOfHour
 
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
-  if (irrigating) {
-      logInfo("", "Daemon: found irrigation is active, so turn or leave it ON")
+  if (irrigating || lawnIrrigatinMode) {
+      logInfo("Daemon","found irrigation is active, so turn or leave it ON")
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-      irrOnOffProc?.apply("1", SCRIPT_DIR)
+      if (irrigating) {
+        Irr_Switch.postUpdate(ON)
+        irrOnOffProc?.apply("1", SCRIPT_DIR)
+      }
+      
   } else {
-      logInfo("", "Daemon: found irrigation is inactive, so turn or leave it OFF")
+      logInfo("Daemon","found irrigation is inactive, so turn or leave it OFF")
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
         // save water: 
@@ -267,7 +272,7 @@ rule "daemon"
       }
     }
       
-    logInfo("","Daemon: EXIT")
+    logInfo("Daemon","EXIT")
 end
 
 // -----------------------------------------------------------------------------
@@ -288,7 +293,7 @@ when
   System started                 or
   Item InitSwitch changed to ON
 then 
-  logInfo("", "SysStart or InitSwitch: ENTRY")
+  logInfo("SysStart or InitSwitch","ENTRY")
   // turn off hardware
   GardencontrolPowerSupply.sendCommand(OFF)
   irrOnOffProc?.apply("0", SCRIPT_DIR)
@@ -313,11 +318,11 @@ then
   Irrigating.postUpdate(OFF)
   LawnIrrigationSwitch.postUpdate(OFF)
   LawnIrrigationSwitch.sendCommand(OFF)
-  LawnIrrigationTimeLeft.sendCommand(99)
+  LawnIrrigationTimeLeft.sendCommand(-1)
   LawnIrrigationInterVal.sendCommand(10)
   LawnIrrigationCounter.postUpdate(LawnIrrigationCounter.state as Number)
-  logInfo("", "SysStart or InitSwitch: LawnIrrigationCounter = {}", LawnIrrigationCounter.state as Number)
-  logInfo("", "SysStart or InitSwitch: EXIT")
+  logInfo("SysStart or InitSwitch","LawnIrrigationCounter = {}", LawnIrrigationCounter.state as Number)
+  logInfo("SysStart or InitSwitch","EXIT")
 end 
 
 // -----------------------------------------------------------------------------
@@ -329,7 +334,7 @@ when System shuts down
 
 then
     InitSwitch.sendCommand(ON)
-    logInfo("", "SysStop: system shutting down")
+    logInfo("SysStop","system shutting down")
 
 end
 
