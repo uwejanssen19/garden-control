@@ -147,6 +147,7 @@ rule "Lawn irrigation"
   then
     logInfo("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
     logInfo("Lawn irrigation","LawnIrrigationCounter = {}", LawnIrrigationCounter.state) 
+    logInfo("Lawn irrigation","current_time = {}", now) 
 
     //val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     // switch  = ON AND (NOT raining OR IgnoreWeather = true)
@@ -168,8 +169,8 @@ rule "Lawn irrigation"
         Valve_Switch.postUpdate(ON)
         water_on_off.sendCommand("1")
         // start over 
-        LawnIrrigationTimeLeft.sendCommand(interval-1) // for display
-        LawnIrrigationCounter.postUpdate(interval-1)
+        LawnIrrigationTimeLeft.sendCommand(interval) // for display
+        LawnIrrigationCounter.postUpdate(interval)
         createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onDepressureTimer)
       }      
     } else {
@@ -181,7 +182,7 @@ rule "Time Interval Changed"
 when Item LawnIrrigationInterVal changed 
 then 
     val interval = LawnIrrigationInterVal.state as Number
-    LawnIrrigationCounter.postUpdate(interval+1)
+    LawnIrrigationCounter.postUpdate(interval)
     LawnIrrigationTimeLeft.sendCommand(interval)
     LawnIrrigationSwitch.postUpdate(ON)
 end
@@ -190,6 +191,7 @@ rule "LawnIrrigationSwitch"
 when Item LawnIrrigationSwitch changed from ON to OFF
 then 
   LawnIrrigationTimeLeft.sendCommand(-1)
+  GardencontrolPowerSupply.postUpdate(OFF)
   // prevent from doing any action in the nex minute
   LawnIrrigationCounter.postUpdate(1000)
 end
@@ -316,11 +318,10 @@ then
   GardencontrolPowerSupply.sendCommand(OFF)
   // set Irrigating flag to false
   Irrigating.postUpdate(OFF)
-  LawnIrrigationSwitch.postUpdate(OFF)
-  LawnIrrigationSwitch.sendCommand(OFF)
   LawnIrrigationTimeLeft.sendCommand(-1)
   LawnIrrigationInterVal.sendCommand(10)
-  LawnIrrigationCounter.postUpdate(LawnIrrigationCounter.state as Number)
+  LawnIrrigationSwitch.postUpdate(OFF)
+  LawnIrrigationSwitch.sendCommand(OFF)
   logInfo("SysStart or InitSwitch","LawnIrrigationCounter = {}", LawnIrrigationCounter.state as Number)
   logInfo("SysStart or InitSwitch","EXIT")
 end 
