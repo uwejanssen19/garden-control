@@ -35,5 +35,5 @@ Switch FillTimerActive
 Switch Irrigating
 Number LawnIrrigationTimeLeft
 Number LawnIrrigationInterVal
-Number LawnIrrigationCounter
+//Number LawnIrrigationCounter
 // END

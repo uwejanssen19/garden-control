@@ -132,7 +132,6 @@ end
 // -----------------------------------------------------------------------------
 //  Individual irrigation by valve. 
 //  NOTE: You need to detach the baarel hose and plugin the irrigation hose instead.
-//  TODO: Put ON/Off Switch into expert section of sitemap
 // -----------------------------------------------------------------------------
 
 rule "Lawn irrigation"
@@ -146,7 +145,7 @@ rule "Lawn irrigation"
 
   then
     logInfo("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
-    logInfo("Lawn irrigation","LawnIrrigationCounter = {}", LawnIrrigationCounter.state) 
+    //logInfo("Lawn irrigation","LawnIrrigationCounter = {}", LawnIrrigationCounter.state) 
     logInfo("Lawn irrigation","current_time = {}", now) 
 
     //val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
@@ -158,19 +157,17 @@ rule "Lawn irrigation"
     val interval = LawnIrrigationInterVal.state as Number
     if (willDoLawn) {
       // count down
-      var tmp = LawnIrrigationCounter.state as Number
-      LawnIrrigationCounter.postUpdate(tmp-1)
-      LawnIrrigationTimeLeft.sendCommand(tmp-1) // display
-      logInfo("Lawn irrigation","counter =  {}", tmp)
-      if (LawnIrrigationCounter.state as Number == 0 ) {
+      var counterVal = LawnIrrigationTimeLeft.state as Number
+      LawnIrrigationTimeLeft.postUpdate(counterVal-1) // display
+      logInfo("Lawn irrigation","counter =  {}", counterVal)
+      if (counterVal == 0 ) {
         logInfo("Lawn irrigation","Mode = ON -> start Lawn irrigation") 
         GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
         Thread::sleep(2000) // wait 2s
         Valve_Switch.postUpdate(ON)
         water_on_off.sendCommand("1")
         // start over 
-        LawnIrrigationTimeLeft.sendCommand(interval) // for display
-        LawnIrrigationCounter.postUpdate(interval)
+        LawnIrrigationTimeLeft.sendCommand(interval-1) // for display
         createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onDepressureTimer)
       }      
     } else {
@@ -182,18 +179,20 @@ rule "Time Interval Changed"
 when Item LawnIrrigationInterVal changed 
 then 
     val interval = LawnIrrigationInterVal.state as Number
-    LawnIrrigationCounter.postUpdate(interval)
     LawnIrrigationTimeLeft.sendCommand(interval)
-    LawnIrrigationSwitch.postUpdate(ON)
 end
 
-rule "LawnIrrigationSwitch" 
-when Item LawnIrrigationSwitch changed from ON to OFF
+rule "LawnIrrigationSwitch OFF" 
+when Item LawnIrrigationSwitch changed to OFF
 then 
   LawnIrrigationTimeLeft.sendCommand(-1)
   GardencontrolPowerSupply.postUpdate(OFF)
-  // prevent from doing any action in the nex minute
-  LawnIrrigationCounter.postUpdate(1000)
+end
+
+rule "LawnIrrigationSwitch ON" 
+when Item LawnIrrigationSwitch changed to OFF
+then 
+  LawnIrrigationTimeLeft.sendCommand(LawnIrrigationInterVal.state as Number)
 end
 
 // -----------------------------------------------------------------------------
@@ -322,7 +321,7 @@ then
   LawnIrrigationInterVal.sendCommand(10)
   LawnIrrigationSwitch.postUpdate(OFF)
   LawnIrrigationSwitch.sendCommand(OFF)
-  logInfo("SysStart or InitSwitch","LawnIrrigationCounter = {}", LawnIrrigationCounter.state as Number)
+  logInfo("SysStart or InitSwitch","LawnIrrigationTimeLeft = {}", LawnIrrigationTimeLeft.state as Number)
   logInfo("SysStart or InitSwitch","EXIT")
 end 
 
