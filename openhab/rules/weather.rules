@@ -146,7 +146,7 @@ rule "Lawn irrigation"
   then
     logInfo("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
     //logInfo("Lawn irrigation","LawnIrrigationCounter = {}", LawnIrrigationCounter.state) 
-    logInfo("Lawn irrigation","current_time = {}", now) 
+    //logInfo("Lawn irrigation","current_time = {}", now) 
 
     //val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     // switch  = ON AND (NOT raining OR IgnoreWeather = true)
