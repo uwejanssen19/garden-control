@@ -250,7 +250,7 @@ rule "daemon"
 
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
   // -> turn ON again 
-  if (irrigating || lawnIrrigatinMode) {
+  if (irrigating) {
       logInfo("Daemon","found irrigation is active, so turn or leave it ON")
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       if (irrigating) {
