@@ -32,7 +32,29 @@ var String SCRIPT_DIR="/home/pi/scripts/"
 //  Functions and procedures section
 // -----------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
+//  Function doLawnDespiteRain
+// -----------------------------------------------------------------------------
 
+val Functions$Function0<Boolean> doLawnDespiteRain = [ 
+  // do the lawn when not raining OR ignore switch = ON
+
+  val isRaining = isRaining_out.state.toString
+  val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)   
+  val Boolean isNotRaining = (isRaining == "0")
+    
+  logDebug("doLawnDespiteRain::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+  logDebug("doLawnDespiteRain:","isNotRaining = {} ",isNotRaining)
+    
+  if (switchStateSetToIgnore || isNotRaining) {
+    logDebug("doLawnDespiteRain:","return true")
+    return true
+  }
+  else {
+    logDebug("doLawnDespiteRain:","return false")
+    return false 
+  }
+]
 // -----------------------------------------------------------------------------
 //  Timer onDepressureTimer
 // -----------------------------------------------------------------------------
@@ -151,7 +173,7 @@ rule "Lawn irrigation"
     //val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     // switch  = ON AND (NOT raining OR IgnoreWeather = true)
     //val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
-    val Boolean willDoLawn = (LawnIrrigationSwitch?.state == ON)
+    val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && doLawnDespiteRain.apply())
     logInfo("Lawn irrigation","willDoLawn = {}", willDoLawn)
     StatusText.sendCommand("willDoLawn = "+willDoLawn)
     val interval = LawnIrrigationInterVal.state as Number
@@ -190,9 +212,22 @@ then
 end
 
 rule "LawnIrrigationSwitch ON" 
-when Item LawnIrrigationSwitch changed to OFF
+when Item LawnIrrigationSwitch changed to ON
 then 
   LawnIrrigationTimeLeft.sendCommand(LawnIrrigationInterVal.state as Number)
+end
+
+// needed if openweather tells it rains but actually does not.
+// This way the user can 'overrride' the rain fact 
+// but the interval has to set to a valid value
+// otherwise the background process will count down starting from -1 to -2 and so on forever
+
+rule "IgnoreWeatherSwitch ON" 
+when Item IgnoreWeatherSwitch changed to ON
+then 
+  if (LawnIrrigationSwitch?.state == ON) {
+    LawnIrrigationTimeLeft.sendCommand(LawnIrrigationInterVal.state as Number)
+  }
 end
 
 // -----------------------------------------------------------------------------
