@@ -195,6 +195,7 @@ rule "Lawn irrigation"
     } else {
       LawnIrrigationTimeLeft.sendCommand(-1)
     }
+    logInfo("Lawn irrigation","EXIT") 
    end
 
 rule "Time Interval Changed" 
