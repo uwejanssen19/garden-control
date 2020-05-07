@@ -191,7 +191,7 @@ rule "Lawn irrigation"
         // start over 
         LawnIrrigationTimeLeft.sendCommand(interval-1) // for display
         createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onDepressureTimer)
-      }      
+      }
     } else {
       LawnIrrigationTimeLeft.sendCommand(-1)
     }

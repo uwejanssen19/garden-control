@@ -30,12 +30,14 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
             Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
             Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
             Default item=GardencontrolPowerSupply visibility=[TestModeSwitch == ON]
-            // Text item=Temperature valuecolor=[Last_Update=="Uninitialized"="gray",
-            //                       >=25="orange", >=15="green", 0="white", <15="blue"]
 
-            Default item=LawnIrrigationTimeLeft label="Minuten bis Gießen: [%s]"  labelcolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
-                                  >=8="black", >=6="blue", >=4="orange",>=2="yellow
-                                ", >=1="red", ==0="green"] visibility=[TestModeSwitch == ON]
+            Default item=LawnIrrigationTimeLeft label="Minuten bis Gießen: [%s]" 
+                                labelcolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
+                                  >=10="maroon", >=8="black", >=6="blue", >=4="orange",>=2="#ff3f00
+                                ", >=1="red", ==0="olive"]
+                                valuecolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
+                                  >=10="maroon", >=8="black", >=6="blue", >=4="orange",>=2="#ff3f00
+                                ", >=1="red", ==0="olive"] visibility=[TestModeSwitch == ON]
             Setpoint item=LawnIrrigationInterVal label="Rasen GiessIntervall [%s Minuten]" icon="time" minValue=5 maxValue=60 step=5 visibility=[TestModeSwitch == ON]
         }
 
