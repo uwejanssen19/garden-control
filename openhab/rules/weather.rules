@@ -56,18 +56,18 @@ val Functions$Function0<Boolean> doLawnDespiteRain = [
   }
 ]
 // -----------------------------------------------------------------------------
-//  Timer onDepressureTimer
+//  Timer onValveTimer
 // -----------------------------------------------------------------------------
 
-val Procedures$Procedure0 onDepressureTimer = [ 
+val Procedures$Procedure0 onValveTimer = [ 
         val irrigating = (Irrigating.state == ON)
-        logInfo("Procedure onDepressureTimer", "ENTRY")
+        logInfo("Procedure onValveTimer", "ENTRY")
         water_on_off.sendCommand("0")
         if (!irrigating) {
-          logInfo("Procedure onDepressureTimer", "irrigating state = "+ irrigating+", turn power OFF")
+          logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", turn power OFF")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
         } else {
-          logInfo("Procedure onDepressureTimer", "irrigating state = "+ irrigating+", leave power ON")
+          logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", leave power ON")
         }
 
         Valve_Switch.postUpdate(OFF)
@@ -81,7 +81,7 @@ val Procedures$Procedure0 onDepressureTimer = [
 val irrOnOffProc = [ 
     String onOff, String SCRIPT_DIR |
                  executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
-                 logInfo("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
+                 logDebug("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
 ]
 
 
@@ -106,14 +106,14 @@ rule "Manual irrigation"
             StatusText.postUpdate("Irrigation started")
         }
         case OFF: {
-          logInfo("Manual irrigation","irrigation OFF")
+          logDebug("Manual irrigation","irrigation OFF")
         }
         default: 
-          logInfo("T","Manual irrigation: received command neither ON nor OFF")
+          logDebug("T","Manual irrigation: received command neither ON nor OFF")
     }
 
-    logInfo("Manual irrigation","received command = "+receivedCommand+", cmd set to = "+cmd)
-    logInfo("Manual irrigation","irrigating state set to " + Irrigating.state.toString)
+    logDebug("Manual irrigation","received command = "+receivedCommand+", cmd set to = "+cmd)
+    logDebug("Manual irrigation","irrigating state set to " + Irrigating.state.toString)
 
     if(cmd !== null) 
     {
@@ -143,7 +143,7 @@ rule "Trigger water valve"
         }
         default: logError("water valve", "Do not know how to handle " + receivedCommand.toString)
     }
-    logInfo("Trigger water valve","state set to " + cmd)
+    logDebug("Trigger water valve","state set to " + cmd)
     logInfo("Trigger water valve","EXIT")
 end
 rule "Enable Lawn irrigation"
@@ -174,7 +174,7 @@ rule "Lawn irrigation"
     // switch  = ON AND (NOT raining OR IgnoreWeather = true)
     //val Boolean willDoLawn  = lawnIrrigatinMode && ((isRaining_out.state.toString == "0") || switchStateSetToIgnore)
     val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && doLawnDespiteRain.apply())
-    logInfo("Lawn irrigation","willDoLawn = {}", willDoLawn)
+    logDebug("Lawn irrigation","willDoLawn = {}", willDoLawn)
     StatusText.sendCommand("willDoLawn = "+willDoLawn)
     val interval = LawnIrrigationInterVal.state as Number
     if (willDoLawn) {
@@ -190,7 +190,7 @@ rule "Lawn irrigation"
         water_on_off.sendCommand("1")
         // start over 
         LawnIrrigationTimeLeft.sendCommand(interval-1) // for display
-        createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onDepressureTimer)
+        createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onValveTimer)
       }
     } else {
       LawnIrrigationTimeLeft.sendCommand(-1)
@@ -252,17 +252,17 @@ rule "Depressure"
     logInfo("Depressure","ENTRY LocalCurrentCloudiness = {}", cloudiness) 
     StatusText.sendCommand("Cloudiness = "+cloudiness)
     if (cloudiness >= 0.5) {
-      logInfo("Depressure","cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
-      logInfo("Depressure","LocalCurrentCloudiness = {}", cloudiness) 
+      logDebug("Depressure","cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
+      logDebug("Depressure","LocalCurrentCloudiness = {}", cloudiness) 
       StatusText.sendCommand("No hose depressurizing since cloudiness = "+cloudiness)
     } else {
-      logInfo("Depressure","cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
+      logDebug("Depressure","cloudiness = {}, i.e. < 50% -> start depressurizing", cloudiness) 
       StatusText.sendCommand("Depressurizing due to cloudiness = "+cloudiness)
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       Thread::sleep(2000)
       Valve_Switch.postUpdate(ON)
       water_on_off.sendCommand("1")
-      createTimer (now.plusSeconds(DEPRESSURE_TIME), onDepressureTimer)
+      createTimer (now.plusSeconds(DEPRESSURE_TIME), onValveTimer)
     }
 end
 
@@ -357,7 +357,7 @@ then
   LawnIrrigationInterVal.sendCommand(10)
   LawnIrrigationSwitch.postUpdate(OFF)
   LawnIrrigationSwitch.sendCommand(OFF)
-  logInfo("SysStart or InitSwitch","LawnIrrigationTimeLeft = {}", LawnIrrigationTimeLeft.state as Number)
+  logDebug("SysStart or InitSwitch","LawnIrrigationTimeLeft = {}", LawnIrrigationTimeLeft.state as Number)
   logInfo("SysStart or InitSwitch","EXIT")
 end 
 
@@ -370,7 +370,7 @@ when System shuts down
 
 then
     InitSwitch.sendCommand(ON)
-    logInfo("SysStop","system shutting down")
+    logDebug("SysStop","system shutting down")
 
 end
 
