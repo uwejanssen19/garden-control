@@ -25,6 +25,8 @@
 
 var DEPRESSURE_TIME = 5
 var LAWN_IRRIGATION_TIME = 60 // seconds
+var MANUAL_IRRIGATION_TIME = 600 // seconds
+//var MANUAL_IRRIGATION_TIME = 20 // for test
 var String SCRIPT_DIR="/home/pi/scripts/"
 
 
@@ -71,7 +73,22 @@ val Procedures$Procedure0 onValveTimer = [
         }
 
         Valve_Switch.postUpdate(OFF)
-        logInfo("Procedure DepressureTimer", "EXIT") 
+        logInfo("Procedure onValveTimer", "EXIT") 
+]
+
+// -----------------------------------------------------------------------------
+//  Timer onIrrigationTimer
+// -----------------------------------------------------------------------------
+
+val Procedures$Procedure0 onIrrigationTimer = [ 
+        logInfo("Procedure onIrrigationTimer", "ENTRY")
+        // turn irrigation off if time is due
+        irr_on_off.sendCommand("0")
+        Irr_Switch.postUpdate(OFF)
+        Irrigating.postUpdate(OFF)
+        GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+        GardencontrolPowerSupply.postUpdate(OFF) 
+        logInfo("Procedure onIrrigationTimer", "EXIT") 
 ]
 
 // -----------------------------------------------------------------------------
@@ -86,7 +103,7 @@ val irrOnOffProc = [
 
 
 // -----------------------------------------------------------------------------
-//  Manual irrigation
+//  Manual irrigation with timeout
 // -----------------------------------------------------------------------------
 
 rule "Manual irrigation"
@@ -95,7 +112,6 @@ rule "Manual irrigation"
 
     var String cmd = "0"
     Irrigating.postUpdate(OFF)
-    // var String text = "ignored manual irrigation command = "+receivedCommand+" beacause of the weather"
        
     switch (receivedCommand){
         case ON: {
@@ -104,6 +120,7 @@ rule "Manual irrigation"
             cmd = "1"
             Irrigating.postUpdate(ON)
             StatusText.postUpdate("Irrigation started")
+            createTimer(now.plusSeconds(MANUAL_IRRIGATION_TIME), onIrrigationTimer)
         }
         case OFF: {
           logDebug("Manual irrigation","irrigation OFF")
@@ -303,7 +320,8 @@ rule "daemon"
         if ((minute % 9) == 0 ) {
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
-          GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve     
+          GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
+          GardencontrolPowerSupply.postUpdate(OFF) 
           LawnIrrigationTimeLeft.sendCommand(-1)
         }
       }
