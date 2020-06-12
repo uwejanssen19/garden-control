@@ -178,7 +178,7 @@ rule "Lawn irrigation"
 // This is done by turning on tap water for a 8 minutes every hour, then turn off again 
 
   when 
-    Time cron "0 0/1 8-21 * 3-10 ?" //near future test
+    Time cron "0 0/1 8-20 * 3-10 ?" //near future test
     // Time cron "0 1/20 8-15 * 3-10 ?"  or
     // Time cron "0 1/10 16-22 * 3-10 ?" 
 
