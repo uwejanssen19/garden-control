@@ -85,7 +85,7 @@ val readLevel = [
   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
   Thread::sleep(2000)
   var level = executeCommandLine(SCRIPT_DIR+"Level.sh", 6000)
-  logInfo("", "readLevel() result = {}",level)
+  logDebug("", "readLevel() result = {}",level)
   if (powerOff) {
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
   }
@@ -105,7 +105,7 @@ rule "Update Water Level Switch"
 when 
   Item UpdateLevelSwitch received command
 then 
-  logInfo("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
+  logDebug("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   // just for test since we do not want to wait for some timer to occur
   if (receivedCommand == ON) {
     val willIrrigate = shallIrrigate.apply()
@@ -117,7 +117,7 @@ then
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     logDebug("", "WanAddress =  {} ",wanAddress)
   }
-  logInfo("", "Update Level Switch: EXIT")
+  logDebug("", "Update Level Switch: EXIT")
 end
 
 // -----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ rule "Fill barrel FNI"
 // fill up barrel except when raining or rain has been forecast
   when Item Fill_Switch received command
   then
-    logInfo("", "FILL barrel FNI: ENTRY received command = " + receivedCommand.toString)
+    logDebug("", "FILL barrel FNI: ENTRY received command = " + receivedCommand.toString)
     var String level = LEVEL_EMPTY
 
     switch(receivedCommand){
@@ -208,7 +208,7 @@ rule "Irrigation ON"
     // }
     var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
     // Irrigate except forecast tells otherwise
-    logInfo("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
@@ -246,13 +246,13 @@ rule "Irrigation OFF"
     Time cron "0 00 19 * 3,9,10 ? " or
     Time cron "0 00 20 * 4-8 ? " 
   then   
-    logInfo("", "Irrigation OFF: ENTRY, Cron event is due, stop irrigation")
+    logDebug("", "Irrigation OFF: ENTRY, Cron event is due, stop irrigation")
     Irr_Switch.postUpdate(OFF)
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     irr_on_off.sendCommand("0")
     Irrigating.postUpdate(OFF)
     sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
-    logInfo("", "Irrigation OFF: EXIT")
+    logDebug("", "Irrigation OFF: EXIT")
 end
 // -----------------------------------------------------------------------------
 //  WAN Address change
@@ -263,7 +263,7 @@ rule "WAN Address change"
     Item wanAddress changed 
   then 
     var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
-    logInfo("", "WAN Address change: "+linkText)
+    logDebug("", "WAN Address change: "+linkText)
     sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+linkText)
-    logInfo("", "WAN Address change: EXIT")
+    logDebug("", "WAN Address change: EXIT")
 end
