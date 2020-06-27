@@ -30,6 +30,7 @@ var MANUAL_IRRIGATION_TIME = 600 // seconds
 //var MANUAL_IRRIGATION_TIME = 20 // for test
 var String SCRIPT_DIR="/home/pi/scripts/"
 var Timer valveTimer = null
+var Timer irrTimer = null
 
 
 // -----------------------------------------------------------------------------
@@ -60,17 +61,18 @@ val Functions$Function0<Boolean> isLastLawnIrrigationCron = [
 //  Function doLawnDespiteRain
 // -----------------------------------------------------------------------------
 
-val Functions$Function0<Boolean> doLawnDespiteRain = [ 
-  // do the lawn when not raining OR ignore switch = ON
-
+val Functions$Function0<Boolean> shallDoLawnIrrigation = [ 
+  // do the lawn when not raining OR will not rain OR ignore switch = ON
   val isRaining = isRaining_out.state.toString
   val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)   
   val Boolean isNotRaining = (isRaining == "0")
-    
-  logDebug("doLawnDespiteRain::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
-  logDebug("doLawnDespiteRain:","isNotRaining = {} ",isNotRaining)
-  val Boolean retVal  =  (switchStateSetToIgnore || isNotRaining)
-  logDebug("doLawnDespiteRain:","return {}", retVal)
+  val Number RAIN_TRESHOLD = 3.0
+  val float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
+  val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)    
+  logDebug("shallDoLawnIrrigation::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+  logDebug("shallDoLawnIrrigation:","isNotRaining = {} ",isNotRaining)
+  val Boolean retVal = (isNotRaining && willNotRain ) || switchStateSetToIgnore
+  logDebug("shallDoLawnIrrigation:","return {}", retVal)
   return retVal
 ]
 // -----------------------------------------------------------------------------
@@ -89,7 +91,6 @@ val Procedures$Procedure0 onValveTimer = [
         }
 
         Valve_Switch.postUpdate(OFF)
-        StatusText.sendCommand("onValveTimer expired")
 
         logDebug("Procedure onValveTimer", "EXIT") 
 ]
@@ -138,9 +139,12 @@ rule "Manual irrigation"
             cmd = "1"
             Irrigating.postUpdate(ON)
             StatusText.postUpdate("Irrigation started")
-            createTimer(now.plusSeconds(MANUAL_IRRIGATION_TIME), onIrrigationTimer)
+            irrTimer = createTimer(now.plusSeconds(MANUAL_IRRIGATION_TIME), onIrrigationTimer)
         }
         case OFF: {
+          if (irrTimer !== null && !irrTimer.hasTerminated) {
+            irrTimer.cancel()
+          }
           logDebug("Manual irrigation","irrigation OFF")
         }
         default: 
@@ -216,7 +220,7 @@ rule "Lawn irrigation"
       IgnoreWeatherSwitch.postUpdate(OFF)
       GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     } else {
-      val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && doLawnDespiteRain.apply())
+      val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && shallDoLawnIrrigation.apply())
       logDebug("Lawn irrigation","willDoLawn = {}", willDoLawn)
       StatusText.sendCommand("willDoLawn = "+willDoLawn)
       val interval = LawnIrrigationInterVal.state as Number

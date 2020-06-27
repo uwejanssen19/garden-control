@@ -10,6 +10,7 @@ LOG_FILE=/tmp/waterOnOff.log
 CURRENT_WEATHER_RESPONSE=/tmp/weather.json
 MAX_READ_COUNT=4
 FORECAST=/tmp/forecast.json
+YESTERDAY=/tmp/yesterday.json
 OW_API='19617de07bcc959ff8dc5e0caffce590'
 
 function irrOnOff () {
@@ -122,4 +123,26 @@ function logp() {
 
 function getDate() {
   date +" %d.%m.%Y %H:%M:%S"
+}
+# get unix timestamp for now minus 24h
+function getYesterdaysTimeStamp() {
+  echo $(($(date +%s)-(3600*24)))
+  #echo $(($(date +%s)-(3600*72)))
+}
+
+function getYesterdaysWeather() {
+  yts=$(getYesterdaysTimeStamp)
+  date -d @$yts
+  wget "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=47.8449&lon=12.0667&dt=$yts&units=metric&appid=$OW_API" -O $YESTERDAY
+}
+function getRainYesterday () {
+  getYesterdaysWeather
+  #RAIN_SECTION_SAMPLE='"rain":{"1h":1.312},'
+  PREC=0;
+  # pretty format single line json to multi line output: python -mjson.tool <file>
+  # find the 'rain:' lines and calculate the sum
+  for line in $(python -mjson.tool $YESTERDAY | grep '1h":' | cut -d ':' -f 2 | tr -d ' ')
+    do PREC=$(python -c "print $PREC+$line")
+  done
+  echo $PREC
 }
