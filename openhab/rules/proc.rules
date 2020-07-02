@@ -16,6 +16,7 @@
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 val MAX_FILL_BARREL_TIME = 180
+var String linkText='IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://'+wanAddress.state.toString+':8066\nWeather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n'
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
@@ -115,6 +116,7 @@ then
     Level_out.postUpdate(level.toString)
     StatusText.sendCommand("level = "+level)
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
+    sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+linkText)
     logDebug("", "WanAddress =  {} ",wanAddress)
   }
   logDebug("", "Update Level Switch: EXIT")
@@ -206,7 +208,6 @@ rule "Irrigation ON"
     //      ) as Map<Boolean,String>
     //   )
     // }
-    var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
@@ -262,7 +263,6 @@ rule "WAN Address change"
   when
     Item wanAddress changed 
   then 
-    var String linkText="IP = http://"+wanAddress.state.toString+":8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://"+wanAddress.state.toString+":8066\n"
     logDebug("", "WAN Address change: "+linkText)
     sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+linkText)
     logDebug("", "WAN Address change: EXIT")
