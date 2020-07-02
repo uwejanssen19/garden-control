@@ -1,0 +1,12 @@
+// Steckdose mit Versorgung für Pumpe und Ventil
+Thing mqtt:topic:myUnsecureBroker:powerSupply (mqtt:broker:myUnsecureBroker) {
+Channels:
+        Type switch : PowerSupply "PowerSupply" [ stateTopic="stat/PowersupplyGardenControl/POWER", commandTopic="cmnd/PowersupplyGardenControl/POWER", allowedStates="ON,OFF" ]
+}
+Thing mqtt:topic:myUnsecureBroker:bme_thing (mqtt:broker:myUnsecureBroker) {
+//ESP8266 Messtation fuer Temperatur, Feuchtigkeit, Druck
+Channels:
+         Type string : bme_temp_channel "bme_temperature_channel" [ stateTopic="Uwe8266/bme/temp" ]
+         Type string : bme_hum_channel "bme_humidity_temp_channel" [ stateTopic="Uwe8266/bme/hum" ]
+         Type string : bme_pressure_channel "bme_pressure_channel" [ stateTopic="Uwe8266/bme/press" ]
+}

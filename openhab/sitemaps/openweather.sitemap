@@ -25,18 +25,25 @@ sitemap openweather label="OpenWeather Overview" {
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
  
     }
+    Frame label="Current local weather from Uwes Weather Device" {
+        Default item=Temperature_8266 label="Temperatur von 8266 [%s °C]"
+        Default item=Humidity_8266 label="Feuchtigkeit von 8266  [%s %%]"
+        Default item=Pressure_8266 label="Druck von 8266  [%s mbar]"
+    }
 
-    Frame label="Current local weather" {
+    Frame label="Current local weather from OWM" {
         Text item=LocalLastMeasurement
         // Text item=LocalCurrentCondition
         // Image item=LocalCurrentConditionIcon
         Text item=LocalCurrentTemperature
         Text item=LocalCurrentPressure
         Text item=LocalCurrentHumidity
+
         Text item=LocalCurrentWindSpeed
         Text item=LocalCurrentWindDirection
         Text item=LocalCurrentCloudiness
         Text item=LocalCurrentRainVolume
         Text item=LocalCurrentSnowVolume
     }
+
 }

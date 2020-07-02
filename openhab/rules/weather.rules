@@ -81,7 +81,7 @@ val Functions$Function0<Boolean> shallDoLawnIrrigation = [
 
 val Procedures$Procedure0 onValveTimer = [ 
         val irrigating = (Irrigating.state == ON)
-        logInfo("Procedure onValveTimer", "ENTRY")
+        logDebug("Procedure onValveTimer", "ENTRY")
         water_on_off.sendCommand("0")
         if (!irrigating) {
           logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", turn power OFF")
@@ -379,17 +379,17 @@ rule  "Test Mode Switch handling"
 // -----------------------------------------------------------------------------
 rule "SysStart"
 when 
-  System started                 or
+  System started or
   Item InitSwitch changed to ON
 then 
   logInfo("SysStart or InitSwitch","ENTRY")
   // turn off hardware
+  StatusText.sendCommand("System starting")
   GardencontrolPowerSupply.sendCommand(OFF)
   irrOnOffProc?.apply("0", SCRIPT_DIR)
   water_on_off.sendCommand("0")
   // reset graphical objects
   InitSwitch.sendCommand(OFF)
-  Irr_Switch.sendCommand(OFF)
   Valve_Switch.sendCommand(OFF)
   Fill_Switch.sendCommand(OFF)
   FillTimerActive.sendCommand(OFF) 
@@ -397,7 +397,6 @@ then
   Display_level_out.sendCommand(0)
   UpdateLevelSwitch.sendCommand(OFF)
   UpdateLevelSwitch.sendCommand(ON)
-  StatusText.sendCommand("System started")
 
   Level_out.sendCommand("0")
   // make all fields visible
@@ -410,7 +409,9 @@ then
   LawnIrrigationSwitch.postUpdate(OFF)
   LawnIrrigationSwitch.sendCommand(OFF)
   IgnoreWeatherSwitch.sendCommand(OFF)
-  logDebug("SysStart or InitSwitch","LawnIrrigationTimeLeft = {}", LawnIrrigationTimeLeft.state as Number)
+  Irr_Switch.sendCommand(OFF)
+  Irr_Switch.postUpdate(OFF)
+  StatusText.sendCommand("System started")
   logInfo("SysStart or InitSwitch","EXIT")
 end 
 
