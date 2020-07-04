@@ -28,7 +28,7 @@ sitemap openweather label="OpenWeather Overview" {
     Frame label="Current local weather from Uwes Weather Device" {
         Default item=Temperature_8266 label="Temperatur von 8266 [%s °C]"
         Default item=Humidity_8266 label="Feuchtigkeit von 8266  [%s %%]"
-        Default item=Pressure_8266 label="Druck von 8266  [%s mbar]"
+        Default item=Pressure_8266 label="Druck von 8266  [%s hPa]"
     }
 
     Frame label="Current local weather from OWM" {
