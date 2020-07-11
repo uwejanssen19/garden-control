@@ -16,7 +16,13 @@
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 val MAX_FILL_BARREL_TIME = 180
-var String linkText='IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\nSONOFF Link = http://'+wanAddress.state.toString+':8066\nWeather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n'
+var String linkText='
+IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
+SONOFF Link = http://'+wanAddress.state.toString+':8066\n
+Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
+UweRainSensor = http://'+wanAddress.state.toString+':8062\n
+Uwe8266 = http://'+wanAddress.state.toString+':8071\n\n
+'
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
