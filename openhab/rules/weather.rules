@@ -208,7 +208,7 @@ rule "Lawn irrigation"
     //Time cron "0 0/1 22 * 3-10 ?"  // TEST
     Time cron "0 0/1 8-20 * 3-10 ?"  // check every minute
   then
-    logInfo("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
+    logDebug("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
     if (isLastLawnIrrigationCron.apply()) {
       StatusText.sendCommand("LAST lawn irrigation cron executed")
       // turn OFF everything
@@ -243,7 +243,7 @@ rule "Lawn irrigation"
         LawnIrrigationTimeLeft.sendCommand(-1)
       }
     } // last cron ?
-    logInfo("Lawn irrigation","EXIT") 
+    logDebug("Lawn irrigation","EXIT") 
    end
 
 rule "Time Interval Changed" 
