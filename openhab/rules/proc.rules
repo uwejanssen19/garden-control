@@ -16,18 +16,32 @@
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 val MAX_FILL_BARREL_TIME = 180
-var String linkText='
-IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
-SONOFF Link = http://'+wanAddress.state.toString+':8066\n
-Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
-UweRainSensor = http://'+wanAddress.state.toString+':8062\n
-Uwe8266 = http://'+wanAddress.state.toString+':8071\n\n
-'
+val String RAIN_SENSOR_HTTP_PORT = 8062
+val String MCU_8266_HTTP_PORT = 8071
+val String SONOFF_HTTP_PORT = 8066
+val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
+val String GARDEN_CONTROL_SUFFIX = 'garden_control'
+val String OPEN_WEATHER_SUFFIX = 'open_weather'
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
 // -----------------------------------------------------------------------------
 
+
+// -----------------------------------------------------------------------------
+//  Function getEmailText
+// -----------------------------------------------------------------------------
+val Functions$Function0<String> getEmailText = [
+  logInfo("getEmailText::","WAN ADDRESS = {} ",wanAddress)
+
+  val String emailText='
+    IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
+    SONOFF Link = http://'+wanAddress.state.toString+':8066\n
+    Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
+    UweRainSensor = http://'+wanAddress.state.toString+':8062\n
+    Uwe8266 = http://'+wanAddress.state.toString+':8071\n\n'
+  return emailText
+]
 // -----------------------------------------------------------------------------
 //  Function shallIrrigate
 // -----------------------------------------------------------------------------
@@ -122,7 +136,7 @@ then
     Level_out.postUpdate(level.toString)
     StatusText.sendCommand("level = "+level)
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
-    sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+linkText)
+    sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+getEmailText.apply())
     logDebug("", "WanAddress =  {} ",wanAddress)
   }
   logDebug("", "Update Level Switch: EXIT")
@@ -228,7 +242,7 @@ rule "Irrigation ON"
       logDebug("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
       sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
-      "Bewaesserung findet statt.\n"+linkText+"Wasserstand: "+Level_out.state.toString)
+      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString)
     } else {
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
@@ -236,7 +250,7 @@ rule "Irrigation ON"
       logDebug("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
-      "Bewaesserung.             \n"+linkText+"KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
+      "Bewaesserung.             \n"+getEmailText.apply()+"KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
     }
 end
 
@@ -269,7 +283,7 @@ rule "WAN Address change"
   when
     Item wanAddress changed 
   then 
-    logDebug("", "WAN Address change: "+linkText)
+    logDebug("", "WAN Address change: "+getEmailText.apply())
     sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+linkText)
     logDebug("", "WAN Address change: EXIT")
 end
