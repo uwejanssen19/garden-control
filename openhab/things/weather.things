@@ -18,5 +18,5 @@ Bridge mqtt:broker:myUnsecureBroker [ host="localhost", username="pi", password=
 
 
 //Thing exec:command:getwan [command="/home/pi/scripts/get1Random.sh", transform="REGEX((.*?))", interval=0, autorun=true ]
-Thing exec:command:getwan [command="/home/pi/scripts/getwan.sh", interval=3600, autorun=true ]
+Thing exec:command:getwan [command="/home/pi/scripts/getwan.sh", interval=0, autorun=true ]
 

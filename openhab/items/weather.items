@@ -32,6 +32,7 @@ Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mq
 String Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_temp_channel" }
 String Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_hum_channel" }
 String Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
+String Vcc_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
 
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 

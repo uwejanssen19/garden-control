@@ -9,4 +9,5 @@ Channels:
          Type string : bme_temp_channel "bme_temperature_channel" [ stateTopic="Uwe8266/bme/temp" ]
          Type string : bme_hum_channel "bme_humidity_temp_channel" [ stateTopic="Uwe8266/bme/hum" ]
          Type string : bme_pressure_channel "bme_pressure_channel" [ stateTopic="Uwe8266/bme/press" ]
+         Type string : vcc_channel "vcc_channel" [ stateTopic="Uwe8266/a0/a0" ]
 }

@@ -29,6 +29,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Temperature_8266 label="Temperatur von 8266 [%s °C]"
         Default item=Humidity_8266 label="Feuchtigkeit von 8266  [%s %%]"
         Default item=Pressure_8266 label="Druck von 8266  [%s hPa]"
+        Default item=Vcc_8266 label="VCC von 8266  [%s Volt]"
     }
 
     Frame label="Current local weather from OWM" {
