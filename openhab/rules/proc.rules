@@ -284,6 +284,6 @@ rule "WAN Address change"
     Item wanAddress changed 
   then 
     logDebug("", "WAN Address change: "+getEmailText.apply())
-    sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+linkText)
+    sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+getEmailText.apply())
     logDebug("", "WAN Address change: EXIT")
 end

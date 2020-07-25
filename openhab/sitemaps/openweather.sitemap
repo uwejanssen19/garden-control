@@ -30,6 +30,8 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Humidity_8266 label="Feuchtigkeit von 8266  [%s %%]"
         Default item=Pressure_8266 label="Druck von 8266  [%s hPa]"
         Default item=Vcc_8266 label="VCC von 8266  [%s Volt]"
+        Default item=Time_RainSensor label="Letzte Meldung vom Regensensor um: [%s]"
+        
     }
 
     Frame label="Current local weather from OWM" {
