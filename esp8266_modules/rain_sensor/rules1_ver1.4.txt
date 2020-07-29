@@ -1,0 +1,39 @@
+On system#boot do
+  timerset,1,10 // time
+  gpio,2,0
+  timerset,3,5 // handle boot time
+endon
+
+On rules#timer=1 do
+  timerset,1,60
+  Publish %sysname%/time/value,%systime%
+endon
+
+on rules#timer=3 do
+  if [MQTT#connected]=1
+    // disable deep sleep
+    publish sleepMode,0
+    publish %sysname%/status,'Woke up from deep sleep'
+  else 
+    timerset,3,5 // wait another 5 secs'
+  endif
+endon
+
+On rainSensorMqttListener#sleepMode=1 do
+  publish %sysname%/status,'sleepMode ACTIVE, please wait 1h  til wakeup'
+  gpio,2,1
+  delay,1000
+  pulse,2,0,200
+  timerset,2,1
+endon
+
+// somebody disabled sleep
+On rainSensorMqttListener#sleepMode=0 do
+  gpio,2,0
+  publish %sysname%/status,'sleepMode OFF'
+endon
+
+On rules#timer=2 do
+  publish %sysname%/status,'Entering deep sleep'
+  deepsleep,36
+endon

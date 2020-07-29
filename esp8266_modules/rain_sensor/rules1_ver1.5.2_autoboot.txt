@@ -1,0 +1,44 @@
+On system#boot do
+  timerset,1,60 // time
+endon
+
+On rules#timer=1 do
+  timerset,1,60
+  Publish %sysname%/time/value,%systime%
+endon
+
+On MQTT#connected do
+    publish %sysname%/status,"%sysname% connected"
+    Publish %sysname%/time/value,%systime%
+    publish %sysname%/bmp085/press,[bmp085#press]
+    publish %sysname%/bmp085/temp,[bmp085#temp]
+    // wait 10 secs to give chance to disable sleep mode
+    delay,10000
+    // enter sleep mode
+    timerset,2,1
+endon
+
+On rainSensorMqttListener#sleepMode=1 do
+  publish %sysname%/status,'sleepMode ACTIVE, please wait 1h  til wakeup'
+  gpio,2,1
+  delay,1000
+  pulse,2,0,200
+  timerset,2,1
+endon
+
+// somebody disabled sleep
+On rainSensorMqttListener#sleepMode=0 do
+  timerset,2,0
+  gpio,2,0
+  publish %sysname%/status,'sleepMode OFF'
+endon
+
+On rules#timer=2 do
+  publish %sysname%/status,'Entering deep sleep'
+  deepsleep,1800
+endon
+
+on Clock#Time=All,05:52 do 
+  // restart because living room access point restarts at 05:39 a.m.
+  reboot
+endon

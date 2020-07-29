@@ -1,0 +1,4 @@
+on Clock#Time=All,05:52 do 
+  // restart because living room access point restarts at 05:39 a.m.
+  reboot
+endon

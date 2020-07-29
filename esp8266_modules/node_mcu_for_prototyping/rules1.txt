@@ -1,0 +1,13 @@
+On System#Boot do    //When the ESP boots, do
+  GPIO,2,0 //  Turn on LED  blue
+   timerSet,1,10     //Set Timer 1 for the next event in 10 seconds
+ endon
+
+On Rules#Timer=1 do  
+  if [E1SW#switch]=1
+    GPIO,2,0 // turn led on
+  else
+    GPIO,2,1 // turn led off
+  endif
+  timerSet,1,60  // wait 30 secs
+endon
