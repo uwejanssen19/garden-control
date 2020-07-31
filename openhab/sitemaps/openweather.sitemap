@@ -25,20 +25,24 @@ sitemap openweather label="OpenWeather Overview" {
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
  
     }
-    Frame label="Current local weather from Uwes Weather Device" {
+    Frame label="Aktuelle Werte von Solar Modul" {
+        Default item=Time_RainSensor label="Letzte Meldung vom Regensensor um: [%s]"
+        Default item=Vcc_RainSensor label="Regensensor Batterie [%s]"        
+        Default item=Temp_RainSensor label="Regensensor Temperatur [%s °C]"        
+    }
+
+    Frame label="Data from Prototype" {
+        Default item=Vcc_8266 label="VCC von 8266  [%s Volt]"
         Default item=Temperature_8266 label="Temperatur von 8266 [%s °C]"
         Default item=Humidity_8266 label="Feuchtigkeit von 8266  [%s %%]"
         Default item=Pressure_8266 label="Druck von 8266  [%s hPa]"
-        Default item=Vcc_8266 label="VCC von 8266  [%s Volt]"
-        Default item=Time_RainSensor label="Letzte Meldung vom Regensensor um: [%s]"
-        Default item=Vcc_RainSensor label="Regensensor Batterie = [%s]"        
     }
 
     Frame label="Current local weather from OWM" {
         Text item=LocalLastMeasurement
         // Text item=LocalCurrentCondition
         // Image item=LocalCurrentConditionIcon
-        Text item=LocalCurrentTemperature
+        //Text item=LocalCurrentTemperature
         Text item=LocalCurrentPressure
         Text item=LocalCurrentHumidity
 
@@ -46,7 +50,7 @@ sitemap openweather label="OpenWeather Overview" {
         Text item=LocalCurrentWindDirection
         Text item=LocalCurrentCloudiness
         Text item=LocalCurrentRainVolume
-        Text item=LocalCurrentSnowVolume
+//        Text item=LocalCurrentSnowVolume
     }
 
 }
