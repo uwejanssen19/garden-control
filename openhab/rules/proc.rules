@@ -283,9 +283,9 @@ rule "WAN Address change"
   when
     Item wanAddress changed 
   then 
-    logDebug("", "WAN Address change: "+getEmailText.apply())
+    //logDebug("", "WAN Address change: "+getEmailText.apply())
     sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+getEmailText.apply())
-    logDebug("", "WAN Address change: EXIT")
+    //logDebug("", "WAN Address change: EXIT")
 end
 // -----------------------------------------------------------------------------
 //  Battery level change
@@ -295,7 +295,7 @@ rule "Battery level change"
   when
     Item Vcc_RainSensor changed 
   then 
-    logDebug("", "Battery level change: "+getEmailText.apply())
+    //logDebug("", "Battery level change: "+getEmailText.apply())
     sendMail("uwe@janssen-muenchen.de","Battery level change", "New links available:\n"+getEmailText.apply()+"\nVoltage = "+Vcc_RainSensor.state.toString)
-    logDebug("", "Battery level change: EXIT")
+    //logDebug("", "Battery level change: EXIT")
 end
