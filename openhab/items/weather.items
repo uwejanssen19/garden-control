@@ -33,9 +33,14 @@ String Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme
 String Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_hum_channel" }
 String Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
 String Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
+
 String Time_RainSensor <time> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_time_channel" }
 String Vcc_RainSensor <battery> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_vcc_channel" }
 String Temp_RainSensor <temperature> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_bmp_temp_channel" }
+
+String Time_Solar2 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:time_channel" }
+String Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
+String Status_Solar2 { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:status_channel" }
 
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 

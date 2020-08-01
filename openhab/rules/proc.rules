@@ -283,9 +283,9 @@ rule "WAN Address change"
   when
     Item wanAddress changed 
   then 
-    //logDebug("", "WAN Address change: "+getEmailText.apply())
+    logInfo("", "WAN Address change: "+getEmailText.apply())
     sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+getEmailText.apply())
-    //logDebug("", "WAN Address change: EXIT")
+    logInfo("", "WAN Address change: EXIT")
 end
 // -----------------------------------------------------------------------------
 //  Battery level change

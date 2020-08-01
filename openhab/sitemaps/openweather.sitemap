@@ -38,6 +38,12 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Pressure_8266 label="Druck von 8266  [%s hPa]"
     }
 
+    Frame label="Aktuelle Werte von Solar Modul 2 ( Tonne )" {
+        Default item=Time_Solar2 label="Letzte Meldung vom Regensensor um: [%s]"
+        Default item=Vcc_Solar2 label="Batterie [%s]"        
+        Default item=Status_Solar2 label="Status [%s]"        
+    }
+
     Frame label="Current local weather from OWM" {
         Text item=LocalLastMeasurement
         // Text item=LocalCurrentCondition

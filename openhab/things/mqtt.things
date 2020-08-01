@@ -18,3 +18,10 @@ Channels:
          Type string : rain_sensor_vcc_channel "vcc_rain_sensor_channel" [ stateTopic="UweRainSensor/a0/a0" ]
          Type string : rain_sensor_bmp_temp_channel "rain_sensor_bmp_temp_channel" [ stateTopic="UweRainSensor/bmp085/temp" ]
 }
+Thing mqtt:topic:myUnsecureBroker:solar_module2_thing (mqtt:broker:myUnsecureBroker) {
+//ESP8266 Outdoor Solar Messtation
+Channels:
+         Type string : time_channel "time_channel" [ stateTopic="UweSolar2/time/value" ]
+         Type string : vcc_channel "vcc_channel" [ stateTopic="UweSolar2/a0/a0" ]
+         Type string : status_channel "status_channel" [ stateTopic="UweSolar2/status" ]
+}
