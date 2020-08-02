@@ -24,4 +24,5 @@ Channels:
          Type string : time_channel "time_channel" [ stateTopic="UweSolar2/time/value" ]
          Type string : vcc_channel "vcc_channel" [ stateTopic="UweSolar2/a0/a0" ]
          Type string : status_channel "status_channel" [ stateTopic="UweSolar2/status" ]
+         Type string : temp_channel "temp_channel" [ stateTopic="UweSolar2/dht/temp" ]
 }

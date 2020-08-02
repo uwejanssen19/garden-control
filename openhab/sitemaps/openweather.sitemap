@@ -25,23 +25,24 @@ sitemap openweather label="OpenWeather Overview" {
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
  
     }
-    Frame label="Aktuelle Werte von Solar Modul" {
+    Frame label="Aktuelle Werte von Solar Modul ( Gartenhaus )" {
         Default item=Time_RainSensor label="Letzte Meldung vom Regensensor um: [%s]"
         Default item=Vcc_RainSensor label="Regensensor Batterie [%s]"        
         Default item=Temp_RainSensor label="Regensensor Temperatur [%s °C]"        
     }
 
-    Frame label="Data from Prototype" {
+    Frame label="Aktuelle Werte von Solar Modul 2 ( Carport Westseite )" {
+        Default item=Time_Solar2 label="Letzte Meldung vom Regensensor um: [%s]"
+        Default item=Vcc_Solar2 label="Batterie [%s]"        
+        Default item=Status_Solar2 label="Letzter Status [%s]"        
+        Default item=Temp_Solar2 label="Temperatur [%s °C]"        
+    }
+
+    Frame label="Daten vom Prototyp NodeMCU" {
         Default item=Vcc_8266 label="VCC von 8266  [%s Volt]"
         Default item=Temperature_8266 label="Temperatur von 8266 [%s °C]"
         Default item=Humidity_8266 label="Feuchtigkeit von 8266  [%s %%]"
         Default item=Pressure_8266 label="Druck von 8266  [%s hPa]"
-    }
-
-    Frame label="Aktuelle Werte von Solar Modul 2 ( Tonne )" {
-        Default item=Time_Solar2 label="Letzte Meldung vom Regensensor um: [%s]"
-        Default item=Vcc_Solar2 label="Batterie [%s]"        
-        Default item=Status_Solar2 label="Status [%s]"        
     }
 
     Frame label="Current local weather from OWM" {
