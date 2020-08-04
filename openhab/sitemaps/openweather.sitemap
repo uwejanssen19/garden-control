@@ -29,6 +29,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Time_RainSensor label="Letzte Meldung vom Regensensor um: [%s]"
         Default item=Vcc_RainSensor label="Regensensor Batterie [%s]"        
         Default item=Temp_RainSensor label="Regensensor Temperatur [%s °C]"        
+        Default item=Status_RainSensor label="Letzter Status [%s]"        
     }
 
     Frame label="Aktuelle Werte von Solar Modul 2 ( Carport Westseite )" {

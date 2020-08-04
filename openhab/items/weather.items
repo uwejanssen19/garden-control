@@ -37,6 +37,7 @@ String Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_c
 String Time_RainSensor <time> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_time_channel" }
 String Vcc_RainSensor <battery> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_vcc_channel" }
 String Temp_RainSensor <temperature> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_bmp_temp_channel" }
+String Status_RainSensor { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:status_channel" }
 
 String Time_Solar2 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:time_channel" }
 String Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
