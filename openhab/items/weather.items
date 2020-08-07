@@ -29,20 +29,21 @@ Switch LawnIrrigationSwitch
 Switch InitSwitch {expire="60s,OFF"} // only for test of the 'system started' rule 
 Switch TestModeSwitch // expert mode, makes diagnostic switches and fields visible
 Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mqtt:topic:myUnsecureBroker:powerSupply:PowerSupply" }
-String Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_temp_channel" }
-String Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_hum_channel" }
-String Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
-String Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
+
+Number Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_temp_channel" }
+Number Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_hum_channel" }
+Number Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
+Number Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
 
 String Time_RainSensor <time> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_time_channel" }
-String Vcc_RainSensor <battery> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_vcc_channel" }
-String Temp_RainSensor <temperature> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_bmp_temp_channel" }
+Number Vcc_RainSensor <battery> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_vcc_channel" }
+Number Temp_RainSensor <temperature> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_bmp_temp_channel" }
 String Status_RainSensor { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:status_channel" }
 
 String Time_Solar2 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:time_channel" }
-String Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
+Number Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
 String Status_Solar2 { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:status_channel" }
-String Temp_Solar2 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:temp_channel" }
+Number Temp_Solar2 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:temp_channel" }
 
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 

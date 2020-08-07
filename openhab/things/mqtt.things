@@ -6,24 +6,24 @@ Channels:
 Thing mqtt:topic:myUnsecureBroker:bme_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Messtation fuer Temperatur, Feuchtigkeit, Druck
 Channels:
-         Type string : bme_temp_channel "bme_temperature_channel" [ stateTopic="Uwe8266/bme/temp" ]
-         Type string : bme_hum_channel "bme_humidity_temp_channel" [ stateTopic="Uwe8266/bme/hum" ]
-         Type string : bme_pressure_channel "bme_pressure_channel" [ stateTopic="Uwe8266/bme/press" ]
-         Type string : vcc_channel "vcc_channel" [ stateTopic="Uwe8266/a0/a0" ]
+         Type number : bme_temp_channel "bme_temperature_channel" [ stateTopic="Uwe8266/bme/temp" ]
+         Type number : bme_hum_channel "bme_humidity_temp_channel" [ stateTopic="Uwe8266/bme/hum" ]
+         Type number : bme_pressure_channel "bme_pressure_channel" [ stateTopic="Uwe8266/bme/press" ]
+         Type number : vcc_channel "vcc_channel" [ stateTopic="Uwe8266/a0/a0" ]
 }
 Thing mqtt:topic:myUnsecureBroker:rain_sensor_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Outdoor Solar Messtation
 Channels:
          Type string : rain_sensor_time_channel "time_channel" [ stateTopic="UweRainSensor/time/value" ]
-         Type string : rain_sensor_vcc_channel "vcc_rain_sensor_channel" [ stateTopic="UweRainSensor/a0/a0" ]
-         Type string : rain_sensor_bmp_temp_channel "rain_sensor_bmp_temp_channel" [ stateTopic="UweRainSensor/bmp085/temp" ]
+         Type number : rain_sensor_vcc_channel "vcc_rain_sensor_channel" [ stateTopic="UweRainSensor/a0/a0" ]
+         Type number : rain_sensor_bmp_temp_channel "rain_sensor_bmp_temp_channel" [ stateTopic="UweRainSensor/bmp085/temp" ]
          Type string : status_channel "status_channel" [ stateTopic="UweRainSensor/status" ]
 }
 Thing mqtt:topic:myUnsecureBroker:solar_module2_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Outdoor Solar Messtation
 Channels:
          Type string : time_channel "time_channel" [ stateTopic="UweSolar2/time/value" ]
-         Type string : vcc_channel "vcc_channel" [ stateTopic="UweSolar2/a0/a0" ]
+         Type number : vcc_channel "vcc_channel" [ stateTopic="UweSolar2/a0/a0" ]
          Type string : status_channel "status_channel" [ stateTopic="UweSolar2/status" ]
-         Type string : temp_channel "temp_channel" [ stateTopic="UweSolar2/dht/temp" ]
+         Type number : temp_channel "temp_channel" [ stateTopic="UweSolar2/dht/temp" ]
 }

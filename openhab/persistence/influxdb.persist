@@ -1,0 +1,23 @@
+Strategies {
+    everyMinute : "0 * * * * ?"
+    everyHour : "0 0 * * * ?"
+    everyDay : "0 0 0 * * ?"
+    everyHalfHour : "0 0/30 * * * ?"  // check every half hour
+    default = everyChange
+}
+
+Items {
+    // Node MCU
+    Temperature_8266 : strategy =  everyMinute
+    Humidity_8266 : strategy =  everyMinute
+    Pressure_8266 : strategy =  everyMinute
+    Vcc_8266 : strategy =  everyHalfHour
+
+    // Solarmodul Gartenhaus
+    Temp_RainSensor : strategy =  everyHalfHour
+    Vcc_RainSensor : strategy =  everyHalfHour
+    // Solarmodul Carport
+    Vcc_Solar2 : strategy =  everyHalfHour
+    Temp_Solar2 : strategy =  everyHalfHour
+
+}
