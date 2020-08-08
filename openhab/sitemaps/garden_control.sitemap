@@ -8,13 +8,14 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
             Text item=willRain_out label="Wird es regnen? [MAP(yesNo.map):%s]"
             Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel (Liter in 12h) ?"
             Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
+            Text item=RainAverage label="Regendurchschnitt von gestern [%s Liter]"
+            Text item=TempAverage label="Temperaturdurchschnitt von gestern [%s °C]"
         }
         
         Frame label="Wasserstand" {
             Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern"
             Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
             Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
-
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {

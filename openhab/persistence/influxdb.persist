@@ -19,5 +19,5 @@ Items {
     // Solarmodul Carport
     Vcc_Solar2 : strategy =  everyHalfHour
     Temp_Solar2 : strategy =  everyHalfHour
-
+    LocalCurrentRainVolume : strategy = everyHour
 }

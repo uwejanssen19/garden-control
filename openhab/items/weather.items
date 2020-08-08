@@ -1,7 +1,7 @@
  
 String temperature_out <temperature> { channel="exec:command:weatherstation_temperature:output" }
 String willRain_out <rain> { channel="exec:command:weatherstation_willRain:output" }
-String precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
+Number precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
 String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
 //String Level_from_periodic_script { channel="exec:command:weatherstation_waterlevel:output", autorun="false" } // set by thing's exec script
 String wanAddress "Wan Address = [%s]" <settings> { channel="exec:command:getwan:output" } // set by thing's exec script
@@ -52,4 +52,6 @@ Number LawnIrrigationTimeLeft
 Number LawnIrrigationInterVal
 // not displayed - for internal use only 
 Number LawnIrrigationCounter
+Number RainAverage
+Number TempAverage
 // END

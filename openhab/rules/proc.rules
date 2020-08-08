@@ -16,9 +16,10 @@
 val String LEVEL_EMPTY = "1"
 val String SCRIPT_DIR="/home/pi/scripts/"
 val MAX_FILL_BARREL_TIME = 180
-val String RAIN_SENSOR_HTTP_PORT = 8062
-val String MCU_8266_HTTP_PORT = 8071
-val String SONOFF_HTTP_PORT = 8066
+val Number RAIN_SENSOR_HTTP_PORT = 8062
+val Number MCU_8266_HTTP_PORT = 8071
+val Number SONOFF_HTTP_PORT = 8066
+val Number GRAFANA_PORT = 8030
 val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
 val String GARDEN_CONTROL_SUFFIX = 'garden_control'
 val String OPEN_WEATHER_SUFFIX = 'open_weather'
@@ -39,6 +40,7 @@ val Functions$Function0<String> getEmailText = [
     SONOFF Link = http://'+wanAddress.state.toString+':8066\n
     Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
     UweRainSensor = http://'+wanAddress.state.toString+':8062\n
+    Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/_2JkdIZgk/gartenhaus?orgId=1\n
     Uwe8266 = http://'+wanAddress.state.toString+':8071\n\n'
   return emailText
 ]
@@ -65,6 +67,11 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
 //  val Boolean isNotRaining = (currentRainVal == 0.0)    
   val Boolean isNotRaining = (isRaining == "0")
+
+  // val float lastRain =  (precipitation_out?.state as DecimalType).floatValue
+  // RainAverage.sendCommand(.averageSince(now.minusDays(1)))
+  // val Boolean rainedAlready =  (RainAverage.state > RAIN_TRESHOLD)
+
   val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain)
     
   logDebug("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
@@ -136,6 +143,8 @@ then
     Level_out.postUpdate(level.toString)
     StatusText.sendCommand("level = "+level)
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
+    RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
+    TempAverage.postUpdate(Temp_RainSensor.averageSince(now.minusDays(1)).toString)
     sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+getEmailText.apply())
     logDebug("", "WanAddress =  {} ",wanAddress)
   }
@@ -298,4 +307,17 @@ end
 //     //logDebug("", "Battery level change: "+getEmailText.apply())
 //     sendMail("uwe@janssen-muenchen.de","Battery level change", "New links available:\n"+getEmailText.apply()+"\nVoltage = "+Vcc_RainSensor.state.toString)
 //     //logDebug("", "Battery level change: EXIT")
+// end
+
+// -----------------------------------------------------------------------------
+//  Temp 8266 change for test of historical data
+// -----------------------------------------------------------------------------
+
+// rule "Temp 8266 change"
+//   when
+//     Item Temperature_8266 changed 
+//   then 
+//     logDebug("", "Temp_8266 level change: "+getEmailText.apply())
+//     sendMail("uwe@janssen-muenchen.de","Temp_8266 level change", "New links available:\n"+getEmailText.apply()+"\nTemp_8266 = "+Temperature_8266.state.toString)
+//     logDebug("", "Temp_8266 level change: EXIT")
 // end
