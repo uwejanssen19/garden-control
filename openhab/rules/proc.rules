@@ -50,35 +50,29 @@ val Functions$Function0<String> getEmailText = [
 
 val Functions$Function0<Boolean> shallIrrigate = [ 
   // if switch is = ON OR either not raining or coming rain less than defined amount
-  logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
-  logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
+  // logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
+  // logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
   val isRaining = isRaining_out.state.toString
-  logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
-  //val currentRainVal = (LocalCurrentRainVolume?.state as DecimalType).floatValue
-  // logDebug("shallIrrigate::","currentRainVal = {}", currentRainVal)
+  // logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
   var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
-  // logDebug("shallIrrigate::","comingRainVal = {}", comingRainVal)
 
   val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     
   val Number RAIN_TRESHOLD = 3.0
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
-//  val Boolean isNotRaining = (currentRainVal == 0.0)    
   val Boolean isNotRaining = (isRaining == "0")
 
-  // val float lastRain =  (precipitation_out?.state as DecimalType).floatValue
-  // RainAverage.sendCommand(.averageSince(now.minusDays(1)))
-  // val Boolean rainedAlready =  (RainAverage.state > RAIN_TRESHOLD)
+  val float rainAv = (RainAverage?.state as DecimalType).floatValue
+  val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
+  logInfo("shallIrrigate::","RainAverage < {} ", RAIN_TRESHOLD)
 
-  val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain)
+  val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain)
     
-  logDebug("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
-  // logDebug("shallIrrigate::","comingRainVal = {} ",comingRainVal)
-  // logDebug("shallIrrigate::","willNotRain = {} ",willNotRain)
-  logDebug("shallIrrigate:","isNotRaining = {} ",isNotRaining)
-  logDebug("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
+  // logDebug("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+  // logDebug("shallIrrigate:","isNotRaining = {} ",isNotRaining)
+  // logDebug("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
     
   if (switchStateSetToIgnore || weatherSuitableForIrrigating) {
     logDebug("shallIrrigate:","return true")
@@ -144,7 +138,15 @@ then
     StatusText.sendCommand("level = "+level)
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
-    TempAverage.postUpdate(Temp_RainSensor.averageSince(now.minusDays(1)).toString)
+
+    logInfo("","TempAverage before update = {} ",TempAverage.state)
+    TempAverage.postUpdate(Temp_RainSensor.averageSince(now.minusHours(24)).toString)
+    logInfo("","TempAverage after update  = {} ",TempAverage.state)
+
+    val float tmpAv = (TempAverage?.state as DecimalType).floatValue
+    logInfo("","TempAverage float value = {} ",tmpAv)
+    val Boolean wasHot = (tmpAv > 24.0)
+    logInfo("","TempAverage wasHot last day = {} ",wasHot)
     sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+getEmailText.apply())
     logDebug("", "WanAddress =  {} ",wanAddress)
   }

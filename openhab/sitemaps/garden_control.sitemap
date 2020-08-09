@@ -8,8 +8,8 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
             Text item=willRain_out label="Wird es regnen? [MAP(yesNo.map):%s]"
             Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel (Liter in 12h) ?"
             Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
-            Text item=RainAverage label="Regendurchschnitt von gestern [%s Liter]"
-            Text item=TempAverage label="Temperaturdurchschnitt von gestern [%s °C]"
+            Text item=RainAverage label="Regendurchschnitt von gestern [%.2f Liter]"
+            Text item=TempAverage label="Temperaturdurchschnitt von gestern [%.2f °C]"
         }
         
         Frame label="Wasserstand" {

@@ -8,9 +8,9 @@ Strategies {
 
 Items {
     // Node MCU
-    Temperature_8266 : strategy =  everyMinute
-    Humidity_8266 : strategy =  everyMinute
-    Pressure_8266 : strategy =  everyMinute
+    Temperature_8266 : strategy =  everyHalfHour
+    Humidity_8266 : strategy =  everyHalfHour
+    Pressure_8266 : strategy =  everyHalfHour
     Vcc_8266 : strategy =  everyHalfHour
 
     // Solarmodul Gartenhaus
