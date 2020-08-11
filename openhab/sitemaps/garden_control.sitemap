@@ -6,7 +6,9 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
 //        }
         Frame label="Wetterdaten" {
             Text item=willRain_out label="Wird es regnen? [MAP(yesNo.map):%s]"
-            Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel (Liter in 12h) ?"
+//            Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel [%.2f Liter in 12h]"
+            Default item=ForecastRainVolumesGroup visibility=[willRain_out != "0"] 
+
             Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
             Text item=RainAverage label="Regendurchschnitt von gestern [%.2f Liter]"
             Text item=TempAverage label="Temperaturdurchschnitt von gestern [%.2f °C]"

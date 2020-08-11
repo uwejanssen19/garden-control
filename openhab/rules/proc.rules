@@ -37,9 +37,7 @@ val Functions$Function0<String> getEmailText = [
 
   val String emailText='
     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
-    SONOFF Link = http://'+wanAddress.state.toString+':8066\n
     Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
-    UweRainSensor = http://'+wanAddress.state.toString+':8062\n
     Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/_2JkdIZgk/gartenhaus?orgId=1\n
     Uwe8266 = http://'+wanAddress.state.toString+':8071\n\n'
   return emailText
@@ -56,30 +54,32 @@ val Functions$Function0<Boolean> shallIrrigate = [
   
   val isRaining = isRaining_out.state.toString
   // logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
-  var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
+  var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
 
   val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
     
   val Number RAIN_TRESHOLD = 3.0
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
   val Boolean isNotRaining = (isRaining == "0")
-
-  val float rainAv = (RainAverage?.state as DecimalType).floatValue
+  
+  var float rainAv = 0
+  rainAv = (RainAverage?.state as DecimalType)?.floatValue
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
-  logInfo("shallIrrigate::","RainAverage < {} ", RAIN_TRESHOLD)
+  logInfo("shallIrrigate::","RainAverage( = {} ) < {} = {} ", RainAverage.state, RAIN_TRESHOLD, didNotRain)
 
   val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain)
     
-  // logDebug("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
-  // logDebug("shallIrrigate:","isNotRaining = {} ",isNotRaining)
-  // logDebug("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
+ logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+ logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
+ logInfo("shallIrrigate:","didNotRain = {} ",didNotRain)
+ logInfo("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
     
   if (switchStateSetToIgnore || weatherSuitableForIrrigating) {
-    logDebug("shallIrrigate:","return true")
+    logInfo("shallIrrigate:","return true")
     return true
   }
   else {
-    logDebug("shallIrrigate:","return false")
+    logInfo("shallIrrigate:","return false")
     return false 
   }
   
@@ -139,18 +139,18 @@ then
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
 
-    logInfo("","TempAverage before update = {} ",TempAverage.state)
-    TempAverage.postUpdate(Temp_RainSensor.averageSince(now.minusHours(24)).toString)
-    logInfo("","TempAverage after update  = {} ",TempAverage.state)
+    // logInfo("","TempAverage before update = {} ",TempAverage.state)
+    TempAverage.postUpdate(Temp_RainSensor.averageSince(now.minusDays(1)).toString)
+    // logInfo("","TempAverage after update  = {} ",TempAverage.state)
 
-    val float tmpAv = (TempAverage?.state as DecimalType).floatValue
-    logInfo("","TempAverage float value = {} ",tmpAv)
-    val Boolean wasHot = (tmpAv > 24.0)
-    logInfo("","TempAverage wasHot last day = {} ",wasHot)
+    // val float tmpAv = (TempAverage?.state as DecimalType).floatValue
+    // logInfo("","TempAverage float value = {} ",tmpAv)
+    // val Boolean wasHot = (tmpAv > 24.0)
+    // logInfo("","TempAverage wasHot last day = {} ",wasHot)
     sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+getEmailText.apply())
     logDebug("", "WanAddress =  {} ",wanAddress)
   }
-  logDebug("", "Update Level Switch: EXIT")
+  logDebug("", "Update Water Level Switch: EXIT")
 end
 
 // -----------------------------------------------------------------------------
@@ -216,7 +216,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    //Time cron "0 0/10 * * * ? " or // near future test 
+    //Time cron "0 0/10 * * * ? " // near future test 
     Time cron "0 00 05 * 4-8 ? " or
     Time cron "0 00 06 * 3-10 ? " or 
     Time cron "0 00 18 * 3-10 ? " or
@@ -273,7 +273,7 @@ end
 rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
-    //Time cron "0 5/10 * * * ? " or // near future test 
+    // Time cron "0 5/10 * * * ? " // near future test 
     Time cron "0 00 07 * 3-10 ? " or
     Time cron "0 00 19 * 3,9,10 ? " or
     Time cron "0 00 20 * 4-8 ? " 

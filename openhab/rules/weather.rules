@@ -24,7 +24,7 @@
 // -----------------------------------------------------------------------------
 
 
-var DEPRESSURE_TIME = 5
+var DEPRESSURE_TIME = 12
 var LAWN_IRRIGATION_TIME = 60 // seconds
 var MANUAL_IRRIGATION_TIME = 600 // seconds
 //var MANUAL_IRRIGATION_TIME = 20 // for test
@@ -290,9 +290,10 @@ rule "Depressure"
 // so all along the hose there will be less pressure
 
   when 
-    //Time cron "0 0/2 9-23 * * ?" // for TEST
-    // TODO: adapt to seasonal sun radiation
-    Time cron "0 3/10 9-17 * 5-8 ?" or
+    // Time cron "0 0/2 9-23 * * ?" // for TEST
+    Time cron "0 3/10 9-17 * 5-6 ?" or
+    Time cron "0 3/5 8-16 * 7-8 ?" or
+    Time cron "0 3/10 17 * 7-8 ?" or
     Time cron "0 3/40 10-16 * 4,9 ?"
 
   then
@@ -383,10 +384,18 @@ when
   Item InitSwitch changed to ON
 then 
   logInfo("SysStart or InitSwitch","ENTRY")
-  // turn off hardware
+  // createTimer(now.plusMinutes(2), [ |  //Give the system time to load up
+  //       gWeatherItems.members.forEach[ i |
+  //           if (i.state == NULL || i.state == UNDEF) i.postUpdate(0)
+  //       ]
+  //   ])
   StatusText.sendCommand("System starting")
+  // turn off hardware
   GardencontrolPowerSupply.sendCommand(OFF)
   irrOnOffProc?.apply("0", SCRIPT_DIR)
+  // set to not raining
+  isRaining_out.postUpdate("0")
+  // no water pumping
   water_on_off.sendCommand("0")
   // reset graphical objects
   InitSwitch.sendCommand(OFF)
@@ -395,6 +404,11 @@ then
   FillTimerActive.sendCommand(OFF) 
 
   Display_level_out.sendCommand(0)
+  // set some items to 0 
+  gWeatherItems.members.forEach[ i |
+            if (i.state == NULL || i.state == UNDEF) i.postUpdate(0)
+  ]
+  // toggle level update
   UpdateLevelSwitch.sendCommand(OFF)
   UpdateLevelSwitch.sendCommand(ON)
 
@@ -411,9 +425,13 @@ then
   IgnoreWeatherSwitch.sendCommand(OFF)
   Irr_Switch.sendCommand(OFF)
   Irr_Switch.postUpdate(OFF)
+
   StatusText.sendCommand("System started")
   logInfo("SysStart or InitSwitch","EXIT")
 end 
+
+
+
 
 // -----------------------------------------------------------------------------
 // rule "SysStop" 

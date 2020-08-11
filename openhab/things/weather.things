@@ -1,6 +1,6 @@
 Thing exec:command:weatherstation_willRain [command="/home/pi/scripts/willRain.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
-Thing exec:command:weatherstation_howMuchRain [command="/home/pi/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
-Thing exec:command:weatherstation_isRaining [command="/home/pi/scripts/isRaining.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
+//Thing exec:command:weatherstation_howMuchRain [command="/home/pi/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=20, autorun=true]
+Thing exec:command:weatherstation_isRaining [command="/home/pi/scripts/isRaining.sh", transform="REGEX((.*?))", interval=1800, autorun=true]
 Thing exec:command:weatherstation_waterlevel [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=0, autorun=true]
 
 Thing exec:command:weatherstation_irr_on_off [ command="/home/pi/scripts/irrOnOff.sh %2$s", interval = 0, autorun=true ]
