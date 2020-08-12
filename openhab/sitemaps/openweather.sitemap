@@ -3,7 +3,7 @@ sitemap openweather label="OpenWeather Overview" {
             Text item=LocalStationName {
             Text item=LocalStationId 
             //Mapview item=LocalStationLocation height=6
-            Text item=wanAddress
+            Text item=wanAddress label="Wan Address = [%s]"
         }
     }
 
@@ -40,7 +40,7 @@ sitemap openweather label="OpenWeather Overview" {
     }
 
     Frame label="Daten vom Prototyp NodeMCU" {
-        Default item=Vcc_8266 label="Batterie [%s Volt]"
+        // Default item=Vcc_8266 label="Batterie [%s Volt]"
         Default item=Temperature_8266 label="Temperatur [%s °C]"
         Default item=Humidity_8266 label="Feuchtigkeit [%s %%]"
         Default item=Pressure_8266 label="Druck [%s hPa]"

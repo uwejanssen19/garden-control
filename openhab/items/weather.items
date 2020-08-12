@@ -4,7 +4,7 @@ String willRain_out <rain> { channel="exec:command:weatherstation_willRain:outpu
 //Number precipitation_out <level> { channel="exec:command:weatherstation_howMuchRain:output" }
 String isRaining_out <rain> { channel="exec:command:weatherstation_isRaining:output" }
 //String Level_from_periodic_script { channel="exec:command:weatherstation_waterlevel:output", autorun="false" } // set by thing's exec script
-String wanAddress "Wan Address = [%s]" <settings> { channel="exec:command:getwan:output" } // set by thing's exec script
+String wanAddress <settings> { channel="exec:command:getwan:output" } // set by thing's exec script
 
 
 String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }
@@ -14,7 +14,7 @@ String water_on_off { channel="exec:command:weatherstation_water_on_off:input" }
 
 // Virtual variable section
 
-Switch Irr_Switch {expire="3h,OFF"} 
+Switch Irr_Switch 
 Switch Valve_Switch {expire="600s,OFF"} 
 Switch Fill_Switch  {expire="130s,OFF"} 
 
@@ -23,6 +23,7 @@ Number Display_level_out
 Switch UpdateLevelSwitch {expire="60s,OFF"} 
 
 String StatusText
+String SystemStatusText
 
 String Level_out //  set by rule 
 Switch LawnIrrigationSwitch
@@ -33,7 +34,7 @@ Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mq
 Number Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_temp_channel" }
 Number Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_hum_channel" }
 Number Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
-Number Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
+// Number Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
 
 String Time_RainSensor <time> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_time_channel" }
 Number Vcc_RainSensor <battery> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_vcc_channel" }

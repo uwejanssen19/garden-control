@@ -28,9 +28,9 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
         }
 
         Frame label="Test section" visibility=[TestModeSwitch == ON] {
-            
+            Default item=SystemStatusText label="System Message: [%s]" visibility=[TestModeSwitch == ON]
+            Default item=StatusText label="Message: [%s]" visibility=[TestModeSwitch == ON]
             Default item=LawnIrrigationSwitch label="Gießen über Ventilanschluss" visibility=[TestModeSwitch == ON]
-            Default item=StatusText label="Last Message: [%s]" visibility=[TestModeSwitch == ON]
             Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
             Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
             Default item=GardencontrolPowerSupply visibility=[TestModeSwitch == ON]

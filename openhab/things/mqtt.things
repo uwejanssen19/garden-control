@@ -7,9 +7,9 @@ Thing mqtt:topic:myUnsecureBroker:bme_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Messtation fuer Temperatur, Feuchtigkeit, Druck
 Channels:
          Type number : bme_temp_channel "bme_temperature_channel" [ stateTopic="Uwe8266/bme/temp" ]
-         Type number : bme_hum_channel "bme_humidity_temp_channel" [ stateTopic="Uwe8266/bme/hum" ]
-         Type number : bme_pressure_channel "bme_pressure_channel" [ stateTopic="Uwe8266/bme/press" ]
-         Type number : vcc_channel "vcc_channel" [ stateTopic="Uwe8266/a0/a0" ]
+          Type number : bme_hum_channel "bme_humidity_temp_channel" [ stateTopic="Uwe8266/bme/hum" ]
+          Type number : bme_pressure_channel "bme_pressure_channel" [ stateTopic="Uwe8266/bme/press" ]
+        //  Type number : vcc_channel "vcc_channel" [ stateTopic="Uwe8266/a0/a0" ]
 }
 Thing mqtt:topic:myUnsecureBroker:rain_sensor_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Outdoor Solar Messtation

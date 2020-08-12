@@ -86,6 +86,7 @@ val Procedures$Procedure0 onValveTimer = [
         if (!irrigating) {
           logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", turn power OFF")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+          StatusText.sendCommand("Water Valve OFF")
         } else {
           logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", leave power ON")
         }
@@ -222,7 +223,7 @@ rule "Lawn irrigation"
     } else {
       val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && shallDoLawnIrrigation.apply())
       logDebug("Lawn irrigation","willDoLawn = {}", willDoLawn)
-      StatusText.sendCommand("willDoLawn = "+willDoLawn)
+      //StatusText.sendCommand("willDoLawn = "+willDoLawn)
       val interval = LawnIrrigationInterVal.state as Number
       if (willDoLawn) {
         // count down
@@ -297,13 +298,13 @@ rule "Depressure"
     Time cron "0 3/40 10-16 * 4,9 ?"
 
   then
-    val cloudiness = LocalCurrentCloudiness.state as Number
+    val cloudiness = LocalCurrentCloudiness?.state as Number
     logDebug("Depressure","ENTRY LocalCurrentCloudiness = {}", cloudiness) 
     StatusText.sendCommand("Cloudiness = "+cloudiness)
     val isRaining = (isRaining_out.state.toString == "1")
     logDebug("Depressure", "isRaining = {}", isRaining)
     
-    if (cloudiness >= 0.5 || isRaining) {
+    if (cloudiness >= 0.75 || isRaining) {
       logDebug("Depressure","cloudiness more than {}% -> so relieving hose is not needed",cloudiness)
       logDebug("Depressure","LocalCurrentCloudiness = {}", cloudiness) 
       StatusText.sendCommand("No depressurizing - cloudiness = "+cloudiness+" or it'sraining")
@@ -389,7 +390,7 @@ then
   //           if (i.state == NULL || i.state == UNDEF) i.postUpdate(0)
   //       ]
   //   ])
-  StatusText.sendCommand("System starting")
+  SystemStatusText.sendCommand("System starting")
   // turn off hardware
   GardencontrolPowerSupply.sendCommand(OFF)
   irrOnOffProc?.apply("0", SCRIPT_DIR)
@@ -426,7 +427,7 @@ then
   Irr_Switch.sendCommand(OFF)
   Irr_Switch.postUpdate(OFF)
 
-  StatusText.sendCommand("System started")
+  SystemStatusText.sendCommand("System started")
   logInfo("SysStart or InitSwitch","EXIT")
 end 
 
