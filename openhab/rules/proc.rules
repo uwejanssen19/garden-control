@@ -23,6 +23,7 @@ val Number GRAFANA_PORT = 8030
 val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
 val String GARDEN_CONTROL_SUFFIX = 'garden_control'
 val String OPEN_WEATHER_SUFFIX = 'open_weather'
+val String WAN_ADDRESS_FRITZ = 'xdbu92gos1irkzbd.myfritz.net'
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
@@ -33,7 +34,10 @@ val String OPEN_WEATHER_SUFFIX = 'open_weather'
 //  Function getEmailText
 // -----------------------------------------------------------------------------
 val Functions$Function0<String> getEmailText = [
-  logInfo("getEmailText::","WAN ADDRESS = {} ",wanAddress)
+  if (wanAddress == NULL) {
+    wanAddress = WAN_ADDRESS_FRITZ
+  }
+  logInfo("getEmailText::","WAN ADDRESS = {} ",wanAddress.state)
 
   val String emailText='
     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
