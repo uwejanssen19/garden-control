@@ -323,11 +323,11 @@ end
 //  Background daemon for various tasks
 // -----------------------------------------------------------------------------
 
-// This rule serves as a steady bgackground task running all five minutes
+// This rule serves as a steady bgackground task running periodically
 rule "daemon"
   when 
     //Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 1/4 * * * ?" // release values
+    Time cron "0 1/10 * * * ?" // release values
   then
   
   val irrigating = (Irrigating.state == ON)
