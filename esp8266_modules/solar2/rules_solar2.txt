@@ -7,7 +7,7 @@ on Wifi#Disconnected do
 // and goto BED
     gpio,2,1 // blue LED OFF
     pulse,2,0,200
-    deepsleep,3600
+    timerset,2,1 //sleep
 endon
 
 On MQTT#connected do
@@ -17,7 +17,9 @@ On MQTT#connected do
     // wait 10 secs to give chance to disable sleep mode
     delay,10000
     // enter sleep mode
-    timerset,2,1
+    if ([MqttListener#sleepMode]=1
+      timerset,2,1
+    endif
 endon
 
 
@@ -40,7 +42,8 @@ endon
 
 On rules#timer=2 do
   publish %sysname%/status,'%systime%: %sysname%/%ip% go to BED, %rssi% dBm'
-  deepsleep,3600
+  gpio,2,1
+  deepsleep,120
 endon
 
 on Clock#Time=All,05:52 do 
