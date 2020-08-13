@@ -14,8 +14,6 @@ On MQTT#connected do
     publish %sysname%/status,"%systime%: %sysname%/%ip% %rssi% dBm connected, MAC is %bssid%."
     publish %sysname%/a0/a0,[a0#a0]
     gpio,2,0 // blue LED ON
-    // wait 10 secs to give chance to disable sleep mode
-    delay,10000
     // enter sleep mode
     if ([MqttListener#sleepMode]=1
       timerset,2,1
@@ -43,7 +41,7 @@ endon
 On rules#timer=2 do
   publish %sysname%/status,'%systime%: %sysname%/%ip% go to BED, %rssi% dBm'
   gpio,2,1
-  deepsleep,120
+  deepsleep,300
 endon
 
 on Clock#Time=All,05:52 do 
