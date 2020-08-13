@@ -1,27 +1,17 @@
 On system#boot do
-  // timerset,1,60 // time
   gpio,2,0 // blue LED ON
-endon
-
-On rules#timer=1 do
-  timerset,1,60
-  publish %sysname%/status,"%sysname% IP = %ip%"
-  Publish %sysname%/time/value,%systime%
-  publish %sysname%/a0/a0,[a0#a0]
 endon
 
 on Wifi#Disconnected do 
 // TODO set disconnect counter
 // and goto BED
     gpio,2,1 // blue LED OFF
+    pulse,2,0,200
     deepsleep,3600
 endon
 
 On MQTT#connected do
     publish %sysname%/status,"%systime%: %sysname%/%ip% %rssi% dBm connected, MAC is %bssid%."
-    Publish %sysname%/time/value,%systime%
-//    publish %sysname%/bmp085/press,[bmp085#press]
-//    publish %sysname%/bmp085/temp,[bmp085#temp]
     publish %sysname%/a0/a0,[a0#a0]
     gpio,2,0 // blue LED ON
     // wait 10 secs to give chance to disable sleep mode
@@ -32,7 +22,7 @@ endon
 
 
 On MqttListener#sleepMode=1 do
-  publish %sysname%/status,'sleepMode of %sysname%/%ip% ACTIVE, please wait 1h  til wakeup'
+  publish %sysname%/status,'%systime%: sleepMode of %sysname%/%ip% ACTIVATED, sleeping for 3600s'
   publish %sysname%/a0/a0,[a0#a0]
   gpio,2,1
   delay,1000
@@ -44,7 +34,7 @@ endon
 On MqttListener#sleepMode=0 do
   timerset,2,0
   gpio,2,0
-  publish %sysname%/status,'%sysname%/%ip% sleepMode OFF'
+  publish %sysname%/status,'%systime%: %sysname%/%ip% sleepMode OFF'
   publish %sysname%/a0/a0,[a0#a0]
 endon
 
