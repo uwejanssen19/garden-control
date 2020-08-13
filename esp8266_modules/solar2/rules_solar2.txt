@@ -41,7 +41,7 @@ endon
 On rules#timer=2 do
   publish %sysname%/status,'%systime%: %sysname%/%ip% go to BED, %rssi% dBm'
   gpio,2,1
-  deepsleep,300
+  deepsleep,3600
 endon
 
 on Clock#Time=All,05:52 do 
