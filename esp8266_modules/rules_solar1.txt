@@ -38,8 +38,8 @@ On rules#timer=1 do
     delay,5000
     publish %sysname%/status,"%sysname%/%ip% in no sleep mode"
     Publish %sysname%/time/value,%systime%
-    publish %sysname%/bmp085/press,[bm085#press]
-    publish %sysname%/bm085/temp,[bm085#temp]
+    publish %sysname%/bmp085/press,[bmp085#press]
+    publish %sysname%/bmp085/temp,[bmp085#temp]
     publish %sysname%/a0/a0,[a0#a0]
     if [switch#pmode]=1 // in programming mode continue sending data 
       timerset,1,30
