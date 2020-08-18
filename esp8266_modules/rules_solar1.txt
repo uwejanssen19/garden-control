@@ -32,7 +32,6 @@ endon
 
 On rules#timer=1 do
     delay,5000
-    publish %sysname%/status,"%sysname%/%ip% in no sleep mode"
     Publish %sysname%/time/value,%systime%
     publish %sysname%/bmp085/press,[bmp085#press]
     publish %sysname%/bmp085/temp,[bmp085#temp]
