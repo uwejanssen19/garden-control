@@ -9,6 +9,10 @@ else
  endif
 endon  
 
+On MQTT#disconnected do
+    reboot
+endon
+
 on system#wake do
   timerset,1,1
   timerset,2,10
@@ -23,11 +27,23 @@ On startSleep do
   timerset,2,1
 endon
 
+On switch#pmode do
+  // if switch programming mode=OFF goto BED
+  if [switch#pmode]=0
+    timerset,2,1
+  endif
+endon
+
 On rules#timer=1 do
+    delay,5000
     publish %sysname%/status,"%sysname%/%ip% in no sleep mode"
     Publish %sysname%/time/value,%systime%
-    publish %sysname%/bme/press,[bme#press]
-    publish %sysname%/bme/temp,[bme#temp]
+    publish %sysname%/bmp085/press,[bm085#press]
+    publish %sysname%/bm085/temp,[bm085#temp]
     publish %sysname%/a0/a0,[a0#a0]
+    if [switch#pmode]=1 // in programming mode continue sending data 
+      timerset,1,30
+    endif
 endon
+
 
