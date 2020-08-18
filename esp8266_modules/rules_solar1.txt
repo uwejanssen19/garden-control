@@ -9,10 +9,6 @@ else
  endif
 endon  
 
-On MQTT#disconnected do
-    reboot
-endon
-
 on system#wake do
   timerset,1,1
   timerset,2,10
