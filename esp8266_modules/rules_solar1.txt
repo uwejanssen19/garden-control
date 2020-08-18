@@ -1,12 +1,16 @@
 On rules#timer=2 do
   gpio,2,1
   publish %sysname%/status,"%sysname%/%ip% Entering deep sleep"
-if [switch#pmode]=0
+  if [switch#pmode]=0
      gpio,2,1 
-     deepsleep,3600
-else 
-     gpio,2,0
- endif
+     if [a0#a0] > 3.8 // if enough power send more frequently
+       deepsleep,600
+     else
+       deepsleep,4200
+     endif
+  else 
+    gpio,2,0
+  endif
 endon  
 
 on system#wake do
