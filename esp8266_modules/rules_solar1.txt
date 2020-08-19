@@ -3,9 +3,9 @@ On rules#timer=2 do
   if [switch#pmode]=0
      gpio,2,1 
      if [a0#a0] > 3.9 // if enough power send more frequently
-       let,14,6
+       let,14,600
      else
-       let,14,120
+       let,14,4300
      endif
      publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm now sleep for %v14% s"
      deepsleep,%v14%
@@ -45,6 +45,7 @@ On rules#timer=1 do
     publish %sysname%/bme/temp,[bme#temp]
     publish %sysname%/a0/a0,[a0#a0]
 endon
+
 
 
 
