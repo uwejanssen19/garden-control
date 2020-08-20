@@ -4,16 +4,15 @@ On rules#timer=2 do
   if [switch#pmode]=0
      gpio,2,1 
      if [a0#a0] > 3.9 // if enough power send more frequently
-       let,14,15
+       let,14,600
      else
-       let,14,60
+       let,14,4300
      endif
-     let,6,0 // means not yet sent 
      delay,10000 // wait for establishing wlan
      publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm now sleep for %v14% s"
      if [var#6]=1 // sent?
        deepsleep,%v14%
-     else
+     else 
        //try again after some time
        timerset,2,10
      endif
@@ -54,10 +53,12 @@ On switch#pmode do
 endon
 
 on system#wake do
+  let,6,0
   timerset,2,1
 endon
 
 on system#boot do
+  let,6,0
   timerset,2,1
 endon
 
