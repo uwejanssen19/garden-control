@@ -1,4 +1,5 @@
 On rules#timer=2 do
+  serialprint,'TIMER 2'
   gpio,2,1
   if [switch#pmode]=0
      gpio,2,1 
@@ -12,9 +13,11 @@ On rules#timer=2 do
   else       
      gpio,2,0
      publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (in program mode)"
-     timerset,1,1 // just send info
   endif
-
+      publish %sysname%/time/value,%systime%
+//    publish %sysname%/bmp085/press,[bmp085#press]
+      publish %sysname%/bmp085/temp,[bmp085#temp]
+      publish %sysname%/a0/a0,[a0#a0]
 endon  
 
 on wifi#disconnect do
@@ -29,32 +32,30 @@ endon
 On switch#pmode do
   // if switch programming mode=OFF goto BED
   if [switch#pmode]=1
+    serialprint,'pmode TRUE'
     gpio,2,0
     timerset,1,1
+  else 
+    serialprint,'pmode FALSE'
   endif
 endon
 
 on system#wake do
-  timerset,1,1
+  timerset,2,1
+endon
+
+on system#boot do
+  timerset,2,1
 endon
 
 On rules#timer=1 do
     delay,5000
-    if [MQTT#connected]=1
-      pulse,2,0,100
       Publish %sysname%/time/value,%systime%
-//    publish %sysname%/bmp085/press,[bmp085#press]
       publish %sysname%/bmp085/temp,[bmp085#temp]
       publish %sysname%/a0/a0,[a0#a0]
-    else 
-      pulse,2,0,800
-    endif
   if [switch#pmode]=1 // programming mode
     gpio,2,0
+    publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (in program mode)"
     timerset,1,20 // repeat sending mqtt
-  else 
-    gpio,2,1
-    timerset,2,1 // start sleep sequence
   endif
-
 endon
