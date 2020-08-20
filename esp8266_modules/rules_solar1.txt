@@ -1,5 +1,5 @@
 On rules#timer=2 do
-  serialprint,'TIMER 2'
+  serialsend,'TIMER 2'
   gpio,2,1
   if [switch#pmode]=0
      gpio,2,1 
@@ -8,17 +8,29 @@ On rules#timer=2 do
      else
        let,14,60
      endif
+     let,6,0 // means not yet sent 
+     delay,10000 // wait for establishing wlan
      publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm now sleep for %v14% s"
-     deepsleep,%v14%
+     if [var#6]=1 // sent?
+       deepsleep,%v14%
+     else
+       //try again after some time
+       timerset,2,10
+     endif
   else       
      gpio,2,0
      publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (in program mode)"
+     timerset,1,1
   endif
+endon  
+
+on MQTT#Connected do 
       publish %sysname%/time/value,%systime%
 //    publish %sysname%/bmp085/press,[bmp085#press]
       publish %sysname%/bmp085/temp,[bmp085#temp]
       publish %sysname%/a0/a0,[a0#a0]
-endon  
+      let,6,1 // set the 'sent'flag
+endon
 
 on wifi#disconnect do
   pulse,2,0,1600
@@ -32,11 +44,12 @@ endon
 On switch#pmode do
   // if switch programming mode=OFF goto BED
   if [switch#pmode]=1
-    serialprint,'pmode TRUE'
+    serialsend,'pmode TRUE'
     gpio,2,0
     timerset,1,1
   else 
-    serialprint,'pmode FALSE'
+    serialsend,'pmode FALSE'
+    timerset,2,1
   endif
 endon
 
@@ -57,5 +70,7 @@ On rules#timer=1 do
     gpio,2,0
     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (in program mode)"
     timerset,1,20 // repeat sending mqtt
+  else 
+    timerset,2,1
   endif
 endon
