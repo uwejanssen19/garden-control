@@ -28,26 +28,14 @@ endon
 
 On switch#pmode do
   // if switch programming mode=OFF goto BED
-  if [switch#pmode]=0
-    timerset,2,1
-  else 
+  if [switch#pmode]=1
     gpio,2,0
-    timerset,1,20
+    timerset,1,1
   endif
 endon
 
 on system#wake do
   timerset,1,1
-  timerset,2,1
-endon
-
-On startSleep do
-  timerset,1,1
-  publish %sysname%/status,'%sysname%/%ip% EVENT startSleepMode RECEIVED'
-  gpio,2,1
-  delay,1000
-  //pulse,2,0,200
-  timerset,2,1
 endon
 
 On rules#timer=1 do
@@ -66,6 +54,7 @@ On rules#timer=1 do
     timerset,1,20 // repeat sending mqtt
   else 
     gpio,2,1
+    timerset,2,1 // start sleep sequence
   endif
 
 endon
