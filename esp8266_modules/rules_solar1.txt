@@ -14,7 +14,7 @@ On rules#timer=2 do
        deepsleep,%v14%
      else 
        //try again after some time
-       timerset,2,10
+       timerset,2,%v14%
      endif
   else       
      gpio,2,0
@@ -26,7 +26,7 @@ endon
 on MQTT#Connected do 
       publish %sysname%/time/value,%systime%
 //    publish %sysname%/bmp085/press,[bmp085#press]
-      publish %sysname%/bmp085/temp,[bmp085#temp]
+      publish %sysname%/bme/temp,[bme#temp]
       publish %sysname%/a0/a0,[a0#a0]
       let,6,1 // set the 'sent'flag
 endon
@@ -63,9 +63,9 @@ on system#boot do
 endon
 
 On rules#timer=1 do
-    delay,5000
+ 
       Publish %sysname%/time/value,%systime%
-      publish %sysname%/bmp085/temp,[bmp085#temp]
+      publish %sysname%/bme/temp,[bme#temp]
       publish %sysname%/a0/a0,[a0#a0]
   if [switch#pmode]=1 // programming mode
     gpio,2,0
