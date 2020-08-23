@@ -327,29 +327,54 @@ end
 //     sendMail("uwe@janssen-muenchen.de","Temp_8266 level change", "New links available:\n"+getEmailText.apply()+"\nTemp_8266 = "+Temperature_8266.state.toString)
 //     logDebug("", "Temp_8266 level change: EXIT")
 // end
-rule "check solar stations power level"
-when 
-  Item Vcc_Solar1 changed or 
-  Item Vcc_Solar2 changed 
-then
-  val solar1 = Vcc_Solar1.state as Number
-  val solar2 = Vcc_Solar2.state as Number
-  logInfo("rule power level","Vcc_solar1 = {}", solar1)
-  logInfo("rule power level","Vcc_solar2 = {}", solar2)
-  if (solar1 < 3.9 || solar2 < 3.9) {
-//    sendMail("uwe@janssen-muenchen.de","Battery low water reached", "New links available:\n"+getEmailText.apply()+"\n\n Solar1 = {}, \nSolar2 = {}", solar1,solar2)
-    logInfo("", "Solar1 = {}, Solar2 = {}", solar1,solar2)
-  }
-end
-rule "Battery change"
+// rule "check solar stations power level"
+// when 
+//   Item Vcc_Solar1 changed or 
+//   Item Vcc_Solar2 changed 
+// then
+//   val solar1 = Vcc_Solar1.state as Number
+//   val solar2 = Vcc_Solar2.state as Number
+//   logInfo("rule power level","Vcc_solar1 = {}", solar1)
+//   logInfo("rule power level","Vcc_solar2 = {}", solar2)
+//   if (solar1 < 3.9 || solar2 < 3.9) {
+// //    sendMail("uwe@janssen-muenchen.de","Battery low water reached", "New links available:\n"+getEmailText.apply()+"\n\n Solar1 = {}, \nSolar2 = {}", solar1,solar2)
+//     logInfo("", "Solar1 = {}, Solar2 = {}", solar1,solar2)
+//   }
+// end
+
+rule "Battery change 1"
+// TODO use group and find member with lowest battery
+// then send msg if discharging rate is jeopardizing the battery
 when
-  Item Vcc_Solar1 received command
+  Item Vcc_Solar1 changed
 then
-  logInfo("rule Battery change","Solar1 = {}", Vcc_solar1)
-  val display = Math.round(receivedCommand as DecimalType) * 25)
-  logInfo("rule Battery change","display value = {}", display)
-  Vcc_Solar1_Display.postUpdate(display)
+  val sol_number = Vcc_Solar1.state 
+  logInfo("rule Battery change","value = {}", sol_number)
+  val vcc = sol_number as DecimalType
+//  logInfo("rule Battery change","pvalue as decimalType = {}", vcc)
+  // 3.6 V -> 10%, 4.2V -> 100%
+  // equation pct = f(vcc) = m(x-x1) + y1
+  val pct = (vcc-3.6)*150 + 10
+//  logInfo("rule Battery change","percentage value = {}", pct)
+  Vcc_Solar1_Display.postUpdate(pct)
 end
+rule "Battery change 2"
+// TODO use group and find member with lowest battery
+// then send msg if discharging rate is jeopardizing the battery
+when
+  Item Vcc_Solar2 changed
+then
+  val sol_number = Vcc_Solar2.state 
+  logInfo("rule Battery change","value = {}", sol_number)
+  val vcc = sol_number as DecimalType
+//  logInfo("rule Battery change","pvalue as decimalType = {}", vcc)
+  // 3.6 V -> 10%, 4.2V -> 100%
+  // equation pct = f(vcc) = m(x-x1) + y1
+  val pct = (vcc-3.6)*150 + 10
+//  logInfo("rule Battery change","percentage value = {}", pct)
+  Vcc_Solar2_Display.postUpdate(pct)
+end
+
 // rule "Low battery alert"
 // when
 //     Item gBatteries changed

@@ -59,8 +59,8 @@ Group gWeatherItems
   Number RainAverage (gWeatherItems)
   Number TempAverage (gWeatherItems)
 
-Group:Number:MIN batteries
+Group:Number:MIN gBatteries
 // Group:Number:MIN batteries 
-  Number  Vcc_Solar1_Display <battery> (batteries)
-  Number  Vcc_Solar2_Display <battery> (batteries)
+  Number  Vcc_Solar1_Display <battery> (gBatteries)
+  Number  Vcc_Solar2_Display <battery> (gBatteries)
 
