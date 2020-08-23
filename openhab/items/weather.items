@@ -36,10 +36,10 @@ Number Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing
 Number Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
 // Number Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
 
-String Time_RainSensor <time> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_time_channel" }
-Number Vcc_RainSensor <battery> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_vcc_channel" }
-Number Temp_RainSensor <temperature> { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:rain_sensor_bmp_temp_channel" }
-String Status_RainSensor { channel="mqtt:topic:myUnsecureBroker:rain_sensor_thing:status_channel" }
+String Time_Solar1 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:time_channel" }
+Number Vcc_Solar1 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:vcc_channel" }
+String Status_Solar1 { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:status_channel" }
+Number Temp_Solar1 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:temp_channel" }
 
 String Time_Solar2 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:time_channel" }
 Number Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
@@ -53,8 +53,14 @@ Number LawnIrrigationTimeLeft
 Number LawnIrrigationInterVal
 // not displayed - for internal use only 
 Number LawnIrrigationCounter
+// END
+
 Group gWeatherItems
   Number RainAverage (gWeatherItems)
   Number TempAverage (gWeatherItems)
 
-// END
+Group:Number:MIN batteries
+// Group:Number:MIN batteries 
+  Number  Vcc_Solar1_Display <battery> (batteries)
+  Number  Vcc_Solar2_Display <battery> (batteries)
+

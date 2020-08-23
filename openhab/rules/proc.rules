@@ -144,7 +144,7 @@ then
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
 
     // logInfo("","TempAverage before update = {} ",TempAverage.state)
-    TempAverage.postUpdate(Temp_RainSensor.averageSince(now.minusDays(1)).toString)
+    TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
     // logInfo("","TempAverage after update  = {} ",TempAverage.state)
 
     // val float tmpAv = (TempAverage?.state as DecimalType).floatValue
@@ -308,10 +308,10 @@ end
 
 // rule "Battery level change"
 //   when
-//     Item Vcc_RainSensor changed 
+//     Item Vcc_Solar1 changed 
 //   then 
 //     //logDebug("", "Battery level change: "+getEmailText.apply())
-//     sendMail("uwe@janssen-muenchen.de","Battery level change", "New links available:\n"+getEmailText.apply()+"\nVoltage = "+Vcc_RainSensor.state.toString)
+//     sendMail("uwe@janssen-muenchen.de","Battery level change", "New links available:\n"+getEmailText.apply()+"\nVoltage = "+Vcc_Solar1.state.toString)
 //     //logDebug("", "Battery level change: EXIT")
 // end
 
@@ -326,4 +326,36 @@ end
 //     logDebug("", "Temp_8266 level change: "+getEmailText.apply())
 //     sendMail("uwe@janssen-muenchen.de","Temp_8266 level change", "New links available:\n"+getEmailText.apply()+"\nTemp_8266 = "+Temperature_8266.state.toString)
 //     logDebug("", "Temp_8266 level change: EXIT")
+// end
+rule "check solar stations power level"
+when 
+  Item Vcc_Solar1 changed or 
+  Item Vcc_Solar2 changed 
+then
+  val solar1 = Vcc_Solar1.state as Number
+  val solar2 = Vcc_Solar2.state as Number
+  logInfo("rule power level","Vcc_solar1 = {}", solar1)
+  logInfo("rule power level","Vcc_solar2 = {}", solar2)
+  if (solar1 < 3.9 || solar2 < 3.9) {
+//    sendMail("uwe@janssen-muenchen.de","Battery low water reached", "New links available:\n"+getEmailText.apply()+"\n\n Solar1 = {}, \nSolar2 = {}", solar1,solar2)
+    logInfo("", "Solar1 = {}, Solar2 = {}", solar1,solar2)
+  }
+end
+rule "Battery change"
+when
+  Item Vcc_Solar1 received command
+then
+  logInfo("rule Battery change","Solar1 = {}", Vcc_solar1)
+  val display = Math.round(receivedCommand as DecimalType) * 25)
+  logInfo("rule Battery change","display value = {}", display)
+  Vcc_Solar1_Display.postUpdate(display)
+end
+// rule "Low battery alert"
+// when
+//     Item gBatteries changed
+// then
+//     if(gBatteries.state > 20) return;
+
+//     val lowBatteriesList = gBatteries.members.filter[ b | b.state < 3.9 ].map[ name ].reduce[ list, bat | list = list + ", " + transform("MAP", "batteries.map", bat) ]
+//     statusText.sendCommand("The following batteries need to be replaced: " + lowBatteryList.subString(0, lowBatteryList.size-2) + ".")
 // end

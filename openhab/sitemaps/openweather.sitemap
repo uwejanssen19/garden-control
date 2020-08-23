@@ -26,10 +26,10 @@ sitemap openweather label="OpenWeather Overview" {
  
     }
     Frame label="Aktuelle Werte von Solar Modul ( Gartenhaus )" {
-        Default item=Time_RainSensor label="Letzte Meldung: [%s]"
-        Default item=Vcc_RainSensor label="Batterie [%s]"        
-        Default item=Status_RainSensor label="Status [%s]"        
-        Default item=Temp_RainSensor label="Temperatur [%s °C]"        
+        Default item=Time_Solar1 label="Letzte Meldung: [%s]"
+        Default item=Vcc_Solar1_Display label="Batterie [%s]"        
+        Default item=Status_Solar1 label="Status [%s]"        
+        Default item=Temp_Solar1 label="Temperatur [%s °C]"        
     }
 
     Frame label="Aktuelle Werte von Solar Modul 2 ( Carport Westseite )" {
