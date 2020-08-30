@@ -326,13 +326,21 @@ end
 // This rule serves as a steady bgackground task running periodically
 rule "daemon"
   when 
-    //Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 1/10 * * * ?" // release values
+    Time cron "0 0/1 * * * ?" //near future test
+    // Time cron "0 2/10 * * * ?" // time spec for release edition
   then
   
   val irrigating = (Irrigating.state == ON)
   val minute = now.getMinuteOfHour
-
+  
+  // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
+  Set_alive.sendCommand(ON)
+  logInfo("daemon", "updating set_alive file")
+  // *********************************************************************************************************************************************
+  // NOTE: 
+  // If we do not get here within ONE hour since the last Set_alive command something is wrong with openhab CRON and the computer will be restarted
+  //
+  // *********************************************************************************************************************************************
 
   logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
@@ -346,7 +354,6 @@ rule "daemon"
         Irr_Switch.postUpdate(ON)
         irrOnOffProc?.apply("1", SCRIPT_DIR)
       }
-      
   } else {
       logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
       irrOnOffProc?.apply("0", SCRIPT_DIR)

@@ -9,7 +9,8 @@ String wanAddress <settings> { channel="exec:command:getwan:output" } // set by 
 
 String irr_on_off { channel="exec:command:weatherstation_irr_on_off:input" }
 String water_on_off { channel="exec:command:weatherstation_water_on_off:input" }
-
+// set alive heart beat 
+Switch Set_alive { channel="exec:command:set_alive:run", autoupdate = "false" }
 //String fill_barrel { channel="exec:command:weatherstation_fill_barrel:input", autoupdate = "false" }
 
 // Virtual variable section
