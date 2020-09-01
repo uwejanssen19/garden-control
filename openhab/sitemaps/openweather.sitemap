@@ -39,6 +39,15 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Temp_Solar2 label="Temperatur [%s °C]"        
     }
 
+    Frame label="Aktuelle Werte von Solar Modul 3 ( Südseite )" {
+        Default item=Time_Solar3 label="Letzte Meldung: [%s]"
+        Default item=Vcc_Solar3_Display label="Batterie [%s %%]"        
+        Default item=Status_Solar3 label="Status [%s]"        
+        Default item=Temp_Solar3 label="Temperatur [%s °C]"        
+        Default item=Hum_Solar3 label="Feuchtigkeit [%s %%]"
+        Default item=Press_Solar3 label="Druck [%s hPa]"
+    }
+
     Frame label="Daten vom Prototyp NodeMCU" {
         // Default item=Vcc_8266 label="Batterie [%s Volt]"
         Default item=Temperature_8266 label="Temperatur [%s °C]"

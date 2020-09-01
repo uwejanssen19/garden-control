@@ -47,6 +47,13 @@ Number Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2
 String Status_Solar2 { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:status_channel" }
 Number Temp_Solar2 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:temp_channel" }
 
+String Time_Solar3 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:time_channel" }
+Number Vcc_Solar3 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:vcc_channel" }
+String Status_Solar3 { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:status_channel" }
+Number Temp_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:temp_channel" }
+Number Hum_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:hum_channel" }
+Number Press_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:press_channel" }
+
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 
 Switch Irrigating
