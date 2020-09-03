@@ -21,17 +21,18 @@ then
   //gBatteries.members.forEach[ i | var vcc = i.state as DecimalType;var i+"_Display" = (vcc-3.6)*150 +10  ]
 end
 
-// // find lowest battery
-// rule "CHECK batteries"
-// when
-//     Member of gBatteriesMin changed
-// then
-//   val batValue =  triggeringItem.state
-//   logInfo("rule CHECK batteries","value = {}", batValue)
-//   if (batValue > 100/3.7) {
-//     return
-//   }
-//   else {
-//     StatusText.sendCommand(triggeringItem.name+" only has " + batValue + " V")      
-//   }
-// end
+// find lowest battery
+rule "CHECK batteries"
+when
+    Member of gBatteriesMin changed
+then
+  val batValue =  triggeringItem.state
+  logInfo("rule CHECK batteries","value = {}", batValue)
+  if (batValue > 3.7) {
+    logInfo("rule CHECK batteries","value = {} ABOVE 3.7 -> o.k.", batValue)
+    return
+  }
+  else {
+    StatusText.sendCommand(triggeringItem.name+" only has " + batValue + " V")      
+  }
+end
