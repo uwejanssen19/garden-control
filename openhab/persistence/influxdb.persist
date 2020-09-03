@@ -14,13 +14,14 @@ Items {
     // Vcc_8266 : strategy =  everyHalfHour
 
     // Solarmodul Gartenhaus
-    Temp_Solar1 : strategy =  everyHalfHour
     Vcc_Solar1 : strategy =  everyHalfHour
+    Temp_Solar1 : strategy =  everyHalfHour
     // Solarmodul Carport
     Vcc_Solar2 : strategy =  everyHalfHour
     Temp_Solar2 : strategy =  everyHalfHour
     // Solarmodul South
     Vcc_Solar3 : strategy =  everyHalfHour
     Temp_Solar3 : strategy =  everyHalfHour
+
     LocalCurrentRainVolume : strategy = everyHour
 }

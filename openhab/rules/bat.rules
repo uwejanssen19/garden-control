@@ -1,0 +1,37 @@
+
+// display calculated value on change
+rule "battery change" 
+when 
+  Member of gBatteries changed
+then
+  // get the voltage, then calculate percentage and write to variable_name + "_Display"
+  // vcc = 3.6 V -> pct = 10% and 4.2V -> 100%
+  // equation pct = f(vcc) = m(x-x1) + y1
+  // pct = 150*(vcc - 3.6) + 10
+  // e.g. Vcc_Solar1 = 4.2 -> Vcc_Solar1_Display = 100%
+  logInfo("rule Battery change","triggeringItem = {}", triggeringItem)
+  val vcc = triggeringItem.state as DecimalType
+  logInfo("rule Battery change","vcc value as decimalType = {}", vcc)
+  val pct = (vcc-3.6)*150 +10
+  // use proxy item for display
+  val displayItem = triggeringItem.name+"_Display"
+  logInfo("rule Battery change","triggeringItem item = {}", triggeringItem.name)
+  logInfo("rule Battery change","display item = {}", displayItem)
+  displayItem.sendCommand(pct.toString)
+  //gBatteries.members.forEach[ i | var vcc = i.state as DecimalType;var i+"_Display" = (vcc-3.6)*150 +10  ]
+end
+
+// // find lowest battery
+// rule "CHECK batteries"
+// when
+//     Member of gBatteriesMin changed
+// then
+//   val batValue =  triggeringItem.state
+//   logInfo("rule CHECK batteries","value = {}", batValue)
+//   if (batValue > 100/3.7) {
+//     return
+//   }
+//   else {
+//     StatusText.sendCommand(triggeringItem.name+" only has " + batValue + " V")      
+//   }
+// end

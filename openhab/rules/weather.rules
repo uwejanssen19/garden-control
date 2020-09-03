@@ -207,7 +207,7 @@ rule "Lawn irrigation"
 
   when 
     //Time cron "0 0/1 22 * 3-10 ?"  // TEST
-    Time cron "0 0/1 8-20 * 3-10 ?"  // check every minute
+    Time cron "0 0/1 8-20 * 3-8 ?"  
   then
     logDebug("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
     if (isLastLawnIrrigationCron.apply()) {
@@ -326,8 +326,8 @@ end
 // This rule serves as a steady bgackground task running periodically
 rule "daemon"
   when 
-    Time cron "0 0/1 * * * ?" //near future test
-    // Time cron "0 2/10 * * * ?" // time spec for release edition
+    //Time cron "0 0/1 * * * ?" //near future test
+    Time cron "0 2/10 * * * ?" // time spec for release edition
   then
   
   val irrigating = (Irrigating.state == ON)

@@ -37,22 +37,26 @@ Number Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing
 Number Pressure_8266 <pressure> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_pressure_channel" }
 // Number Vcc_8266 <battery> { channel="mqtt:topic:myUnsecureBroker:bme_thing:vcc_channel" }
 
+Group:Number:MIN gBatteriesMin
+Group:Number gBatteries
+
+
 String Time_Solar1 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:time_channel" }
-Number Vcc_Solar1 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:vcc_channel" }
+Number Vcc_Solar1 <battery> (gBatteries,gBatteriesMin) { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:vcc_channel" }
 String Status_Solar1 { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:status_channel" }
 Number Temp_Solar1 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:temp_channel" }
 
 String Time_Solar2 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:time_channel" }
-Number Vcc_Solar2 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
+Number Vcc_Solar2 <battery> (gBatteries,gBatteriesMin) { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
 String Status_Solar2 { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:status_channel" }
 Number Temp_Solar2 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:temp_channel" }
 
 String Time_Solar3 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:time_channel" }
-Number Vcc_Solar3 <battery> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:vcc_channel" }
+Number Vcc_Solar3 <battery> (gBatteries,gBatteriesMin) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:vcc_channel" }
 String Status_Solar3 { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:status_channel" }
 Number Temp_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:temp_channel" }
-Number Hum_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:hum_channel" }
-Number Press_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:press_channel" }
+Number Hum_Solar3 <humidity> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:hum_channel" }
+Number Press_Solar3 <pressure> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:press_channel" }
 
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 
@@ -67,8 +71,7 @@ Group gWeatherItems
   Number RainAverage (gWeatherItems)
   Number TempAverage (gWeatherItems)
 
-Group:Number:MIN gBatteries
-// Group:Number:MIN batteries 
-  Number  Vcc_Solar1_Display <battery> (gBatteries)
-  Number  Vcc_Solar2_Display <battery> (gBatteries)
+Number  Vcc_Solar1_Display <battery> 
+Number  Vcc_Solar2_Display <battery> 
+Number  Vcc_Solar3_Display <battery>
 
