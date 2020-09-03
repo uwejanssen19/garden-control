@@ -9,14 +9,14 @@ then
   // equation pct = f(vcc) = m(x-x1) + y1
   // pct = 150*(vcc - 3.6) + 10
   // e.g. Vcc_Solar1 = 4.2 -> Vcc_Solar1_Display = 100%
-  logInfo("rule Battery change","triggeringItem = {}", triggeringItem)
+//   logInfo("rule Battery change","triggeringItem = {}", triggeringItem)
   val vcc = triggeringItem.state as DecimalType
-  logInfo("rule Battery change","vcc value as decimalType = {}", vcc)
+//   logInfo("rule Battery change","vcc value as decimalType = {}", vcc)
   val pct = (vcc-3.6)*150 +10
   // use proxy item for display
   val displayItem = triggeringItem.name+"_Display"
-  logInfo("rule Battery change","triggeringItem item = {}", triggeringItem.name)
-  logInfo("rule Battery change","display item = {}", displayItem)
+//   logInfo("rule Battery change","triggeringItem item = {}", triggeringItem.name)
+//   logInfo("rule Battery change","display item = {}", displayItem)
   displayItem.sendCommand(pct.toString)
   //gBatteries.members.forEach[ i | var vcc = i.state as DecimalType;var i+"_Display" = (vcc-3.6)*150 +10  ]
 end
