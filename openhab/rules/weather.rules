@@ -433,7 +433,7 @@ then
   IgnoreWeatherSwitch.sendCommand(OFF)
   Irr_Switch.sendCommand(OFF)
   Irr_Switch.postUpdate(OFF)
-
+  NoIrrigationPreset.sendCommand(OFF)
   SystemStatusText.sendCommand("System started")
   logInfo("SysStart or InitSwitch","EXIT")
 end 

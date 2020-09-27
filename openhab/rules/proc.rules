@@ -61,6 +61,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
   var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
 
   val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
+  val Boolean NoIrrigationWanted = (NoIrrigationPreset?.state == ON)
     
   val Number RAIN_TRESHOLD = 3.0
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
@@ -77,13 +78,17 @@ val Functions$Function0<Boolean> shallIrrigate = [
  logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
  logInfo("shallIrrigate:","didNotRain = {} ",didNotRain)
  logInfo("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
+ logInfo("shallIrrigate:","NoIrrigationWanted = {} ",NoIrrigationWanted)
+ 
     
-  if (switchStateSetToIgnore || weatherSuitableForIrrigating) {
+  if (!NoIrrigationWanted && (switchStateSetToIgnore || weatherSuitableForIrrigating)) {
     logInfo("shallIrrigate:","return true")
     return true
   }
   else {
     logInfo("shallIrrigate:","return false")
+    // turn off no irrigation preset until it is pressed again or next call of this function
+    NoIrrigationPreset.sendCommand(OFF)
     return false 
   }
   

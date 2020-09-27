@@ -21,6 +21,7 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {
+            Default item=NoIrrigationPreset icon="water" label="Gießen aus bis zum nächsten Mal"
             Default item=IgnoreWeatherSwitch icon="sun_clouds" label="Gießen trotz Regen in der Wettervorhersage"
             Default item=Irr_Switch icon="water" label= "Bewässerung"
             Default item=Valve_Switch icon="faucet" label=  "Regentonne fuellen"

@@ -18,6 +18,7 @@ Switch Set_alive { channel="exec:command:set_alive:run", autoupdate = "false" }
 Switch Irr_Switch 
 Switch Valve_Switch {expire="600s,OFF"} 
 Switch Fill_Switch  {expire="130s,OFF"} 
+Switch NoIrrigationPreset {expire="9h,OFF"}
 
 Number Display_level_out
 // reading level will not take more than 8 s
