@@ -39,7 +39,7 @@
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
 #endif
-#ifdef U8X8_HAVE_HW_I2C
+#ifdef U8X8_HAVE_HW_I2C 
 #include <Wire.h>
 #endif
 
@@ -341,7 +341,7 @@ void u8g2_ascii_1() {
 void u8g2_ascii_2() {
   char s[2] = " ";
   uint8_t x, y;
-  u8g2.drawStr( 0, 0, "ASCII page 2");
+  u8g2.drawStr( 0, 0, "ASCII page Nr. 2");
   for( y = 0; y < 6; y++ ) {
     for( x = 0; x < 16; x++ ) {
       s[0] = y*16 + x + 160;
@@ -428,7 +428,7 @@ void u8g2_bitmap_modes(uint8_t transparent) {
   
   if(!transparent) {
     u8g2.setBitmapMode(false /* solid */);
-    u8g2.drawStr(0, 0, "Solid bitmap");
+    u8g2.drawStr(0, 0, "Solllllllid bitmap");
   } else {
     u8g2.setBitmapMode(true /* transparent*/);
     u8g2.drawStr(0, 0, "Transparent bitmap");
@@ -463,6 +463,7 @@ void draw(void) {
 
 
 void setup(void) {
+  Serial.println(F("TEST Graphics"))
   u8g2.begin();
 }
 

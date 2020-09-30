@@ -1,0 +1,12 @@
+{
+  "additionalFiles": "",
+  "builtInLibrariesFolders": "D:\\install\\Arduino\\libraries",
+  "builtInToolsFolders": "D:\\install\\Arduino\\tools-builder,D:\\install\\Arduino\\hardware\\tools\\avr,C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "build.path=p:\\dokumente\\uwe\\software_projekte\\rasperry_pi\\My_Raspberry_Pis\\garden-control\\esp8266_modules\\build,build.warn_data_percentage=75,runtime.tools.mklittlefs.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\mklittlefs\\2.5.0-4-fe5bb56,runtime.tools.mklittlefs-2.5.0-4-fe5bb56.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\mklittlefs\\2.5.0-4-fe5bb56,runtime.tools.xtensa-lx106-elf-gcc.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\2.5.0-4-b40a506,runtime.tools.xtensa-lx106-elf-gcc-2.5.0-4-b40a506.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\2.5.0-4-b40a506,runtime.tools.python3.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\python3\\3.7.2-post1,runtime.tools.python3-3.7.2-post1.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\python3\\3.7.2-post1,runtime.tools.mkspiffs.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\mkspiffs\\2.5.0-4-b40a506,runtime.tools.mkspiffs-2.5.0-4-b40a506.path=C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\mkspiffs\\2.5.0-4-b40a506",
+  "fqbn": "esp8266:esp8266:d1_mini:xtal=80,vt=flash,exception=legacy,ssl=all,eesz=4M2M,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=921600",
+  "hardwareFolders": "D:\\install\\Arduino\\hardware,C:\\Users\\uwe\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\uwe\\Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10813",
+  "sketchLocation": "p:\\dokumente\\uwe\\software_projekte\\rasperry_pi\\My_Raspberry_Pis\\garden-control\\esp8266_modules\\Hello\\HelloWorld.ino"
+}

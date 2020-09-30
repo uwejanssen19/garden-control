@@ -2,6 +2,7 @@
 #include <VL53L1X.h>
 
 VL53L1X sensor;
+uint16_t distance = 0;
 
 void setup()
 {
@@ -32,7 +33,8 @@ void setup()
 
 void loop()
 {
-  Serial.print(sensor.read());
+  distance = sensor.read();
+  Serial.print(distance);
   delay(1000);
   if (sensor.timeoutOccurred()) { Serial.print(" T"); }
 //  if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
