@@ -15,11 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="HelloWorld.ino" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="__vm\.HelloWorld.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SensorDisplayProto.ino" />
   </ItemGroup>
 </Project>
