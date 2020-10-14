@@ -32,14 +32,14 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Temp_Solar1 label="Temperatur [%s °C]"        
     }
 
-    Frame label="Aktuelle Werte von Solar Modul 2 ( Carport West )" {
+    Frame label="Aktuelle Werte von Solar Modul 2 ( Carport NW)" {
         Default item=Time_Solar2 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar2_Display label="Batterie [%s %%]"        
         Default item=Status_Solar2 label="Status [%s]"        
         Default item=Temp_Solar2 label="Temperatur [%s °C]"        
     }
 
-    Frame label="Aktuelle Werte von Solar Modul 3 ( Südseite )" {
+    Frame label="Aktuelle Werte von Solar Modul 3 ( WZ West-Süd )" {
         Default item=Time_Solar3 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar3_Display label="Batterie [%s %%]"        
         Default item=Status_Solar3 label="Status [%s]"        
