@@ -6,3 +6,12 @@ backups/
 sonoff_binary/sonoff-DE.bin
 LOGS/
 .thumb/
+Release/
+**/*log
+**/*obj
+**/*mp4
+**/MP4
+.vs/
+**/*elf
+**/*bin
+
