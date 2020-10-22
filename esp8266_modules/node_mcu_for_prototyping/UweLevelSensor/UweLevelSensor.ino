@@ -40,7 +40,7 @@ VL53L1X sensor;
 int distance = 0;
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
-const char* ssid = "ANY_ID";
+const char* ssid = "ANY_SSID";
 const char* wlanPwd = "***********";
 const char* mqttServer = "garden-control";
 const char* topic = "UweLevelSensor/dist";
