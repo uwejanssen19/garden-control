@@ -27,7 +27,7 @@ when
     Member of gBatteriesMin changed
 then
   val batValue =  triggeringItem.state
-  logInfo("rule CHECK batteries","value = {}", batValue)
+  logInfo("rule CHECK batteries","{} reported value = {}", triggeringItem.name, batValue)
   if (batValue > 3.7) {
     logInfo("rule CHECK batteries","value = {} ABOVE 3.7 -> o.k.", batValue)
     return
