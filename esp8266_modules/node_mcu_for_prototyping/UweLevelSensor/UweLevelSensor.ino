@@ -38,7 +38,7 @@ U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SD
 
 String result = String("");
 VL53L1X sensor;
-int distance = 0;
+unsigned int distance = 0;
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
 const char* ssid = SSID;
@@ -46,6 +46,9 @@ const char* wlanPwd = WLAN_KEY;
 const char* mqttServer = "garden-control";
 const char* topic = "UweLevelSensor/dist";
 const unsigned int mqttPort = 1883;
+float outputValue = 0;
+unsigned int analogValue = 0;
+String analogResult = String("");
 
 void setup(void) {
     Serial.println("Read Range Sensor and display at OLED display");
@@ -72,7 +75,7 @@ void setup(void) {
     // Start continuous readings at a rate of one measurement every 50 ms (the
     // inter-measurement period). This period should be at least as long as the
     // timing budget.
-    sensor.startContinuous(1000);
+    sensor.startContinuous(1000); // every sec
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, wlanPwd);
@@ -106,7 +109,13 @@ void setup(void) {
 
 void loop(void) {
     result = String("Dist = ");
+    analogResult = String("Voltage = ");
     distance = sensor.read();
+    analogValue = analogRead(A0);
+    Serial.println(analogValue);
+    outputValue = map(analogValue, 0, 1023, 0, 255);
+    Serial.println(outputValue);
+    analogResult = analogResult + outputValue + "V";
     u8g2.clearBuffer();					// clear the internal memory
     u8g2.setFont(u8g2_font_ncenB08_tr);	// choose a suitable font
    //u8g2.setFont(u8g2_font_t0_22b_tr);	// choose a suitable font
@@ -114,17 +123,20 @@ void loop(void) {
   //  u8g2.drawStr(0, 22, "from VS mic!");	// write something to the internal memory
 
     // display measured distance on oled display 
-    result += distance;
+    result = result + distance + "mm";
     mqttClient.publish(topic, result.c_str());
     //Serial.println(result);
+    // display IP address
     String msg = String("IP: ");
     IPAddress localIP = WiFi.localIP();
     String ip = localIP.toString();
     msg += ip;
-    u8g2.drawStr(0, 33, result.c_str());	// write something to the internal memory
-    u8g2.drawStr(0, 66, msg.c_str());	// write something to the internal memory
-
+    u8g2.drawStr(0, 11, result.c_str());	// write something to the internal memory
+    // display IP address
+    u8g2.drawStr(0, 33, msg.c_str());	// write something to the internal memory
+    // display power supply (int should 3.3V)
+    u8g2.drawStr(0, 55, analogResult.c_str());
     u8g2.sendBuffer();					// transfer internal memory to the display
 
-    delay(1000);
+    delay(5000);
 }
