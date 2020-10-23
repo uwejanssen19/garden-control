@@ -15,13 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="UweLevelSensor.ino" />
     <None Include="src\arduino folders read me.txt">
       <Filter>Misc Files</Filter>
     </None>
+    <None Include="UweLevelSensor.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.UweLevelSensor.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cred.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

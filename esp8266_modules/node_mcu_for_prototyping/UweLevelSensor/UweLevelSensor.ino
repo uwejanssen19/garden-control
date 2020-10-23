@@ -25,6 +25,7 @@ Try to get that nice thing running inside visual studio
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include <VL53L1X.h>
+#include "cred.h"
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -40,8 +41,8 @@ VL53L1X sensor;
 int distance = 0;
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
-const char* ssid = "ANY_SSID";
-const char* wlanPwd = "***********";
+const char* ssid = SSID;
+const char* wlanPwd = WLAN_KEY;
 const char* mqttServer = "garden-control";
 const char* topic = "UweLevelSensor/dist";
 const unsigned int mqttPort = 1883;
