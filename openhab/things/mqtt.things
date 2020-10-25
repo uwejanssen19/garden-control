@@ -37,3 +37,10 @@ Channels:
          Type number : hum_channel "hum_channel" [ stateTopic="UweSolar3/bme/hum" ]
          Type number : temp_channel "press_channel" [ stateTopic="UweSolar3/bme/press" ]
 }
+Thing mqtt:topic:myUnsecureBroker:level_pump_module_thing (mqtt:broker:myUnsecureBroker) {
+//ESP8266 Outdoor laser level sensor and irrigation pump (planned)
+Channels:
+         Type number : level_channel "level_channel" [ stateTopic="UweLevelSensor/dist" ]
+//         Type string : status_channel "status_channel" [ stateTopic="UweSolar3/status" ]
+         Type switch : pump_channel "pump_channel" [ stateTopic="UweLevelSensor/pump" ]
+}

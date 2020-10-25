@@ -130,7 +130,7 @@ void loop(void) {
 
     // display measured distance on oled display 
     result = result + distance + "mm";
-    mqttClient.publish(topic, result.c_str());
+    mqttClient.publish(topic, (String("")+distance).c_str());
     //Serial.println(result);
     // display IP address
     IPAddress localIP = WiFi.localIP();

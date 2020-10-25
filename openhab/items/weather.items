@@ -76,3 +76,5 @@ Number  Vcc_Solar1_Display <battery>
 Number  Vcc_Solar2_Display <battery> 
 Number  Vcc_Solar3_Display <battery>
 
+Number LaserLevel <time> { channel="mqtt:topic:myUnsecureBroker:level_pump_module_thing:level_channel" }
+

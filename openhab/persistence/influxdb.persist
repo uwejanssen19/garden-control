@@ -3,6 +3,7 @@ Strategies {
     everyHour : "0 0 * * * ?"
     everyDay : "0 0 0 * * ?"
     everyHalfHour : "0 0/30 * * * ?"  // check every half hour
+    every10Minutes : "0 0/10 * * * ?"  // check every 10 minutes
     default = everyChange
 }
 
@@ -22,6 +23,8 @@ Items {
     // Solarmodul South
     Vcc_Solar3 : strategy =  everyHalfHour
     Temp_Solar3 : strategy =  everyHalfHour
+
+    LaserLevel : strategy = every10Minutes
 
     LocalCurrentRainVolume : strategy = everyHour
 }
