@@ -26,6 +26,8 @@ Try to get that nice thing running inside visual studio
 #include <U8g2lib.h>
 #include <VL53L1X.h>
 #include "cred.h"
+#include <ArduinoOTA.h>
+
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -49,8 +51,11 @@ const unsigned int mqttPort = 1883;
 float outputValue = 0;
 unsigned int analogValue = 0;
 String analogResult = String("");
+unsigned int readCount = 0;
+void setupOTA();
 
 void setup(void) {
+    setupOTA();
     Serial.println("Read Range Sensor and display at OLED display");
     u8g2.begin();
     Serial.begin(115200);
@@ -108,13 +113,14 @@ void setup(void) {
 }
 
 void loop(void) {
-    result = String("Dist = ");
+    ArduinoOTA.handle();
+    result = String("Dist: ");
     analogResult = String("Voltage = ");
     distance = sensor.read();
     analogValue = analogRead(A0);
     Serial.println(analogValue);
     outputValue = map(analogValue, 0, 1023, 0, 255);
-    Serial.println(outputValue);
+    //Serial.println(outputValue);
     analogResult = analogResult + outputValue + "V";
     u8g2.clearBuffer();					// clear the internal memory
     u8g2.setFont(u8g2_font_ncenB08_tr);	// choose a suitable font
@@ -127,16 +133,61 @@ void loop(void) {
     mqttClient.publish(topic, result.c_str());
     //Serial.println(result);
     // display IP address
-    String msg = String("IP: ");
     IPAddress localIP = WiFi.localIP();
     String ip = localIP.toString();
-    msg += ip;
+    String count_msg = String("count: ") + readCount++;
     u8g2.drawStr(0, 11, result.c_str());	// write something to the internal memory
     // display IP address
-    u8g2.drawStr(0, 33, msg.c_str());	// write something to the internal memory
+    u8g2.drawStr(0, 22, count_msg.c_str());	// write something to the internal memory
+    // display IP address
+    u8g2.drawStr(0, 33, (String("IP: ")+ ip).c_str());	
     // display power supply (int should 3.3V)
     u8g2.drawStr(0, 55, analogResult.c_str());
     u8g2.sendBuffer();					// transfer internal memory to the display
-
+    if (readCount > 100) {
+        Serial.println("Rebooting");
+        ESP.restart();
+    }
     delay(5000);
+}
+void setupOTA() {
+    ArduinoOTA.onStart([]() {
+        String type;
+        if (ArduinoOTA.getCommand() == U_FLASH) {
+            type = "sketch";
+        }
+        else { // U_FS
+            type = "filesystem";
+        }
+
+        // NOTE: if updating FS this would be the place to unmount FS using FS.end()
+        Serial.println("Start updating " + type);
+        });
+    ArduinoOTA.onEnd([]() {
+        Serial.println("\nEnd");
+        });
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+        });
+    ArduinoOTA.onError([](ota_error_t error) {
+        Serial.printf("Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) {
+            Serial.println("Auth Failed");
+        }
+        else if (error == OTA_BEGIN_ERROR) {
+            Serial.println("Begin Failed");
+        }
+        else if (error == OTA_CONNECT_ERROR) {
+            Serial.println("Connect Failed");
+        }
+        else if (error == OTA_RECEIVE_ERROR) {
+            Serial.println("Receive Failed");
+        }
+        else if (error == OTA_END_ERROR) {
+            Serial.println("End Failed");
+        }
+        });
+    ArduinoOTA.begin();
+    Serial.println("Ready");
+
 }
