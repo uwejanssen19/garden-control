@@ -19,6 +19,7 @@
       <Filter>Misc Files</Filter>
     </None>
     <None Include="UweLevelSensor.ino" />
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.UweLevelSensor.vsarduino.h">

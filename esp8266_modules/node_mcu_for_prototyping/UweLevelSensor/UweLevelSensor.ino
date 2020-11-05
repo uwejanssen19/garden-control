@@ -38,6 +38,9 @@ Try to get that nice thing running inside visual studio
 
 U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // All Boards without Reset of the Display
 
+#define OFF (boolean)false
+#define ON (boolean)true
+#define RELAIS_PIN D3 
 String result = String("");
 VL53L1X sensor;
 unsigned int distance = 0;
@@ -52,14 +55,19 @@ float outputValue = 0;
 unsigned int analogValue = 0;
 String analogResult = String("");
 unsigned int readCount = 0;
+boolean relayState = OFF;
 void setupOTA();
+void relaisControl(boolean value);
+boolean toggleBoolean();
+
 
 void setup(void) {
     setupOTA();
+    inithw();
     Serial.println("Read Range Sensor and display at OLED display");
-    u8g2.begin();
+    u8g2.begin(); // init display
     Serial.begin(115200);
-    Wire.begin();
+    Wire.begin(); // Start I2C
     Wire.setClock(400000); // use 400 kHz I2C
 
     sensor.setTimeout(500);
@@ -82,6 +90,7 @@ void setup(void) {
     // timing budget.
     sensor.startContinuous(1000); // every sec
 
+    // connect to WLAN
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, wlanPwd);
     while (WiFi.status() != WL_CONNECTED) {
@@ -117,6 +126,14 @@ void loop(void) {
     result = String("Dist: ");
     analogResult = String("Voltage = ");
     distance = sensor.read();
+/*    if (distance < 60) {
+        relaisControl(OFF);
+    }
+    else {
+        relaisControl(ON);
+
+    }*/
+
     analogValue = analogRead(A0);
     Serial.println(analogValue);
     outputValue = map(analogValue, 0, 1023, 0, 255);
@@ -130,7 +147,7 @@ void loop(void) {
 
     // display measured distance on oled display 
     result = result + distance + "mm";
-    mqttClient.publish(topic, (String("")+distance).c_str());
+    mqttClient.publish(topic, (String("") + distance).c_str());
     //Serial.println(result);
     // display IP address
     IPAddress localIP = WiFi.localIP();
@@ -140,15 +157,28 @@ void loop(void) {
     // display IP address
     u8g2.drawStr(0, 22, count_msg.c_str());	// write something to the internal memory
     // display IP address
-    u8g2.drawStr(0, 33, (String("IP: ")+ ip).c_str());	
+    u8g2.drawStr(0, 33, (String("IP: ") + ip).c_str());
     // display power supply (int should 3.3V)
     u8g2.drawStr(0, 55, analogResult.c_str());
-    u8g2.sendBuffer();					// transfer internal memory to the display
     if (readCount > 100) {
         Serial.println("Rebooting");
         ESP.restart();
     }
+    if (relayState == OFF) {
+      relaisControl(ON);
+        relayState = ON;
+        // Pump ON
+      //u8g2.drawStr(0, 44, (String("Relay state = ") + relayState).c_str());
+    }
+    else {
+      relaisControl(OFF);
+        relayState = OFF;
+     //u8g2.drawStr(0, 44, "Pump OFF");
+    }
+    u8g2.drawStr(0, 44, (String("Relay state = ") + relayStateToString()).c_str());
+    u8g2.sendBuffer();	// transfer internal memory to the display
     delay(5000);
+
 }
 void setupOTA() {
     ArduinoOTA.onStart([]() {
@@ -189,5 +219,29 @@ void setupOTA() {
         });
     ArduinoOTA.begin();
     Serial.println("Ready");
+    
+}
 
+void relaisControl(boolean value = OFF) {
+    if (value) {
+        digitalWrite(RELAIS_PIN, LOW);
+    }
+    else {
+        digitalWrite(RELAIS_PIN, HIGH);
+    }
+}
+
+void inithw(void) {
+    pinMode(RELAIS_PIN, OUTPUT);
+    relaisControl(OFF);
+}
+
+
+boolean toggleBoolean() {
+    relayState = (relayState == OFF)?ON : OFF;
+    Serial.println("State = " + relayState);
+    return relayState;
+}
+const char * relayStateToString() {
+    return relayState == OFF?"OFF" : "ON";
 }
