@@ -1,0 +1,13 @@
+cred.h
+**/*.o
+**/*.a
+LOGS/
+.thumb/
+Release/
+**/*log
+**/*obj
+.vs/
+**/*elf
+**/*bin
+
+
