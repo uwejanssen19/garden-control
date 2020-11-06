@@ -243,5 +243,5 @@ boolean toggleBoolean() {
     return relayState;
 }
 const char* relayStateToString() {
-    return relayState == OFF ? "OFF_1" : "ON_1";
+    return relayState == OFF ? "OFF" : "ON";
 }
