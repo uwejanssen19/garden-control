@@ -1,3 +1,0 @@
-# manually added
-network.auth_upload=no
-network.port=8266 
