@@ -2,6 +2,7 @@
 Try to get that nice thing running inside visual studio
 */
 
+#include "Relay.h"
 #include <PubSubClient.h>
 #include <WiFiUdp.h>
 #include <WiFiServerSecureBearSSL.h>
@@ -38,11 +39,9 @@ Try to get that nice thing running inside visual studio
 
 U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // All Boards without Reset of the Display
 
-#define OFF (boolean)false
-#define ON (boolean)true
-#define RELAIS_PIN D3 
 String result = String("");
 VL53L1X sensor;
+Relay relay;
 unsigned int distance = 0;
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
@@ -55,10 +54,7 @@ float outputValue = 0;
 unsigned int analogValue = 0;
 String analogResult = String("");
 unsigned int readCount = 0;
-boolean relayState = OFF;
 void setupOTA();
-void relaisControl(boolean value);
-boolean toggleBoolean();
 
 
 void setup(void) {
@@ -164,18 +160,9 @@ void loop(void) {
         Serial.println("Rebooting");
         ESP.restart();
     }
-    if (relayState == OFF) {
-        relaisControl(ON);
-        relayState = ON;
-        // Pump ON
-      //u8g2.drawStr(0, 44, (String("Relay state = ") + relayState).c_str());
-    }
-    else {
-        relaisControl(OFF);
-        relayState = OFF;
-        //u8g2.drawStr(0, 44, "Pump OFF");
-    }
-    u8g2.drawStr(0, 44, (String("Relay state = ") + relayStateToString()).c_str());
+
+    relay.toggleBoolean();
+    u8g2.drawStr(0, 44, (String("Relay state = ") + relay.toString()).c_str());
     u8g2.sendBuffer();	// transfer internal memory to the display
     delay(5000);
 
@@ -222,26 +209,10 @@ void setupOTA() {
 
 }
 
-void relaisControl(boolean value = OFF) {
-    if (value) {
-        digitalWrite(RELAIS_PIN, LOW);
-    }
-    else {
-        digitalWrite(RELAIS_PIN, HIGH);
-    }
-}
 
 void inithw(void) {
     pinMode(RELAIS_PIN, OUTPUT);
-    relaisControl(OFF);
+    relay.control(OFF);
 }
 
 
-boolean toggleBoolean() {
-    relayState = (relayState == OFF) ? ON : OFF;
-    Serial.println("State = " + relayState);
-    return relayState;
-}
-const char* relayStateToString() {
-    return relayState == OFF ? "OFF" : "ON";
-}

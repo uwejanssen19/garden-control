@@ -1,0 +1,28 @@
+// This module periodically sends its data to mqtt garden_control, 1883
+on MQTT#Connected do 
+      publish %sysname%/time/value,%systime%
+      publish %sysname%/a0/a0,[a0#a0]
+      publish %sysname%/bme/temp,[bme#temp]
+      publish %sysname%/bme/press,[bme#press]
+endon
+
+on wifi#disconnect do
+  pulse,2,0,1600
+  reboot
+endon
+
+on system#wake do
+  timerset,1,2
+endon
+
+on system#boot do
+  timerset,1,2
+endon
+
+On rules#timer=1 do
+  publish %sysname%/time/value,%systime%
+  publish %sysname%/a0/a0,[a0#a0]
+  publish %sysname%/bme/temp,[bme#temp]
+  publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (continous)"
+  timerset,1,30 // repeat sending mqtt
+endon
