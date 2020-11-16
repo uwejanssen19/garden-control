@@ -1,0 +1,17 @@
+Build:?
+20109  - Mega
+System Libraries:?
+ESP82xx Core 5d3af165, NONOS SDK 2.2.2-dev(38a443e), LWIP: 2.1.2 PUYA support
+Git Build:?
+
+Plugin Count:?
+46 [Normal]
+Build Time:?
+Aug 12 2020 23:49:33
+Binary Filename:?
+ESP_Easy_mega_20200812_normal_ESP8266_4M1M
+Build Platform:?
+Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29
+Git HEAD:?
+HEAD
+
