@@ -1,30 +1,8 @@
 sitemap openweather label="OpenWeather Overview" {
-    Frame label="Local Weather Station" {
-            Text item=LocalStationName {
-            Text item=LocalStationId 
-            //Mapview item=LocalStationLocation height=6
-            Text item=wanAddress label="Wan Address = [%s]"
-        }
-    }
-
-    Frame label="Local forecast for today" {
-        // Image item=LocalForecastHours12ConditionIcon
-        Text item=RainDetails label= "Rain Details" {
-            Text item=LocalForecastHoursTimestamp03
-            Text item=LocalForecastHoursRainVolume03
-            Text item=LocalForecastHoursTimestamp06
-            Text item=LocalForecastHoursRainVolume06
-            Text item=LocalForecastHoursTimestamp09
-            Text item=LocalForecastHoursRainVolume09
-            Text item=LocalForecastHoursTimestamp12
-            Text item=LocalForecastHoursRainVolume12
-        }
-    
-        Group item=ForecastRainVolumesGroup
 
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
  
-    }
+    
     Frame label="Aktuelle Werte von Solar Modul  1 ( Gartenhaus )" {
         Default item=Time_Solar1 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar1_Display label="Batterie [%s %%]"
@@ -48,14 +26,32 @@ sitemap openweather label="OpenWeather Overview" {
         // Default item=Press_Solar3 label="Druck [%s hPa]"
     }
 
-    // Frame label="Daten vom Prototyp NodeMCU" {
-    //     // Default item=Vcc_8266 label="Batterie [%s Volt]"
-    //     Default item=Temperature_8266 label="Temperatur [%s °C]"
-    //     Default item=Humidity_8266 label="Feuchtigkeit [%s %%]"
-    //     Default item=Pressure_8266 label="Druck [%s hPa]"
-    // }
+    Frame label="Local Weather Station" {
+            Text item=LocalStationName {
+            Text item=LocalStationId 
+            //Mapview item=LocalStationLocation height=6
+            Text item=wanAddress label="Wan Address = [%s]"
+        }
+    }
 
-    Frame label="Current local weather from OWM" {
+    Frame label="Local forecast for today" {
+        // Image item=LocalForecastHours12ConditionIcon
+        Text item=RainDetails label= "Rain Details" {
+            Text item=LocalForecastHoursTimestamp03
+            Text item=LocalForecastHoursRainVolume03
+            Text item=LocalForecastHoursTimestamp06
+            Text item=LocalForecastHoursRainVolume06
+            Text item=LocalForecastHoursTimestamp09
+            Text item=LocalForecastHoursRainVolume09
+            Text item=LocalForecastHoursTimestamp12
+            Text item=LocalForecastHoursRainVolume12
+        }
+    }
+    
+     Group item=ForecastRainVolumesGroup
+
+
+     Frame label="Current local weather from OWM" {
         Text item=LocalLastMeasurement
         // Text item=LocalCurrentCondition
         // Image item=LocalCurrentConditionIcon
