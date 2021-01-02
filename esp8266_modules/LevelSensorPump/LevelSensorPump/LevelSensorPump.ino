@@ -2,6 +2,8 @@
 Try to get that nice thing running inside visual studio
 */
 
+#include "localU8.h"
+#include <Adafruit_BME280.h>
 #include "Relay.h"
 #include <PubSubClient.h>
 #include <WiFiUdp.h>
@@ -37,14 +39,17 @@ Try to get that nice thing running inside visual studio
 #include <Wire.h>
 #endif
 
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // All Boards without Reset of the Display
+#define TEMP_RESULT "Temp: "
 
-String result = String("");
+//U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // All Boards without Reset of the Display
+LocalU8Class u8g2;
+
 VL53L1X sensor;
 Relay relay;
-unsigned int distance = 0;
+unsigned int sensorDistance = 0;
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
+Adafruit_BME280 bme;
 const char* ssid = SSID;
 const char* wlanPwd = WLAN_KEY;
 const char* mqttServer = "garden-control";
@@ -52,21 +57,16 @@ const char* topic = "UweLevelSensor/dist";
 const unsigned int mqttPort = 1883;
 float outputValue = 0;
 unsigned int analogValue = 0;
-String analogResult = String("");
 unsigned int readCount = 0;
 void setupOTA();
+float temperature = -50.0;
+String tempResult;
 
 
 void setup(void) {
     setupOTA();
     inithw();
     Serial.println("Read Range Sensor and display at OLED display");
-    u8g2.begin(); // init display
-    Serial.begin(115200);
-    Wire.begin(); // Start I2C
-    Wire.setClock(400000); // use 400 kHz I2C
-
-    sensor.setTimeout(500);
     if (!sensor.init())
     {
         Serial.println("Failed to detect and initialize sensor VL53L1X!");
@@ -99,8 +99,6 @@ void setup(void) {
     Serial.println("IP Address: ");
     Serial.println(WiFi.localIP());
 
-
-
     // now connect to MQTT server 
 
     mqttClient.setServer(mqttServer, mqttPort);
@@ -119,10 +117,10 @@ void setup(void) {
 
 void loop(void) {
     ArduinoOTA.handle();
-    result = String("Dist: ");
-    analogResult = String("Voltage = ");
-    distance = sensor.read();
-    /*    if (distance < 60) {
+    u8g2.clearBuffer();					// clear the internal OLED display memory
+    u8g2.setFont(u8g2_font_ncenB08_tr);	// choose a suitable font
+    sensorDistance = sensor.read();
+    /*    if (sensorDistance < 60) {
             relaisControl(OFF);
         }
         else {
@@ -131,38 +129,31 @@ void loop(void) {
         }*/
 
     analogValue = analogRead(A0);
-    Serial.println(analogValue);
+    Serial.print("sensorDistance = " );
+    Serial.println(sensorDistance);
     outputValue = map(analogValue, 0, 1023, 0, 255);
-    //Serial.println(outputValue);
-    analogResult = analogResult + outputValue + "V";
-    u8g2.clearBuffer();					// clear the internal memory
-    u8g2.setFont(u8g2_font_ncenB08_tr);	// choose a suitable font
-   //u8g2.setFont(u8g2_font_t0_22b_tr);	// choose a suitable font
-  //  u8g2.drawStr(0, 11, "Hello v1.1");	// write something to the internal memory
-  //  u8g2.drawStr(0, 22, "from VS mic!");	// write something to the internal memory
-
-    // display measured distance on oled display 
-    result = result + distance + "mm";
-    mqttClient.publish(topic, (String("") + distance).c_str());
-    //Serial.println(result);
+   
+    // display measured sensor distance on oled display 
+    mqttClient.publish(topic, (String("") + sensorDistance).c_str());
+    u8g2.displayValue("Distance: ", sensorDistance, "mm", 11);
     // display IP address
+    u8g2.displayValue("Count: ", readCount++, "", 22);
+    //u8g2.drawStr(0, 22, count_msg.c_str());	// write something to the internal memory
     IPAddress localIP = WiFi.localIP();
     String ip = localIP.toString();
-    String count_msg = String("count: ") + readCount++;
-    u8g2.drawStr(0, 11, result.c_str());	// write something to the internal memory
-    // display IP address
-    u8g2.drawStr(0, 22, count_msg.c_str());	// write something to the internal memory
-    // display IP address
-    u8g2.drawStr(0, 33, (String("IP: ") + ip).c_str());
-    // display power supply (int should 3.3V)
-    u8g2.drawStr(0, 55, analogResult.c_str());
+//    u8g2.displayValue("IP", 1, (String(" = ") + ip).c_str(), 33);
+    u8g2.displayValue("IP: ", ip.c_str(), "",33);
+    //u8g2.drawStr(0, 33, (String("IP: ") + ip).c_str());
+    u8g2.displayValue("Voltage: ", outputValue, "V", 55);
     if (readCount > 100) {
         Serial.println("Rebooting");
         ESP.restart();
     }
-
     relay.toggleBoolean();
-    u8g2.drawStr(0, 44, (String("Relay state = ") + relay.toString()).c_str());
+   //u8g2.drawStr(0, 44, (String("Relay state = ") + relay.toString()).c_str());
+    temperature = bme.readTemperature();
+    u8g2.displayValue(TEMP_RESULT, temperature,"", 44);
+//    u8g2.drawStr(0, 44, makeMsg(temperature));
     u8g2.sendBuffer();	// transfer internal memory to the display
     delay(5000);
 
@@ -206,13 +197,29 @@ void setupOTA() {
         });
     ArduinoOTA.begin();
     Serial.println("Ready");
-
 }
 
 
 void inithw(void) {
+    u8g2.begin(); // init display
+    Serial.begin(115200); // Debug port init 
+    Wire.begin(); // Start I2C
+    Wire.setClock(400000); // use 400 kHz I2C
+
+    sensor.setTimeout(500); // range sensort init
     pinMode(RELAIS_PIN, OUTPUT);
     relay.control(OFF);
+    int status = bme.begin(0x76); // temperature sensor init
+    //if (!status) {
+        //Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
+        Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(), 16);
+        Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+    //}
+
 }
 
-
+const char* makeMsg(float par)
+{
+    tempResult = String(TEMP_RESULT) + par;
+    return tempResult.c_str();
+}
