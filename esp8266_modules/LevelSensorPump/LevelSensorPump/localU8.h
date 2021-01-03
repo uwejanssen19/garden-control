@@ -30,7 +30,7 @@ class LocalU8Class : public U8G2_SSD1306_128X64_NONAME_F_SW_I2C
 
 };
 
-extern LocalU8Class LocalU8;
+//extern LocalU8Class LocalU8;
 
 #endif
 

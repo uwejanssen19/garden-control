@@ -59,7 +59,7 @@ float outputValue = 0;
 unsigned int analogValue = 0;
 unsigned int readCount = 0;
 void setupOTA();
-float temperature = -50.0;
+//float temperature = -50.0;
 String tempResult;
 
 
@@ -133,17 +133,13 @@ void loop(void) {
     Serial.println(sensorDistance);
     outputValue = map(analogValue, 0, 1023, 0, 255);
    
-    // display measured sensor distance on oled display 
     mqttClient.publish(topic, (String("") + sensorDistance).c_str());
+    // display measured sensor distance on oled display 
     u8g2.displayValue("Distance: ", sensorDistance, "mm", 11);
-    // display IP address
     u8g2.displayValue("Count: ", readCount++, "", 22);
-    //u8g2.drawStr(0, 22, count_msg.c_str());	// write something to the internal memory
     IPAddress localIP = WiFi.localIP();
     String ip = localIP.toString();
-//    u8g2.displayValue("IP", 1, (String(" = ") + ip).c_str(), 33);
     u8g2.displayValue("IP: ", ip.c_str(), "",33);
-    //u8g2.drawStr(0, 33, (String("IP: ") + ip).c_str());
     u8g2.displayValue("Voltage: ", outputValue, "V", 55);
     if (readCount > 100) {
         Serial.println("Rebooting");
@@ -151,9 +147,8 @@ void loop(void) {
     }
     relay.toggleBoolean();
    //u8g2.drawStr(0, 44, (String("Relay state = ") + relay.toString()).c_str());
-    temperature = bme.readTemperature();
-    u8g2.displayValue(TEMP_RESULT, temperature,"", 44);
-//    u8g2.drawStr(0, 44, makeMsg(temperature));
+ //   temperature = bme.readTemperature();
+ //   u8g2.displayValue(TEMP_RESULT, temperature,"", 44);
     u8g2.sendBuffer();	// transfer internal memory to the display
     delay(5000);
 
@@ -209,13 +204,12 @@ void inithw(void) {
     sensor.setTimeout(500); // range sensort init
     pinMode(RELAIS_PIN, OUTPUT);
     relay.control(OFF);
-    int status = bme.begin(0x76); // temperature sensor init
+    //int status = bme.begin(0x76); // temperature sensor init
     //if (!status) {
         //Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-        Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(), 16);
-        Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+//        Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(), 16);
+//        Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
     //}
-
 }
 
 const char* makeMsg(float par)
