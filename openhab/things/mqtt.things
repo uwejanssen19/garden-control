@@ -26,6 +26,7 @@ Channels:
          Type number : vcc_channel "vcc_channel" [ stateTopic="UweSolar2/a0/a0" ]
          Type string : status_channel "status_channel" [ stateTopic="UweSolar2/status" ]
          Type number : temp_channel "temp_channel" [ stateTopic="UweSolar2/bme/temp" ]
+         Type number : press_channel "press_channel" [ stateTopic="UweSolar2/bme/press" ]
 }
 Thing mqtt:topic:myUnsecureBroker:solar_module3_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Outdoor Solar Messtation 3 with charging module

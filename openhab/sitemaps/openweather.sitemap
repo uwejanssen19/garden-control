@@ -15,6 +15,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Vcc_Solar2_Display label="Batterie [%s %%]"        
         Default item=Status_Solar2 label="Status [%s]"        
         Default item=Temp_Solar2 label="Temperatur [%s °C]"        
+        Default item=Press_Solar2 label="Pressure [%s hPa]"        
     }
 
     Frame label="Aktuelle Werte von Solar Modul 3 ( WZ West-Süd )" {
