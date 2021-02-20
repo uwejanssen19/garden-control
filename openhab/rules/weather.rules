@@ -336,13 +336,17 @@ rule "daemon"
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
   Set_alive.sendCommand(ON)
   logInfo("daemon", "updating set_alive file")
+  // forward rain probability to MQTT item 
+  logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
+  RainProb.postUpdate(ForecastRainVolumesGroup.state.toString)
+  logInfo("Daemon","RainProb = {} ",RainProb.state.toString)
+ 
   // *********************************************************************************************************************************************
   // NOTE: 
   // If we do not get here within ONE hour since the last Set_alive command something is wrong with openhab CRON and the computer will be restarted
   //
   // *********************************************************************************************************************************************
 
-  logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
 
   // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
