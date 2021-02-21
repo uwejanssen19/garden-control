@@ -50,5 +50,5 @@ Channels:
 // Nur fuer Anzeige der Regenwahrscheinlichkeit
 Thing mqtt:topic:myUnsecureBroker:rainProb_thing (mqtt:broker:myUnsecureBroker) {
 Channels:
-        Type number : rainProb_channel "Rain Probablity" [ stateTopic="rainProb" ]
+        Type number : rainProb_channel "Rain Probablity" [ stateTopic="rainProb", commandTopic="rainProb" ]
 }

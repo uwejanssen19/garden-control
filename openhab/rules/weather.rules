@@ -333,13 +333,16 @@ rule "daemon"
   val irrigating = (Irrigating.state == ON)
   val minute = now.getMinuteOfHour
   
+  
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
   Set_alive.sendCommand(ON)
   logInfo("daemon", "updating set_alive file")
   // forward rain probability to MQTT item 
   logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
-  RainProb.postUpdate(ForecastRainVolumesGroup.state.toString)
-  logInfo("Daemon","RainProb = {} ",RainProb.state.toString)
+  var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
+  RainProb.sendCommand(comingRainVal)
+  //RainProb.sendCommand(27.7)
+  logInfo("Daemon","RainProb =  {} ",RainProb.state) 
  
   // *********************************************************************************************************************************************
   // NOTE: 
