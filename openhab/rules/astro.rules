@@ -11,7 +11,11 @@ val Procedures$Procedure0 updateAstroData = [
   val moonrise_val = (MoonRise.state as DateTimeType).format(fmtString)
   val moonset_val = (MoonSet.state as DateTimeType).format(fmtString)
 
-   mqttActions.publishMQTT("moonphase",moonphase_val,false)
+ // calculate moon phase
+ // 0=NEW, 1=WAXING_CRESCENT, 2=FIRST_QUARTER, 3=WAXING_GIBBOUS, 4=FULL, 5=WANING_GIBBOUS, 6=THIRD_QUARTER, 7=WANING_CRESCENT
+ val moonphase_number = transform("MAP", "moonphase_to_display.map",moonphase_val)
+   logInfo("","PUBLISHING ASTRO Values, moonphase = {}, number = {}", moonphase_val, moonphase_number)
+   mqttActions.publishMQTT("moonphase",moonphase_number,false)
    mqttActions.publishMQTT("sunrise",sunrise_val,false)
    mqttActions.publishMQTT("sunset",sunset_val,false)
    mqttActions.publishMQTT("azimut",Azimuth.state.toString,false)
