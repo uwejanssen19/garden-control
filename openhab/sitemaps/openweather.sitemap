@@ -12,12 +12,23 @@ sitemap openweather label="OpenWeather Overview" {
 
     Frame label="Aktuelle Werte von Solar Modul 2 ( Carport NW)" {
         Default item=Time_Solar2 label="Letzte Meldung: [%s]"
-        Default item=Vcc_Solar2_Display label="Batterie [%s %%]"        
-        Default item=Status_Solar2 label="Status [%s]"        
-        Default item=Temp_Solar2 label="Temperatur [%s °C]"        
-        Default item=Press_Solar2 label="Pressure [%s hPa]"        
-        Default item=Hum_Solar2 label="Humidity [%s %%]"   
-        Default item=RainProb label="Regenmenge [%s Liter]"     
+        Default item=Vcc_Solar2_Display label="Batterie [%s %%]"
+        Default item=Status_Solar2 label="Status [%s]"
+        Default item=Temp_Solar2 label="Temperatur [%s °C]"
+        Default item=Press_Solar2 label="Pressure [%s hPa]"
+        Default item=Hum_Solar2 label="Humidity [%s %%]"
+        Default item=RainProb label="Erwartete Regenmenge innnerhalb 12 h: [%s Liter]"
+    }
+
+    Frame label="Sonnendaten" {
+        Text item=Sunrise_Time label="Sunrise [%1$tH:%1$tM]"
+        Text item=Sunset_Time label="Sunset [%1$tH:%1$tM]"
+        Text item=Azimuth label="Azimuthwinkel der Sonne  [%.1f]"
+        Text item=Elevation label="Höhe der Sonne [%.1f]"
+    }
+    Frame label="Monddaten" {
+        Text item=MoonPhase label="Mondphase [%s]"
+        Text item=MoonDistance label="Entfernung Erde-Mond [%.1f]"
     }
 
     Frame label="Aktuelle Werte von Solar Modul 3 ( WZ West-Süd )" {
@@ -50,9 +61,9 @@ sitemap openweather label="OpenWeather Overview" {
             Text item=LocalForecastHoursRainVolume12
         }
     }
-    
-     Group item=ForecastRainVolumesGroup
-
+    Frame label="Rain Volume Forecast" {
+      Group item=ForecastRainVolumesGroup
+    }
 
      Frame label="Current local weather from OWM" {
         Text item=LocalLastMeasurement

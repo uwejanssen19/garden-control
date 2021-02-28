@@ -49,6 +49,15 @@ Channels:
 
 // Nur fuer Anzeige der Regenwahrscheinlichkeit
 Thing mqtt:topic:myUnsecureBroker:rainProb_thing (mqtt:broker:myUnsecureBroker) {
-Channels:
+ Channels:
         Type number : rainProb_channel "Rain Probablity" [ stateTopic="rainProb", commandTopic="rainProb" ]
+}
+Thing mqtt:topic:myUnsecureBroker:astro_thing (mqtt:broker:myUnsecureBroker) {
+ Channels:
+        Type datetime : sunrise_channel "sunrise_channel" [stateTopic="sunrise", commandTopic="sunrise"]
+        Type datetime : sunset_channel "sunset_channel" [stateTopic="sunset", commandTopic="sunset"]
+        Type string : moonphase_channel "moonphase_channel" [stateTopic="moonphase", commandTopic="moonPhase"]
+        Type string : azimut_channel "azimut_channel" [stateTopic="azimut", commandTopic="azimut"]
+        Type string : elevation_channel "elevation_channel" [stateTopic="elevation", commandTopic="elevation"]
+        Type string : distance "distance_channel" [stateTopic="distance", commandTopic="distance"]
 }

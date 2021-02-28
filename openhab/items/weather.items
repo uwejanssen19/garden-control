@@ -81,3 +81,4 @@ Number  Vcc_Solar3_Display <battery>
 Number LaserLevel <time> { channel="mqtt:topic:myUnsecureBroker:level_pump_module_thing:level_channel" }
 
 Number RainProb <rain> { channel="mqtt:topic:myUnsecureBroker:rainProb_thing:rainProb_channel" }
+

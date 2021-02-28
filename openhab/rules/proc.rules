@@ -136,6 +136,7 @@ rule "Update Water Level Switch"
 when 
   Item UpdateLevelSwitch received command
 then 
+  //Thread::sleep(500) // give time to update variables
   logDebug("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   // just for test since we do not want to wait for some timer to occur
   if (receivedCommand == ON) {
@@ -150,6 +151,7 @@ then
 
     // logInfo("","TempAverage before update = {} ",TempAverage.state)
     TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
+
     // logInfo("","TempAverage after update  = {} ",TempAverage.state)
 
     // val float tmpAv = (TempAverage?.state as DecimalType).floatValue

@@ -339,10 +339,10 @@ rule "daemon"
   logInfo("daemon", "updating set_alive file")
   // forward rain probability to MQTT item 
   logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
-  var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
+  var float comingRainVal  = (ForecastRainVolumesGroup.state as DecimalType).floatValue
   RainProb.sendCommand(comingRainVal)
-  //RainProb.sendCommand(27.7)
   logInfo("Daemon","RainProb =  {} ",RainProb.state) 
+
  
   // *********************************************************************************************************************************************
   // NOTE: 
@@ -441,6 +441,13 @@ then
   Irr_Switch.sendCommand(OFF)
   Irr_Switch.postUpdate(OFF)
   NoIrrigationPreset.sendCommand(OFF)
+  // if (SunriseTopic != NULL)
+  //  SunriseTopic.sendCommand(Sunrise_Time)
+  // if (SunsetTopic != NULL)
+  //   SunsetTopic.sendCommand(Sunset_Time)
+  // if (MoonPhaseTopic != NULL)
+  //  MoonPhaseTopic.sendCommand(MoonPhase)
+
   SystemStatusText.sendCommand("System started")
   logInfo("SysStart or InitSwitch","EXIT")
 end 
