@@ -1,78 +1,15 @@
-rule "moon rise"
-when
-    Channel 'astro:moon:home:rise#event' triggered START 
-then
-   logInfo("","MOON RISE")
-end
-
-rule "moon set"
-when
-     Channel 'astro:moon:home:set#event' triggered END
-then
-   logInfo("","MOON SET")
-end
-
-rule "moon phase"
-when
-    Channel 'astro:moon:home:phase#event' triggered FIRST_QUARTER or
-    Channel 'astro:moon:home:phase#event' triggered THIRD_QUARTER or
-    Channel 'astro:moon:home:phase#event' triggered FULL or
-    Channel 'astro:moon:home:phase#event' triggered NEW
-    then
-    logInfo("","MOON PHASE")
-    MoonPhaseTopic.postUpdate(MoonPhase)
-// publish those to MQTT
-    // SunriseTopic.postUpdate(Sunrise_Time)
-    // SunsetTopic.postUpdate(Sunset_Time)
-end
-
-rule "sun azimut"
-when
-    Channel 'astro:sun:home:position#azimuth' triggered START
-then
-    logInfo("","azimut event = {}", Azimuth)
-
-// publish those to MQTT
-    // SunriseTopic.postUpdate(Sunrise_Time)
-    // SunsetTopic.postUpdate(Sunset_Time)
-end
-
-rule "sun elevation"
-when
-    Channel 'astro:sun:home:position#elevation' triggered START
-then
-    logInfo("","Elevation event = {}", Elevation)
-
-// publish those to MQTT
-    // SunriseTopic.postUpdate(Sunrise_Time)
-    // SunsetTopic.postUpdate(Sunset_Time)
-end
-
-
-rule "update level (2) " // (used for checking astro values)" 
-when
-  Item UpdateLevelSwitch received command
-// Time cron "0 0/5 * * * ?" // time spec for future test
-// Time cron "0 0/10 * * * ?" // time spec for release edition
-then
-  val sunActions = getActions("astro","astro:sun:home")
-  val moonActions = getActions("astro","astro:moon:home")
-  logInfo("","astro values sunActions = {}", sunActions)
-  logInfo("","astro values moonActions = {}", moonActions)
-  logInfo("","astro values azimuth = {}", Azimuth)
-  logInfo("","astro values elevation = {}", Elevation)
-  logInfo("","astro values MoonDistance = {}", MoonDistance)
-  logInfo("","astro values MoonPhase = {}", MoonPhase)
+val Procedures$Procedure0 updateAstroData = [ 
+  val String fmtString = "%1$tH:%1$tM"
+   logInfo("","PUBLISHING ASTRO Values, e.g. Azimuth = {}", Azimuth)
+//   logInfo("","astro values elevation = {}", Elevation)
+//   logInfo("","astro values MoonDistance = {}", MoonDistance)
+//   logInfo("","astro values MoonPhase = {}", MoonPhase)
   val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
   val moonphase_val = MoonPhase.state.toString
-//   val sunrise_datetime = Sunrise_Time.state as DateTimeType
-//   logInfo("","astro values sunrise_datetime = {}", sunrise_datetime)
-  val String fmtString = "%1$tH:%1$tM"
   val sunrise_val = (Sunrise_Time.state as DateTimeType).format(fmtString)
-  logInfo("","astro values sunrise_formatted = {}", sunrise_val)
-  val sunset_val = (Sunset_Time.state as DateTimeType).format("%1$tH:%1$tM")
-  val moonrise_val = (MoonRise.state as DateTimeType).format("%1$tH:%1$tM")
-  val moonset_val = (MoonSet.state as DateTimeType).format("%1$tH:%1$tM")
+  val sunset_val = (Sunset_Time.state as DateTimeType).format(fmtString)
+  val moonrise_val = (MoonRise.state as DateTimeType).format(fmtString)
+  val moonset_val = (MoonSet.state as DateTimeType).format(fmtString)
 
    mqttActions.publishMQTT("moonphase",moonphase_val,false)
    mqttActions.publishMQTT("sunrise",sunrise_val,false)
@@ -82,6 +19,23 @@ then
    mqttActions.publishMQTT("distance",MoonDistance.state.toString,false)
    mqttActions.publishMQTT("moonrise",moonrise_val,false)
    mqttActions.publishMQTT("moonset",moonset_val,false)
-  
+
+]
+
+rule "astro update" // (used for checking astro values)" 
+when
+// Time cron "0 0/5 * * * ?" // time spec for future test
+    Time cron "0 0 * * * ?" // time spec for release edition = 1 HOUR 
+then
+  updateAstroData.apply()  
 end
+
+
+rule "Use Update Level for Astro Data Update"
+when 
+  Item UpdateLevelSwitch received command
+then 
+    updateAstroData.apply()
+end
+
 
