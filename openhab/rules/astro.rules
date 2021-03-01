@@ -29,7 +29,7 @@ val Procedures$Procedure0 updateAstroData = [
 rule "astro update" // (used for checking astro values)" 
 when
 // Time cron "0 0/5 * * * ?" // time spec for future test
-    Time cron "0 0 * * * ?" // time spec for release edition = 1 HOUR 
+    Time cron "0 0/15 * * * ?" // time spec for release edition = 1 HOUR 
 then
   updateAstroData.apply()  
 end
