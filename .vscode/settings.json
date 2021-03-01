@@ -1,5 +1,5 @@
 {
-    "openhab.host":"garden-control.speedport.ip",
+    "openhab.host":"garden-control",
     "openhab.port": 8080,
     "arduino.commandPath": "arduino.exe",
     "arduino.path": "D:\\install\\Arduino",

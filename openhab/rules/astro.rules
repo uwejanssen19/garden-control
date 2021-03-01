@@ -1,6 +1,6 @@
 val Procedures$Procedure0 updateAstroData = [ 
   val String fmtString = "%1$tH:%1$tM"
-   logInfo("","PUBLISHING ASTRO Values, e.g. Azimuth = {}", Azimuth)
+  logInfo("","PUBLISHING ASTRO Values, e.g. Azimuth = {}", Azimuth)
 //   logInfo("","astro values elevation = {}", Elevation)
 //   logInfo("","astro values MoonDistance = {}", MoonDistance)
 //   logInfo("","astro values MoonPhase = {}", MoonPhase)
@@ -28,9 +28,10 @@ val Procedures$Procedure0 updateAstroData = [
 
 rule "astro update" // (used for checking astro values)" 
 when
-// Time cron "0 0/5 * * * ?" // time spec for future test
-    Time cron "0 0/15 * * * ?" // time spec for release edition = 1 HOUR 
+ //Time cron "0 0/1 * * * ?" // time spec for future test
+   Time cron "0 0/30 * * * ?" // time spec for release edition
 then
+  logInfo("","invoking updateAstroData")
   updateAstroData.apply()  
 end
 
