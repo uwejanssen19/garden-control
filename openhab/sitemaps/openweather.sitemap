@@ -17,7 +17,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Temp_Solar2 label="Temperatur [%s °C]"
         Default item=Press_Solar2 label="Pressure [%s hPa]"
         Default item=Hum_Solar2 label="Humidity [%s %%]"
-        Default item=RainProb label="Erwartete Regenmenge innnerhalb 12 h: [%s Liter]"
+        Default item=RainProb label="Erwartete Regenmenge innerhalb 12 h: [%s Liter]"
     }
 
     Frame label="Sonnendaten" {
