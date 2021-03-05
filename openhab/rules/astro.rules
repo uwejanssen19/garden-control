@@ -1,15 +1,18 @@
 val Procedures$Procedure0 updateAstroData = [ 
-  val String fmtString = "%1$tH:%1$tM"
+  val String fmtTime = "%1$tH:%1$tM"
+  val String fmtDegree = "%1$.2f"
   logInfo("","PUBLISHING ASTRO Values, e.g. Azimuth = {}", Azimuth)
 //   logInfo("","astro values elevation = {}", Elevation)
 //   logInfo("","astro values MoonDistance = {}", MoonDistance)
 //   logInfo("","astro values MoonPhase = {}", MoonPhase)
   val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
   val moonphase_val = MoonPhase.state.toString
-  val sunrise_val = (Sunrise_Time.state as DateTimeType).format(fmtString)
-  val sunset_val = (Sunset_Time.state as DateTimeType).format(fmtString)
-  val moonrise_val = (MoonRise.state as DateTimeType).format(fmtString)
-  val moonset_val = (MoonSet.state as DateTimeType).format(fmtString)
+  val sunrise_val = (Sunrise_Time.state as DateTimeType).format(fmtTime)
+  val sunset_val = (Sunset_Time.state as DateTimeType).format(fmtTime)
+  val moonrise_val = (MoonRise.state as DateTimeType).format(fmtTime)
+  val moonset_val = (MoonSet.state as DateTimeType).format(fmtTime)
+  val azimut_val = (Azimuth.state).format(fmtDegree)
+  val elevation_val = (Elevation.state).format(fmtDegree)
 
  // calculate moon phase
  // 0=NEW, 1=WAXING_CRESCENT, 2=FIRST_QUARTER, 3=WAXING_GIBBOUS, 4=FULL, 5=WANING_GIBBOUS, 6=THIRD_QUARTER, 7=WANING_CRESCENT
@@ -18,11 +21,12 @@ val Procedures$Procedure0 updateAstroData = [
    mqttActions.publishMQTT("moonphase",moonphase_number,false)
    mqttActions.publishMQTT("sunrise",sunrise_val,false)
    mqttActions.publishMQTT("sunset",sunset_val,false)
-   mqttActions.publishMQTT("azimut",Azimuth.state.toString,false)
-   mqttActions.publishMQTT("elevation",Elevation.state.toString,false)
+   mqttActions.publishMQTT("azimut",azimut_val,false)
+   mqttActions.publishMQTT("elevation",elevation_val,false)
    mqttActions.publishMQTT("distance",MoonDistance.state.toString,false)
    mqttActions.publishMQTT("moonrise",moonrise_val,false)
    mqttActions.publishMQTT("moonset",moonset_val,false)
+   mqttActions.publishMQTT("astrotimestamp",new DateTimeType().format("%1$tH:%1$tM"),false)
 
 ]
 
@@ -35,12 +39,17 @@ then
   updateAstroData.apply()  
 end
 
-
+rule "noon" 
+when 
+  Channel "astro:sun:home:noon#event" triggered START
+then
+  logInfo("","NOON detected at elevation {}", Elevation.state)
+  updateAstroData.apply()
+end
 rule "Use Update Level for Astro Data Update"
 when 
   Item UpdateLevelSwitch received command
 then 
     updateAstroData.apply()
 end
-
 
