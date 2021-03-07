@@ -27,6 +27,8 @@ val Procedures$Procedure0 updateAstroData = [
    mqttActions.publishMQTT("moonrise",moonrise_val,false)
    mqttActions.publishMQTT("moonset",moonset_val,false)
    mqttActions.publishMQTT("astrotimestamp",new DateTimeType().format("%1$tH:%1$tM"),false)
+   logInfo("","updateAstro() SunCulm = {}", SunCulm.state)
+   mqttActions.publishMQTT("sunculm",SunCulm.state.toString,false)
 
 ]
 
@@ -44,8 +46,13 @@ when
   Channel "astro:sun:home:noon#event" triggered START
 then
   logInfo("","NOON detected at elevation {}", Elevation.state)
+  //val String fmtDegree = "%1$.2f"
+  val elevation_val = (Elevation.state.toString)
+  SunCulm.postUpdate(elevation_val)
+   logInfo("","rule NOON SunCulm = {}", SunCulm.state)
   updateAstroData.apply()
 end
+
 rule "Use Update Level for Astro Data Update"
 when 
   Item UpdateLevelSwitch received command

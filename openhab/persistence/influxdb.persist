@@ -27,4 +27,6 @@ Items {
     LaserLevel : strategy = every10Minutes
 
     LocalCurrentRainVolume : strategy = everyHour
+
+    SunCulm :  strategy = everyDay
 }
