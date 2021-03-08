@@ -4,15 +4,6 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
 //        Frame label="Testanzeige" {
 //            Text item=temperature_out label= "Fiktive Temperatur: [%d Grad Celsius]"
 //        }
-        Frame label="Wetterdaten" {
-            Text item=willRain_out label="Wird es regnen? [MAP(yesNo.map):%s]"
-//            Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel [%.2f Liter in 12h]"
-            Default item=ForecastRainVolumesGroup visibility=[willRain_out != "0"] 
-
-            Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
-            Text item=RainAverage label="Regendurchschnitt von gestern [%.2f Liter]"
-            Text item=TempAverage label="Temperaturdurchschnitt von gestern [%.2f °C]"
-        }
         
         Frame label="Wasserstand" {        
             Default item=LaserLevel label="Wasserstand Lasermessung: [%s]" icon="cistern"
@@ -32,6 +23,21 @@ sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
             Default item=NoIrrigationPreset label="Gießen ein wenn kein Regen aktuell oder vorhergesagt" icon="irrigation" visibility=[NoIrrigationPreset == "OFF"]
             Default item=IgnoreWeatherSwitch icon="sun_clouds" label="Gießen trotz Regen in der Wettervorhersage"
         }
+
+        Frame label="Wetterdaten" {
+            Text item=willRain_out label="Wird es regnen? [MAP(yesNo.map):%s]"
+//            Text item=precipitation_out visibility=[willRain_out != "0"] label="Wieviel [%.2f Liter in 12h]"
+            Default item=ForecastRainVolumesGroup visibility=[willRain_out != "0"] 
+
+            Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
+            Text item=RainAverage label="Regendurchschnitt von gestern [%.2f Liter]"
+            Text item=TempAverage label="Temperaturdurchschnitt von gestern [%.2f °C]"
+        }
+
+        // Frame label="Systemfunktionen" visibility=[TestModeSwitch == ON]{
+        //         Switch item=OH2_Service mappings=[status="Status", restart="Restart" ]
+        //         Switch item=PI_Service  mappings=[reboot="Reboot", shutdown="Shutdown"]
+        // }
 
         Frame label="Test section" visibility=[TestModeSwitch == ON] {
             Default item=SystemStatusText label="System Message: [%s]" visibility=[TestModeSwitch == ON]

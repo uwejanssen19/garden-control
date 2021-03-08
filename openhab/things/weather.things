@@ -8,16 +8,12 @@ Thing exec:command:weatherstation_water_on_off [ command="/home/pi/scripts/water
 Thing exec:command:set_alive [ command="/home/pi/scripts/set_alive.sh", interval = 0, autorun=true ]
 //Thing exec:command:weatherstation_fill_barrel [ command="/home/pi/scripts/supply4NextIrrigation.sh %2$s", interval = 0, autorun=true ]
 
-// location id  for Kolbermoor =  2886446
-Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="19617de07bcc959ff8dc5e0caffce590", refreshInterval=10, language="de"] {
-    Thing weather-and-forecast local "Local Weather And Forecast" [location="47.84889769870895,12.055435180664029", forecastHours=24, forecastDays=0]
-    //Thing weather-and-forecast miami "Weather And Forecast In Miami" [location="25.782403,-80.264563", forecastHours=24, forecastDays=0]
-    //Thing uvindex local "Local UV Index" [location="XXX,YYY", forecastDays=7]
-}
 
-Bridge mqtt:broker:myUnsecureBroker [ host="localhost", username="pi", password="Chrome4Me", secure=false, retain = false, qos=0 ]
 
 
 //Thing exec:command:getwan [command="/home/pi/scripts/get1Random.sh", transform="REGEX((.*?))", interval=0, autorun=true ]
 Thing exec:command:getwan [ command="/home/pi/scripts/getwan.sh", interval=3600, autorun=false]
+
+//Thing exec:command:oh2service [command="sudo /bin/systemctl '%2$s' openhab2.service", interval=0,autorun=true ]
+//Thing exec:command:piservice  [command="sudo %2$s", interval=0, autorun=true ] 
 

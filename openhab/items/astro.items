@@ -9,3 +9,4 @@ DateTime    MoonSet       "[%1$tH:%1$tM]"              { channel="astro:moon:hom
 //Number:Intensity Total_Radiation    "Radiation [%.2f %unit%]"                 { channel="astro:sun:home:radiation#total" }
 //Number:Intensity Diffuse_Radiation  "Diffuse Radiation [%.2f %unit%]"         { channel="astro:sun:home:radiation#diffuse" }
 String SunCulm
+

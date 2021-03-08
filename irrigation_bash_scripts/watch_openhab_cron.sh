@@ -33,7 +33,7 @@ then
       echo "sudo sudo service mosquitto stop 2>&1"
       echo "sudo sudo service influxdb stop 2>&1"
       echo "sudo sudo service openhab stop 2>&1"
-      echo "sudo shudown --no-wall -r +1"
+      echo "sudo shutdown --no-wall -r +1"
     endif
 endif
 #log "irrOnOff EXIT  ------------------" 

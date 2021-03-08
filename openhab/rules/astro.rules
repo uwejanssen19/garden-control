@@ -60,3 +60,12 @@ then
     updateAstroData.apply()
 end
 
+
+rule "midnight boot" 
+when 
+  Channel "astro:sun:home:midnight#event" triggered START
+then
+  logInfo("","MIDNIGHT detected at elevation {}", Elevation.state)
+  // restart openhab
+  //OH2_Service.sendCommand("restart") 
+end

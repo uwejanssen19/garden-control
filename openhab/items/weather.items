@@ -82,3 +82,5 @@ Number LaserLevel <time> { channel="mqtt:topic:myUnsecureBroker:level_pump_modul
 
 Number RainProb <rain> { channel="mqtt:topic:myUnsecureBroker:rainProb_thing:rainProb_channel" }
 
+//String OH2_Service  "OH2 Service"   { channel="exec:command:oh2service:input" }
+//String PI_Service   "PI Service"    { channel="exec:command:piservice:input" }
