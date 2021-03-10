@@ -28,5 +28,6 @@ Items {
 
     LocalCurrentRainVolume : strategy = everyHour
 
-    SunCulm :  strategy = everyDay
+    //SunCulm :  strategy = everyDay
+    SunCulm1 :  strategy = everyHalfHour
 }

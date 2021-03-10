@@ -1,12 +1,13 @@
 DateTime         Sunrise_Time        "[%1$tH:%1$tM]"   <sunrise>                 { channel="astro:sun:home:rise#start" }
 DateTime         Sunset_Time          "[%1$tH:%1$tM]"   <sunset>              { channel="astro:sun:home:set#start" }
 Number:Angle     Azimuth            "Azimuth"                                 { channel="astro:sun:home:position#azimuth" }
-Number:Angle     Elevation          "Elevation"                               { channel="astro:sun:home:position#elevation" }
+Number:Dimensionless     Elevation          "Elevation"                               { channel="astro:sun:home:position#elevation" }
 String           MoonPhase          "MoonPhase"                 <moon>              { channel="astro:moon:home:phase#name" }
 Number:Length    MoonDistance       "MoonDistance [%.1f %unit%]"              { channel="astro:moon:home:distance#distance" }
 DateTime    MoonRise       "[%1$tH:%1$tM]"              { channel="astro:moon:home:rise#start" }
 DateTime    MoonSet       "[%1$tH:%1$tM]"              { channel="astro:moon:home:set#end" }
 //Number:Intensity Total_Radiation    "Radiation [%.2f %unit%]"                 { channel="astro:sun:home:radiation#total" }
 //Number:Intensity Diffuse_Radiation  "Diffuse Radiation [%.2f %unit%]"         { channel="astro:sun:home:radiation#diffuse" }
-String SunCulm
+//String SunCulm
+Number SunCulm1
 

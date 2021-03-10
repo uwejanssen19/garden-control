@@ -25,7 +25,7 @@ sitemap openweather label="OpenWeather Overview" {
         Text item=Sunset_Time label="Sunset [%1$tH:%1$tM]"
         Text item=Azimuth label="Azimuthwinkel der Sonne  [%.2f]"
         Text item=Elevation label="Höhe der Sonne [%.2f]"
-        Text item=SunCulm label="Sonnenhöchststand [%s]"
+        Text item=SunCulm1 label="Sonnenhöchststand [%.2f]"
     }
     Frame label="Monddaten" {
         Text item=MoonPhase label="Mondphase [%s]"
