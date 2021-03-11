@@ -4,6 +4,7 @@ on MQTT#Connected do
       publish %sysname%/a0/a0,[a0#a0]
       publish %sysname%/bme/temp,[bme#temp]
       publish %sysname%/bme/press,[bme#press]
+      publish %sysname%/bme/hum,[bme#hum]
 endon
 
 on wifi#disconnect do
@@ -19,11 +20,18 @@ on system#boot do
   timerset,1,2
 endon
 
+// hope this reestablishs connection ...
+on mqtt#disconnected do
+ reboot
+endon
+
+
 On rules#timer=1 do
   publish %sysname%/time/value,%systime%
   publish %sysname%/a0/a0,[a0#a0]
   publish %sysname%/bme/temp,[bme#temp]
   publish %sysname%/bme/press,[bme#press]
+  publish %sysname%/bme/hum,[bme#hum]
   publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (continous)"
-  timerset,1,30 // repeat sending mqtt
+  timerset,1,300 // repeat sending mqtt
 endon
