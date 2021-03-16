@@ -44,6 +44,7 @@ sitemap openweather label="OpenWeather Overview" {
     Frame label="Local Weather Station" {
             Text item=LocalStationName {
             Text item=LocalStationId 
+            Text item=localHourlyForecast12Condition
             //Mapview item=LocalStationLocation height=6
             Text item=wanAddress label="Wan Address = [%s]"
         }

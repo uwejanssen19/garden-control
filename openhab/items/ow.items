@@ -47,7 +47,7 @@ Number:Length RainDetails "RainDetails [%.2f %unit%]" <rain>
 
 String Dhv
 
-//String localHourlyForecast12Condition "Condition locally for next 12 hours [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#condition" }
+String localHourlyForecast12Condition "Condition locally for next 12 hours [%s]" <sun_clouds> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#condition" }
 //Image localHourlyForecast12ConditionIcon "Icon" { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#icon" }
 //Number:Temperature localHourlyForecast12Temperature "Temperature locally for next 12 hours [%.1f %unit%]" <temperature> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#temperature" }
 //Number:Length localHourlyForecastTodayRainVolume "Rain volume for next 12 hours [%.1f %unit%]" <rain> { channel="openweathermap:weather-and-forecast:api:local:forecastHours12#rain" }

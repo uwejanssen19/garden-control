@@ -1,3 +1,22 @@
+val makeAstroEventHumanReadable = [ 
+  String pEventString |
+  // Format of event : 
+  //   astro:sun:home:morningNight#event triggered START
+  //   [0]  :[1]:[2] :[3]
+  logInfo("","makeAstroEventHumanReadable::pEventString = {}", pEventString)
+  // find last chunk separated by ':'
+  val astroParts = pEventString.split(":")
+  // now we got "<eventName>#event triggered START|END"
+  // split again and keep first part reusing array
+  logInfo("","makeAstroEventHumanReadable::astroParts[3] = {}", astroParts.get(3))
+  val astroParts2 = astroParts.get(3).split("#")
+  val String eventName = astroParts2.get(0)
+  logInfo("","makeAstroEventHumanReadable::eventName = {}", eventName)
+  val String userFriendlyName = transform("MAP","astroevents.map",eventName)
+  logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName)
+  return userFriendlyName
+]
+
 val Procedures$Procedure0 updateAstroData = [ 
   val String fmtTime = "%1$tH:%1$tM"
   val String fmtDegree = "%1$.2f"
@@ -13,6 +32,7 @@ val Procedures$Procedure0 updateAstroData = [
   val moonset_val = (MoonSet.state as DateTimeType).format(fmtTime)
   val azimut_val = (Azimuth.state).format(fmtDegree)
   val elevation_val = (Elevation.state).format(fmtDegree)
+  val foreCast_val = localHourlyForecast12Condition.state.toString
 
  // calculate moon phase
  // 0=NEW, 1=WAXING_CRESCENT, 2=FIRST_QUARTER, 3=WAXING_GIBBOUS, 4=FULL, 5=WANING_GIBBOUS, 6=THIRD_QUARTER, 7=WANING_CRESCENT
@@ -29,6 +49,7 @@ val Procedures$Procedure0 updateAstroData = [
    mqttActions.publishMQTT("astrotimestamp",new DateTimeType().format("%1$tH:%1$tM"),false)
    logInfo("","updateAstro() SunCulm = {}", SunCulm1.state)
    mqttActions.publishMQTT("sunculm",SunCulm1.state.format(fmtDegree),false)
+   mqttActions.publishMQTT("forecast",foreCast_val,false)
 
 ]
 
@@ -45,15 +66,9 @@ rule "noon"
 when 
   Channel "astro:sun:home:noon#event" triggered START
 then
-  logInfo("","NOON detected at elevation {}", Elevation.state)
-  //val String fmtDegree = "%1$.2f"
-  val String fmtDegree = "%1$.2f"
-  //val elevation_val = (Elevation.state.toString)
-//  val elevation_val1 = (Elevation.state).format(fmtDegree)
   val Number elevationNumber = Elevation.state
-  //val Number elevationNumber = 37.06
-  logInfo("","rule NOON SunCulm1 = {}", elevationNumber)
-  
+//  val Number elevationNumber = 39.43685692371896
+  logInfo("","rule NOON SunCulm1 = {}", elevationNumber) 
   SunCulm1.postUpdate(elevationNumber)
   updateAstroData.apply()
 end
@@ -66,11 +81,49 @@ then
 end
 
 
-rule "midnight boot" 
+rule "astro event"
 when 
-  Channel "astro:sun:home:midnight#event" triggered START
-then
-  logInfo("","MIDNIGHT detected at elevation {}", Elevation.state)
-  // restart openhab
-  //OH2_Service.sendCommand("restart") 
-end
+  Channel "astro:sun:home:night#event" triggered START or
+  Channel "astro:sun:home:daylight#event" triggered START or
+  Channel "astro:sun:home:morningNight#event" triggered START or
+
+  Channel "astro:sun:home:astroDawn#event" triggered START or
+  Channel "astro:sun:home:nauticDawn#event" triggered START or
+  Channel "astro:sun:home:civilDawn#event" triggered START or
+
+  Channel "astro:sun:home:rise#event" triggered START or
+  Channel "astro:sun:home:noon#event" triggered START or
+
+  Channel "astro:sun:home:civilDusk#event" triggered START or
+  Channel "astro:sun:home:nauticDusk#event" triggered START or
+  Channel "astro:sun:home:astroDusk#event" triggered START or
+
+  Channel "astro:sun:home:eveningNight#event" triggered START or
+  Channel "astro:sun:home:set#event" triggered START or
+
+
+  Channel "astro:sun:home:night#event" triggered END or
+  Channel "astro:sun:home:daylight#event" triggered END or
+  Channel "astro:sun:home:morningNight#event" triggered END or
+
+  Channel "astro:sun:home:astroDawn#event" triggered END or
+  Channel "astro:sun:home:nauticDawn#event" triggered END or
+  Channel "astro:sun:home:civilDawn#event" triggered END or
+
+  Channel "astro:sun:home:rise#event" triggered END or
+  Channel "astro:sun:home:noon#event" triggered END or
+
+  Channel "astro:sun:home:civilDusk#event" triggered END or
+  Channel "astro:sun:home:nauticDusk#event" triggered END or
+  Channel "astro:sun:home:astroDusk#event" triggered END or
+
+  Channel "astro:sun:home:eveningNight#event" triggered END or
+  Channel "astro:sun:home:set#event" triggered END 
+
+then 
+    logInfo("","event {} detected at  {}", receivedEvent, now)
+    val convertedEvent = makeAstroEventHumanReadable.apply(receivedEvent.toString)
+    logInfo("","convertedEvent = {}", convertedEvent)
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT("astroevent",convertedEvent,false)
+end 
