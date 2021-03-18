@@ -1,17 +1,19 @@
 night=NACHT
 daylight=TAG
-morningNight=In aller Herrgottsfrueh
+morningNight=Fruehmorgens
+noon=MITTAG
+eveningNight=NACHT
 
 astroDawn=Astro Morgen Daemmerung
 nauticDawn=Nautische Morgen Daemmerung
 civilDawn=Buergerliche Morgen Daemmerung
 
 rise=Sonnenaufgang
-noon=MITTAG
+set=Sonnenuntergang
 
 civilDusk=Buergerliche Abend Daemmerung
 nauticDusk=Nautische Abend Daemmerung
 astroDusk=Astro Abend Daemmerung
 
-eveningNight=Nachts
-set=Sonnenuntergang
+START=Beginn
+END=Ende

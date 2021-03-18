@@ -1,7 +1,12 @@
 sitemap openweather label="OpenWeather Overview" {
 
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
- 
+    Frame label="Vorhersage" {
+      Image item=localHourlyForecast12ConditionIcon
+      Default item=localHourlyForecast12Condition label="[%s]"
+      Default item=RainProb label="Erwartete Regenmenge innerhalb 12 h: [%s Liter]"
+      Group item=ForecastRainVolumesGroup
+    }
     
     Frame label="Aktuelle Werte von Solar Modul  1 ( Gartenhaus )" {
         Default item=Time_Solar1 label="Letzte Meldung: [%s]"
@@ -17,7 +22,6 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Temp_Solar2 label="Temperatur [%s °C]"
         Default item=Press_Solar2 label="Pressure [%s hPa]"
         Default item=Hum_Solar2 label="Humidity [%s %%]"
-        Default item=RainProb label="Erwartete Regenmenge innerhalb 12 h: [%s Liter]"
     }
 
     Frame label="Sonnendaten" {
@@ -26,6 +30,7 @@ sitemap openweather label="OpenWeather Overview" {
         Text item=Azimuth label="Azimuthwinkel der Sonne  [%.2f]"
         Text item=Elevation label="Höhe der Sonne [%.2f]"
         Text item=SunCulm1 label="Sonnenhöchststand [%.2f]"
+        Default item=LastEvent label="[%s]" icon="sunclouds"
     }
     Frame label="Monddaten" {
         Text item=MoonPhase label="Mondphase [%s]"
@@ -44,7 +49,7 @@ sitemap openweather label="OpenWeather Overview" {
     Frame label="Local Weather Station" {
             Text item=LocalStationName {
             Text item=LocalStationId 
-            Text item=localHourlyForecast12Condition
+            Default item=localHourlyForecast12ConditionIcon
             //Mapview item=LocalStationLocation height=6
             Text item=wanAddress label="Wan Address = [%s]"
         }
@@ -63,10 +68,6 @@ sitemap openweather label="OpenWeather Overview" {
             Text item=LocalForecastHoursRainVolume12
         }
     }
-    Frame label="Rain Volume Forecast" {
-      Group item=ForecastRainVolumesGroup
-    }
-
      Frame label="Current local weather from OWM" {
         Text item=LocalLastMeasurement
         // Text item=LocalCurrentCondition
