@@ -14,14 +14,15 @@ val makeAstroEventHumanReadable = [
   val String eventName = astroParts2.get(0)
   //logInfo("","makeAstroEventHumanReadable::eventName = {}", eventName)
 
-  val remainder /*e.g. event triggered START*/ = astroParts2.get(1)
-  val startEndParts = remainder.split(' ')  // create list with parts event trig START/END
-  val startEnd = startEndParts.get(2) // obtain last
+  //val remainder /*e.g. event triggered START*/ = astroParts2.get(1)
+  //val startEndParts = remainder.split(' ')  // create list with parts event trig START/END
+  //val startEnd = startEndParts.get(2) // obtain last
   //logInfo("","makeAstroEventHumanReadable::startEnd = {}", startEnd)
-  val startEndConv = transform("MAP", astroMapFile,startEnd) // translate into German
+  //val startEndConv = transform("MAP", astroMapFile,startEnd) // translate into German
 
   //logInfo("","makeAstroEventHumanReadable::startEndConv = {}", startEndConv)
-  val String userFriendlyName = transform("MAP",astroMapFile,eventName) + " " + startEndConv
+//  val String userFriendlyName = transform("MAP",astroMapFile,eventName) + " " + startEndConv
+  val String userFriendlyName = transform("MAP",astroMapFile,eventName)
   //logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName)
   return userFriendlyName
 ]
@@ -108,26 +109,28 @@ when
   Channel "astro:sun:home:astroDusk#event" triggered START or
 
   Channel "astro:sun:home:eveningNight#event" triggered START or
-  Channel "astro:sun:home:set#event" triggered START or
+  Channel "astro:sun:home:set#event" triggered START
 
+// U. Janssen 19.03.2021
+// ignore END events for now 
 
-  Channel "astro:sun:home:night#event" triggered END or
-  Channel "astro:sun:home:daylight#event" triggered END or
-  Channel "astro:sun:home:morningNight#event" triggered END or
+  // Channel "astro:sun:home:night#event" triggered END or
+  // Channel "astro:sun:home:daylight#event" triggered END or
+  // Channel "astro:sun:home:morningNight#event" triggered END or
 
-  Channel "astro:sun:home:astroDawn#event" triggered END or
-  Channel "astro:sun:home:nauticDawn#event" triggered END or
-  Channel "astro:sun:home:civilDawn#event" triggered END or
+  // Channel "astro:sun:home:astroDawn#event" triggered END or
+  // Channel "astro:sun:home:nauticDawn#event" triggered END or
+  // Channel "astro:sun:home:civilDawn#event" triggered END or
 
-  Channel "astro:sun:home:rise#event" triggered END or
-  Channel "astro:sun:home:noon#event" triggered END or
+  // Channel "astro:sun:home:rise#event" triggered END or
+  // Channel "astro:sun:home:noon#event" triggered END or
 
-  Channel "astro:sun:home:civilDusk#event" triggered END or
-  Channel "astro:sun:home:nauticDusk#event" triggered END or
-  Channel "astro:sun:home:astroDusk#event" triggered END or
+  // Channel "astro:sun:home:civilDusk#event" triggered END or
+  // Channel "astro:sun:home:nauticDusk#event" triggered END or
+  // Channel "astro:sun:home:astroDusk#event" triggered END or
 
-  Channel "astro:sun:home:eveningNight#event" triggered END or
-  Channel "astro:sun:home:set#event" triggered END 
+  // Channel "astro:sun:home:eveningNight#event" triggered END or
+  // Channel "astro:sun:home:set#event" triggered END 
 
 then 
     //logInfo("","event {} detected at  {}", receivedEvent, now)
