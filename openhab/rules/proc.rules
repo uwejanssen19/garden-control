@@ -285,7 +285,7 @@ rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
     //Time cron "0 5/10 * * * ? " // near future test 
-    Time cron "0 00 07 * 3-10 ? " or
+    Time cron "0 00 07 * 4-10 ? " or
     Time cron "0 00 19 * 4,9,10 ? " or
     Time cron "0 00 20 * 4-8 ? " 
   then   
