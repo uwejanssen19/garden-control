@@ -4,8 +4,8 @@ Number:Angle     Azimuth            "Azimuth"                                 { 
 Number     Elevation          "Elevation"                               { channel="astro:sun:home:position#elevation" }
 String           MoonPhase          "MoonPhase"                 <moon>              { channel="astro:moon:home:phase#name" }
 Number:Length    MoonDistance       "MoonDistance [%.1f %unit%]"              { channel="astro:moon:home:distance#distance" }
-DateTime    MoonRise       "[%1$tH:%1$tM]"              { channel="astro:moon:home:rise#start" }
-DateTime    MoonSet       "[%1$tH:%1$tM]"              { channel="astro:moon:home:set#end" }
+DateTime    MoonRise       "Mondaufgang"             { channel="astro:moon:home:rise#start" }
+DateTime    MoonSet       "Monduntergang"              { channel="astro:moon:home:set#end" }
 //Number:Intensity Total_Radiation    "Radiation [%.2f %unit%]"                 { channel="astro:sun:home:radiation#total" }
 //Number:Intensity Diffuse_Radiation  "Diffuse Radiation [%.2f %unit%]"         { channel="astro:sun:home:radiation#diffuse" }
 //String SunCulm

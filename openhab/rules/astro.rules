@@ -42,7 +42,7 @@ val Procedures$Procedure0 updateAstroData = [
   val moonset_val = (MoonSet.state as DateTimeType).format(fmtTime)
   val azimut_val = (Azimuth.state).format(fmtDegree)
   val elevation_val = (Elevation.state).format(fmtDegree)
-  val foreCast_val = localHourlyForecast12Condition.state.toString
+  val foreCast_val = localHourlyForecast12Condition.state.toString 
 
  // calculate moon phase
  // 0=NEW, 1=WAXING_CRESCENT, 2=FIRST_QUARTER, 3=WAXING_GIBBOUS, 4=FULL, 5=WANING_GIBBOUS, 6=THIRD_QUARTER, 7=WANING_CRESCENT

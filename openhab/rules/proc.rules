@@ -42,8 +42,8 @@ val Functions$Function0<String> getEmailText = [
   val String emailText='
     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
     Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
-    Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n
-    Uwe8266 = http://'+wanAddress.state.toString+':8071\n\n'
+    Astro Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=astro\n
+    Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n'
   return emailText
 ]
 // -----------------------------------------------------------------------------
@@ -228,7 +228,7 @@ rule "Irrigation ON"
 // time based beginning of irrigation
   when
     //Time cron "0 0/10 * * * ? " // near future test 
-    Time cron "0 00 05 * 4-8 ? " or
+    Time cron "0 00 05 * 5-8 ? " or
     Time cron "0 00 06 * 4-10 ? " or 
     Time cron "0 00 18 * 4-10 ? " or
     Time cron "0 00 19 * 4-8 ? "  

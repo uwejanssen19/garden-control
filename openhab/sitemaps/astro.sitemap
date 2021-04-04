@@ -1,0 +1,16 @@
+sitemap astro label="Astro Data Overview" {
+    Frame label="Sonnendaten" {
+        Text item=Sunrise_Time label="Sonnenaufgang [%1$tH:%1$tM]"
+        Text item=Sunset_Time label="Sonnenuntergang [%1$tH:%1$tM]"
+        Text item=Azimuth label="Azimuthwinkel der Sonne  [%.2f]"
+        Text item=Elevation label="Höhe der Sonne [%.2f]"
+        Text item=SunCulm1 label="Sonnenhöchststand [%.2f]"
+        Default item=LastEvent label="[%s]" icon="sunclouds"
+    }
+    Frame label="Monddaten" {
+        Text item=MoonPhase label="Mondphase [%s]"
+        Text item=MoonDistance label="Entfernung Erde-Mond [%.0f km]"
+        Text item=MoonRise label="Mondaufgang [%1$tH:%1$tM]"
+        Text item=MoonSet label="Monduntergang [%1$tH:%1$tM]"
+    }
+}

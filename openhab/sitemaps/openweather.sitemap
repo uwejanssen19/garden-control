@@ -7,7 +7,7 @@ sitemap openweather label="OpenWeather Overview" {
       Default item=RainProb label="Erwartete Regenmenge innerhalb 12 h: [%s Liter]"
       Group item=ForecastRainVolumesGroup
     }
-    
+
     Frame label="Aktuelle Werte von Solar Modul  1 ( Gartenhaus )" {
         Default item=Time_Solar1 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar1_Display label="Batterie [%s %%]"
@@ -24,19 +24,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Hum_Solar2 label="Humidity [%s %%]"
     }
 
-    Frame label="Sonnendaten" {
-        Text item=Sunrise_Time label="Sunrise [%1$tH:%1$tM]"
-        Text item=Sunset_Time label="Sunset [%1$tH:%1$tM]"
-        Text item=Azimuth label="Azimuthwinkel der Sonne  [%.2f]"
-        Text item=Elevation label="Höhe der Sonne [%.2f]"
-        Text item=SunCulm1 label="Sonnenhöchststand [%.2f]"
-        Default item=LastEvent label="[%s]" icon="sunclouds"
-    }
-    Frame label="Monddaten" {
-        Text item=MoonPhase label="Mondphase [%s]"
-        Text item=MoonDistance label="Entfernung Erde-Mond [%.0f km]"
-    }
-
+    
     Frame label="Aktuelle Werte von Solar Modul 3 ( WZ West-Süd )" {
         Default item=Time_Solar3 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar3_Display label="Batterie [%s %%]"        
@@ -82,5 +70,4 @@ sitemap openweather label="OpenWeather Overview" {
         Text item=LocalCurrentRainVolume
 //        Text item=LocalCurrentSnowVolume
     }
-
 }
