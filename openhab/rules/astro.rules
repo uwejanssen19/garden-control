@@ -48,18 +48,18 @@ val Procedures$Procedure0 updateAstroData = [
  // 0=NEW, 1=WAXING_CRESCENT, 2=FIRST_QUARTER, 3=WAXING_GIBBOUS, 4=FULL, 5=WANING_GIBBOUS, 6=THIRD_QUARTER, 7=WANING_CRESCENT
  val moonphase_number = transform("MAP", "moonphase_to_display.map",moonphase_val)
    logInfo("","PUBLISHING ASTRO Values, moonphase = {}, number = {}", moonphase_val, moonphase_number)
-   mqttActions.publishMQTT("moonphase",moonphase_number,false)
-   mqttActions.publishMQTT("sunrise",sunrise_val,false)
-   mqttActions.publishMQTT("sunset",sunset_val,false)
-   mqttActions.publishMQTT("azimut",azimut_val,false)
-   mqttActions.publishMQTT("elevation",elevation_val,false)
-   mqttActions.publishMQTT("distance",MoonDistance.state.toString,false)
-   mqttActions.publishMQTT("moonrise",moonrise_val,false)
-   mqttActions.publishMQTT("moonset",moonset_val,false)
-   mqttActions.publishMQTT("astrotimestamp",new DateTimeType().format("%1$tH:%1$tM"),false)
-   logInfo("","updateAstro() SunCulm = {}", SunCulm1.state)
-   mqttActions.publishMQTT("sunculm",SunCulm1.state.format(fmtDegree),false)
-   mqttActions.publishMQTT("forecast",foreCast_val,false)
+   mqttActions.publishMQTT("moonphase",moonphase_number,true)
+   mqttActions.publishMQTT("sunrise",sunrise_val,true)
+   mqttActions.publishMQTT("sunset",sunset_val,true)
+   mqttActions.publishMQTT("azimut",azimut_val,true)
+   mqttActions.publishMQTT("elevation",elevation_val,true)
+   mqttActions.publishMQTT("distance",MoonDistance.state.toString,true)
+   mqttActions.publishMQTT("moonrise",moonrise_val,true)
+   mqttActions.publishMQTT("moonset",moonset_val,true)
+   mqttActions.publishMQTT("astrotimestamp",new DateTimeType().format("%1$tH:%1$tM"),true)
+   //logInfo("","updateAstro() SunCulm = {}", SunCulm1.state)
+   mqttActions.publishMQTT("sunculm",SunCulm1.state.format(fmtDegree),true)
+   mqttActions.publishMQTT("forecast",foreCast_val,true)
 
 ]
 
@@ -85,11 +85,10 @@ end
 
 rule "Use Update Level for Astro Data Update"
 when 
-  Item UpdateLevelSwitch received command
+  Item UpdateLevelSwitch changed
 then 
     updateAstroData.apply()
 end
-
 
 rule "astro event"
 when 
@@ -138,5 +137,5 @@ then
     //logInfo("","convertedEvent = {}", convertedEvent)
     LastEvent.postUpdate(convertedEvent)
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
-    mqttActions.publishMQTT("astroevent",convertedEvent,false)
+    mqttActions.publishMQTT("astroevent",convertedEvent,true)
 end 

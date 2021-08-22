@@ -30,4 +30,6 @@ Items {
 
     //SunCulm :  strategy = everyDay
     SunCulm1 :  strategy = everyHalfHour
+
+    Hum_Solar1 : stratefy = every10Minutes
 }

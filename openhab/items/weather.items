@@ -46,6 +46,7 @@ String Time_Solar1 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module1_t
 Number Vcc_Solar1 <battery> (gBatteries,gBatteriesMin) { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:vcc_channel" }
 String Status_Solar1 { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:status_channel" }
 Number Temp_Solar1 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:temp_channel" }
+Number Hum_Solar1 <humidity> { channel="mqtt:topic:myUnsecureBroker:solar_module1_thing:hum_channel" }
 
 String Time_Solar2 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:time_channel" }
 Number Vcc_Solar2 <battery> (gBatteries,gBatteriesMin) { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:vcc_channel" }
