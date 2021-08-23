@@ -43,9 +43,7 @@ function readLevel {
 
   #log "turn pump on in order to have power supply for level sensor relais" 
   irrOnOff 1
-  sleep 2
-  newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
-  sleep 2
+  sleep 1
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   # turn off here
   irrOnOff 0

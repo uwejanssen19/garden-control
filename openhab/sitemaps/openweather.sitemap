@@ -13,7 +13,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Vcc_Solar1_Display label="Batterie [%s %%]"
         Default item=Status_Solar1 label="Status [%s]"        
         Default item=Temp_Solar1 label="Temperature [%s °C]"        
-        Default item=Hum_Solar2 label="Soil Humidity [%s]"
+        Default item=Hum_Solar1 label="Soil Humidity [%s]"
     }
 
     Frame label="Aktuelle Werte von Solar Modul 2 ( Carport NW)" {
