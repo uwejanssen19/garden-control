@@ -64,15 +64,20 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean NoIrrigationWanted = (NoIrrigationPreset?.state == ON)
     
   val Number RAIN_TRESHOLD = 3.0
+  val Number SOIL_HUM_TRESHOLD = 750 // only irrigate if  treshold < 750
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
   val Boolean isNotRaining = (isRaining == "0")
   
   var float rainAv = 0
   rainAv = (RainAverage?.state as DecimalType)?.floatValue
+  var int hum = (Hum_Solar1?.state as DecimalType)?.intValue
+  
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
+  val Boolean dryEnough = (hum  < SOIL_HUM_TRESHOLD)
   logInfo("shallIrrigate::","RainAverage( = {} ) < {} = {} ", RainAverage.state, RAIN_TRESHOLD, didNotRain)
+  logInfo("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SOIL_HUM_TRESHOLD, dryEnough)
 
-  val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain)
+  val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain && dryEnough)
     
  logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
  logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
