@@ -56,6 +56,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
   // logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
+  val Number SOIL_HUM_TRESHOLD = 750 // only irrigate if  treshold < 750
   val isRaining = isRaining_out.state.toString
   // logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
   var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
@@ -64,7 +65,6 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean NoIrrigationWanted = (NoIrrigationPreset?.state == ON)
     
   val Number RAIN_TRESHOLD = 3.0
-  val Number SOIL_HUM_TRESHOLD = 750 // only irrigate if  treshold < 750
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
   val Boolean isNotRaining = (isRaining == "0")
   
@@ -74,15 +74,18 @@ val Functions$Function0<Boolean> shallIrrigate = [
   
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
   val Boolean dryEnough = (hum  < SOIL_HUM_TRESHOLD)
-  logInfo("shallIrrigate::","RainAverage( = {} ) < {} = {} ", RainAverage.state, RAIN_TRESHOLD, didNotRain)
+  // logInfo("shallIrrigate::","Hum_Solar1.state =  {} ",Hum_Solar1.state)
+  // logInfo("shallIrrigate::","hum =  {} ",hum)
+  // logInfo("shallIrrigate::","soil hum TRESHOLD = {} ",SOIL_HUM_TRESHOLD)
   logInfo("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SOIL_HUM_TRESHOLD, dryEnough)
 
   val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain && dryEnough)
     
- logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
- logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
- logInfo("shallIrrigate:","didNotRain = {} ",didNotRain)
- logInfo("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
+  logInfo("shallIrrigate::","RainAverage( = {} ) < {} = {} ", RainAverage.state, RAIN_TRESHOLD, didNotRain)
+//  logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+//  logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
+//  logInfo("shallIrrigate:","didNotRain = {} ",didNotRain)
+  logInfo("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
  logInfo("shallIrrigate:","NoIrrigationWanted = {} ",NoIrrigationWanted)
  
     
@@ -163,7 +166,7 @@ then
     // logInfo("","TempAverage float value = {} ",tmpAv)
     // val Boolean wasHot = (tmpAv > 24.0)
     // logInfo("","TempAverage wasHot last day = {} ",wasHot)
-    sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", "New links available:\n"+getEmailText.apply())
+    sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
     logDebug("", "WanAddress =  {} ",wanAddress)
   }
   logDebug("", "Update Water Level Switch: EXIT")
@@ -269,7 +272,7 @@ rule "Irrigation ON"
       logDebug("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
       sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
-      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString)
+      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString+"\n Bodenfeuchte = " + Hum_Solar1.state)
     } else {
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
@@ -277,7 +280,8 @@ rule "Irrigation ON"
       logDebug("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
-      "Bewaesserung.             \n"+getEmailText.apply()+"KEINE Bewaesserung, es regnet oder für die nächsten 24 h ist Regen mit " + ForecastRainVolumesGroup.state + " angesagt ")
+      getEmailText.apply()+"KEINE Bewaesserung, es regnet oder Regen mit " + ForecastRainVolumesGroup.state + " ist angesagt.\nOder Bodenfeuchte (= "
+      + Hum_Solar1.state + ") >= " +SOIL_HUM_TRESHOLD)
     }
 end
 
