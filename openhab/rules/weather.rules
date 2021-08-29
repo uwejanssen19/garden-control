@@ -31,6 +31,8 @@ var MANUAL_IRRIGATION_TIME = 600 // seconds
 var String SCRIPT_DIR="/home/pi/scripts/"
 var Timer valveTimer = null
 var Timer irrTimer = null
+val int SOIL_HUM_TRESHOLD = 750
+
 
 
 // -----------------------------------------------------------------------------
@@ -69,8 +71,8 @@ val Functions$Function0<Boolean> shallDoLawnIrrigation = [
   val Number RAIN_TRESHOLD = 3.0
   val float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType).floatValue
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)    
-  logDebug("shallDoLawnIrrigation::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
-  logDebug("shallDoLawnIrrigation:","isNotRaining = {} ",isNotRaining)
+  //logDebug("shallDoLawnIrrigation::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+  //logDebug("shallDoLawnIrrigation:","isNotRaining = {} ",isNotRaining)
   val Boolean retVal = (isNotRaining && willNotRain ) || switchStateSetToIgnore
   logDebug("shallDoLawnIrrigation:","return {}", retVal)
   return retVal
@@ -449,6 +451,7 @@ then
   //  MoonPhaseTopic.sendCommand(MoonPhase)
 
   SystemStatusText.sendCommand("System started")
+  SoilHumTreshold.sendCommand(SOIL_HUM_TRESHOLD)
   logInfo("SysStart or InitSwitch","EXIT")
 end 
 

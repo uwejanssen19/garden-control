@@ -56,7 +56,6 @@ val Functions$Function0<Boolean> shallIrrigate = [
   // logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
-  val Number SOIL_HUM_TRESHOLD = 750 // only irrigate if  treshold < 750
   val isRaining = isRaining_out.state.toString
   // logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
   var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
@@ -69,15 +68,24 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean isNotRaining = (isRaining == "0")
   
   var float rainAv = 0
-  rainAv = (RainAverage?.state as DecimalType)?.floatValue
-  var int hum = (Hum_Solar1?.state as DecimalType)?.intValue
+  rainAv = (RainAverage.state as DecimalType).floatValue
+  var int hum = 0
+  if ( Hum_Solar1.state == UNDEF || Hum_Solar1.state == NULL) {
+    hum = SoilHumTreshold.state+1 // prevent watering
+    logInfo("shallIrrigate::","Hum_Solar undefined, in order to prevent watering set humidity value to  treshold +1  ( {} )",hum)
+  } else {
+    hum = (Hum_Solar1.state as DecimalType).intValue
+  }
+  logInfo("shallIrrigate::","hum treshold global var = {} ", SoilHumTreshold)
+
   
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
-  val Boolean dryEnough = (hum  < SOIL_HUM_TRESHOLD)
-  // logInfo("shallIrrigate::","Hum_Solar1.state =  {} ",Hum_Solar1.state)
+   logInfo("shallIrrigate::","before dryEnough = ...")
+  val Boolean dryEnough = (hum  < (SoilHumTreshold.state as DecimalType))
+   logInfo("shallIrrigate::","after dryEnough =  ...")
   // logInfo("shallIrrigate::","hum =  {} ",hum)
-  // logInfo("shallIrrigate::","soil hum TRESHOLD = {} ",SOIL_HUM_TRESHOLD)
-  logInfo("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SOIL_HUM_TRESHOLD, dryEnough)
+  // logInfo("shallIrrigate::","soil hum TRESHOLD = {} ",SoilHumTreshold)
+  logInfo("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SoilHumTreshold.state, dryEnough)
 
   val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain && dryEnough)
     
@@ -235,7 +243,7 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    //Time cron "0 0/10 * * * ? " // near future test 
+    //Time cron "0 0/5 * * * ? " // near future test 
     Time cron "0 00 05 * 5-8 ? " or
     Time cron "0 00 06 * 4-10 ? " or 
     Time cron "0 00 18 * 4-10 ? " or
@@ -259,17 +267,17 @@ rule "Irrigation ON"
     //   )
     // }
     // Irrigate except forecast tells otherwise
-    logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    logInfo("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
-      logDebug("", "Irrigation ON: turn on fill_switch")
+      logInfo("", "Irrigation ON: turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
       Fill_Switch.sendCommand(ON)
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
-      logDebug("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
+      logInfo("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
       sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
       "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString+"\n Bodenfeuchte = " + Hum_Solar1.state)
@@ -277,11 +285,11 @@ rule "Irrigation ON"
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
-      logDebug("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+      logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
       getEmailText.apply()+"KEINE Bewaesserung, es regnet oder Regen mit " + ForecastRainVolumesGroup.state + " ist angesagt.\nOder Bodenfeuchte (= "
-      + Hum_Solar1.state + ") >= " +SOIL_HUM_TRESHOLD)
+      + Hum_Solar1.state + ") >= " +SoilHumTreshold.state)
     }
 end
 

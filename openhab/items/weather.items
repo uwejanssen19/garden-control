@@ -85,3 +85,4 @@ Number RainProb <rain> { channel="mqtt:topic:myUnsecureBroker:rainProb_thing:rai
 
 //String OH2_Service  "OH2 Service"   { channel="exec:command:oh2service:input" }
 //String PI_Service   "PI Service"    { channel="exec:command:piservice:input" }
+Number SoilHumTreshold
