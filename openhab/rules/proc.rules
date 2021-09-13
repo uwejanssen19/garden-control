@@ -304,7 +304,12 @@ rule "Irrigation OFF"
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     irr_on_off.sendCommand("0")
     Irrigating.postUpdate(OFF)
-    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+Level_out.state.toString)
+
+    var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
+    val String levelMapFile = "waterLevel.map"
+    val levelString = transform("MAP",levelMapFile,level.toString)
+    
+    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+levelString)
     logDebug("", "Irrigation OFF: EXIT")
 end
 // -----------------------------------------------------------------------------
