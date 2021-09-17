@@ -24,6 +24,7 @@ val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
 val String GARDEN_CONTROL_SUFFIX = 'garden_control'
 val String OPEN_WEATHER_SUFFIX = 'open_weather'
 val String WAN_ADDRESS_FRITZ = 'xdbu92gos1irkzbd.myfritz.net'
+val Number SOIL_TRESH = 550
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
@@ -71,7 +72,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
   rainAv = (RainAverage.state as DecimalType).floatValue
   var int hum = 0
   if (SoilHumTreshold.state == UNDEF || SoilHumTreshold.state == NULL ) {
-    SoilHumTreshold.state = 750
+    SoilHumTreshold.state = SOIL_TRESH
   }
   if ( Hum_Solar1.state == UNDEF || Hum_Solar1.state == NULL) {
     hum = SoilHumTreshold.state // prevent watering

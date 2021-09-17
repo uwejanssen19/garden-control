@@ -31,7 +31,7 @@ var MANUAL_IRRIGATION_TIME = 600 // seconds
 var String SCRIPT_DIR="/home/pi/scripts/"
 var Timer valveTimer = null
 var Timer irrTimer = null
-val int SOIL_HUM_TRESHOLD = 750
+val int SOIL_HUM_TRESHOLD = 550
 
 
 
