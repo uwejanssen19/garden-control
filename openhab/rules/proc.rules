@@ -161,6 +161,7 @@ then
   // just for test since we do not want to wait for some timer to occur
   if (receivedCommand == ON) {
     val willIrrigate = shallIrrigate.apply()
+    logInfo("### MY DEBUG  ###", "### BEFORE toString")
     logInfo("", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
     var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
     //Display_level_out?.postUpdate(level) 

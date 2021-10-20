@@ -454,20 +454,3 @@ then
   SoilHumTreshold.sendCommand(SOIL_HUM_TRESHOLD)
   logInfo("SysStart or InitSwitch","EXIT")
 end 
-
-
-
-
-// -----------------------------------------------------------------------------
-// rule "SysStop" 
-// -----------------------------------------------------------------------------
-
-rule "SysStop"
-when System shuts down
-
-then
-    InitSwitch.sendCommand(ON)
-    logDebug("SysStop","system shutting down")
-
-end
-

@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~pi/scripts/irrLib.sh
+source /home/openhabian/scripts/irrLib.sh
 # begin test
 echo "BEGIN TEST ########################################"
 log "BEGIN TEST ########################################"

@@ -1,18 +1,18 @@
-Thing exec:command:weatherstation_willRain [command="/home/pi/scripts/willRain.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
-//Thing exec:command:weatherstation_howMuchRain [command="/home/pi/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=20, autorun=true]
-Thing exec:command:weatherstation_isRaining [command="/home/pi/scripts/isRaining.sh", transform="REGEX((.*?))", interval=1800, autorun=true]
-Thing exec:command:weatherstation_waterlevel [command="/home/pi/scripts/Level.sh", transform="REGEX((.*?))", interval=0, autorun=true]
+Thing exec:command:weatherstation_willRain [command="/home/openhabian/scripts/willRain.sh", transform="REGEX((.*?))", interval=3600, autorun=true]
+//Thing exec:command:weatherstation_howMuchRain [command="/home/openhabian/scripts/getPrecipitation.sh", transform="REGEX((.*?))", interval=20, autorun=true]
+Thing exec:command:weatherstation_isRaining [command="/home/openhabian/scripts/isRaining.sh", transform="REGEX((.*?))", interval=1800, autorun=true]
+Thing exec:command:weatherstation_waterlevel [command="/home/openhabian/scripts/Level.sh", transform="REGEX((.*?))", interval=0, autorun=true]
 
-Thing exec:command:weatherstation_irr_on_off [ command="/home/pi/scripts/irrOnOff.sh %2$s", interval = 0, autorun=true ]
-Thing exec:command:weatherstation_water_on_off [ command="/home/pi/scripts/waterOnOff.sh %2$s", interval = 0, autorun=true ]
-Thing exec:command:set_alive [ command="/home/pi/scripts/set_alive.sh", interval = 0, autorun=true ]
-//Thing exec:command:weatherstation_fill_barrel [ command="/home/pi/scripts/supply4NextIrrigation.sh %2$s", interval = 0, autorun=true ]
-
-
+Thing exec:command:weatherstation_irr_on_off [ command="/home/openhabian/scripts/irrOnOff.sh %2$s", interval = 0, autorun=true ]
+Thing exec:command:weatherstation_water_on_off [ command="/home/openhabian/scripts/waterOnOff.sh %2$s", interval = 0, autorun=true ]
+Thing exec:command:set_alive [ command="/home/openhabian/scripts/set_alive.sh", interval = 0, autorun=true ]
+//Thing exec:command:weatherstation_fill_barrel [ command="/home/openhabian/scripts/supply4NextIrrigation.sh %2$s", interval = 0, autorun=true ]
 
 
-//Thing exec:command:getwan [command="/home/pi/scripts/get1Random.sh", transform="REGEX((.*?))", interval=0, autorun=true ]
-Thing exec:command:getwan [ command="/home/pi/scripts/getwan.sh", interval=3600, autorun=false]
+
+
+//Thing exec:command:getwan [command="/home/openhabian/scripts/get1Random.sh", transform="REGEX((.*?))", interval=0, autorun=true ]
+Thing exec:command:getwan [ command="/home/openhabian/scripts/getwan.sh", interval=3600, autorun=false]
 
 //Thing exec:command:oh2service [command="sudo /bin/systemctl '%2$s' openhab2.service", interval=0,autorun=true ]
 //Thing exec:command:piservice  [command="sudo %2$s", interval=0, autorun=true ] 

@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~pi/scripts/irrLib.sh
+source /home/openhabian/scripts/irrLib.sh
 FILL_UNITS=10
 MAX_FILL_TIME=240
 NO_RAIN=0

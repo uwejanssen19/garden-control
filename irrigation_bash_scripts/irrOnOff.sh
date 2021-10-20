@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~pi/scripts/irrLib.sh
+source /home/openhabian/scripts/irrLib.sh
 log "irrOnOff ENTRY $1 ---------------" 
 #set -x 
 if [ $1 -eq 1 ]
