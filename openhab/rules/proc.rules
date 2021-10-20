@@ -68,9 +68,9 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
   val Boolean isNotRaining = (isRaining == "0")
   
-  var float rainAv = 0
+  var float rainAv = 0.0
   logInfo("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
-  rainAv = (RainAverage.state as DecimalType)?.floatValue
+  //rainAv = (RainAverage.state as DecimalType)?.floatValue
   var int hum = 0
   if (SoilHumTreshold.state == UNDEF || SoilHumTreshold.state == NULL ) {
     SoilHumTreshold.state = SOIL_TRESH
@@ -157,6 +157,11 @@ rule "Update Water Level Switch"
 when 
   Item UpdateLevelSwitch received command
 then 
+  val mailActions = getActions("mail","mail:smtp:mysmtp")
+  val String levelMapFile = "waterLevel.map"
+  var levelString = transform("MAP",levelMapFile,/*level.toString*/"0")
+    mailActions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
+
   //Thread::sleep(500) // give time to update variables
   //logDebug("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   // just for test since we do not want to wait for some timer to occur
@@ -170,7 +175,7 @@ then
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
 
-    // logInfo("","TempAverage before update = {} ",TempAverage.state)
+    logInfo("","TempAverage before update = {} ",TempAverage.state)
     TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
 
     // logInfo("","TempAverage after update  = {} ",TempAverage.state)
@@ -179,13 +184,12 @@ then
     // logInfo("","TempAverage float value = {} ",tmpAv)
     // val Boolean wasHot = (tmpAv > 24.0)
     // logInfo("","TempAverage wasHot last day = {} ",wasHot)
-    val String levelMapFile = "waterLevel.map"
 
-     val levelString = transform("MAP",levelMapFile,level.toString)
+    levelString = transform("MAP",levelMapFile,level.toString)
     //logInfo("", "BEFORE sendmail")
     //sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
     //logInfo("", "AFTER sendmail")
-    sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
+    mailActions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
     //logDebug("", "WanAddress =  {} ",wanAddress)
   }
   //logDebug("", "Update Water Level Switch: EXIT")
@@ -262,6 +266,7 @@ rule "Irrigation ON"
   then
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    val mailActions = getActions("mail","mail:smtp:mysmtp")
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
@@ -272,15 +277,17 @@ rule "Irrigation ON"
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
       logInfo("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
-      sendMail("uwe@janssen-muenchen.de",
+      mailActions.sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
-      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString)
+//      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString)
+      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: VOLL")
     } else {
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
       logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
-      sendMail("uwe@janssen-muenchen.de",
+
+      mailActions.sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
       //getEmailText.apply()+"KEINE Bewaesserung, es regnet oder Regen mit " + ForecastRainVolumesGroup.state + " ist angesagt.\nOder Bodenfeuchte (= "
       //+ Hum_Solar1.state + ") >= " +SoilHumTreshold.state)
