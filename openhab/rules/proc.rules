@@ -69,7 +69,8 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean isNotRaining = (isRaining == "0")
   
   var float rainAv = 0
-  rainAv = (RainAverage.state as DecimalType).floatValue
+  logInfo("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
+  rainAv = (RainAverage.state as DecimalType)?.floatValue
   var int hum = 0
   if (SoilHumTreshold.state == UNDEF || SoilHumTreshold.state == NULL ) {
     SoilHumTreshold.state = SOIL_TRESH
@@ -160,9 +161,8 @@ then
   //logDebug("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   // just for test since we do not want to wait for some timer to occur
   if (receivedCommand == ON) {
-    val willIrrigate = shallIrrigate.apply()
-    logInfo("### MY DEBUG  ###", "### BEFORE toString")
-    logInfo("", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
+//    val willIrrigate = shallIrrigate.apply()
+  //  logInfo("", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
     var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
     //Display_level_out?.postUpdate(level) 
     Level_out.postUpdate(level.toString)
@@ -254,11 +254,11 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    //Time cron "0 0/5 * * * ? " // near future test 
-    Time cron "0 00 05 * 5-8 ? " or
-    Time cron "0 00 06 * 4-10 ? " or 
-    Time cron "0 00 18 * 4-10 ? " or
-    Time cron "0 00 19 * 4-8 ? "  
+    Time cron "0 0/5 * * * ? " // near future test 
+    //Time cron "0 00 05 * 5-8 ? " or
+    //Time cron "0 00 06 * 4-10 ? " or 
+    //Time cron "0 00 18 * 4-10 ? " or
+    //Time cron "0 00 19 * 4-8 ? "  
   then
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
