@@ -51,7 +51,7 @@ val Functions$Function0<Boolean> isLastLawnIrrigationCron = [
   // Calculation of last event is based upon cron entry "0 0/1 8-20 * 3-10 ?" 
 
   val hour = now.getHourOfDay
-  val minute = now.getMinuteOfHour
+  val minute = now.getMinute
   
   val Boolean retVal = (hour ==  20 && minute == 59) // last occurrence 
   logDebug("isLastLawnIrrigationCron ", " hour = {}, minute = {}, retVal = {}" , hour, minute, retVal)
@@ -333,7 +333,7 @@ rule "daemon"
   then
   
   val irrigating = (Irrigating.state == ON)
-  val minute = now.getMinuteOfHour
+  val minute = now.getMinute
   
   
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 

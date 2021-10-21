@@ -258,11 +258,11 @@ end
 rule "Irrigation ON"
 // time based beginning of irrigation
   when
-    Time cron "0 0/5 * * * ? " // near future test 
-    //Time cron "0 00 05 * 5-8 ? " or
-    //Time cron "0 00 06 * 4-10 ? " or 
-    //Time cron "0 00 18 * 4-10 ? " or
-    //Time cron "0 00 19 * 4-8 ? "  
+    //Time cron "0 0/5 * * * ? " // near future test 
+    Time cron "0 00 05 * 5-8 ? " or
+    Time cron "0 00 06 * 4-10 ? " or 
+    Time cron "0 00 18 * 4-10 ? " or
+    Time cron "0 00 19 * 4-8 ? "  
   then
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)

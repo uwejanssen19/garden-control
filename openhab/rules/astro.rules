@@ -4,15 +4,15 @@ val makeAstroEventHumanReadable = [
   // Format of event : 
   //   astro:sun:home:morningNight#event triggered START
   //   [0]  :[1]:[2] :[3]
-  //logInfo("","makeAstroEventHumanReadable::pEventString = {}", pEventString)
+  logInfo("","makeAstroEventHumanReadable::pEventString = {}", pEventString)
   // find last chunk separated by ':'
   val astroParts = pEventString.split(":")
   // now we got "<eventName>#event triggered START|END"
   // split again and keep first part reusing array
-  //logInfo("","makeAstroEventHumanReadable::astroParts[3] = {}", astroParts.get(3))
+  logInfo("","makeAstroEventHumanReadable::astroParts[3] = {}", astroParts.get(3))
   val astroParts2 = astroParts.get(3).split("#")
   val String eventName = astroParts2.get(0)
-  //logInfo("","makeAstroEventHumanReadable::eventName = {}", eventName)
+  logInfo("","makeAstroEventHumanReadable::eventName = {}", eventName)
 
   //val remainder /*e.g. event triggered START*/ = astroParts2.get(1)
   //val startEndParts = remainder.split(' ')  // create list with parts event trig START/END
@@ -23,7 +23,7 @@ val makeAstroEventHumanReadable = [
   //logInfo("","makeAstroEventHumanReadable::startEndConv = {}", startEndConv)
 //  val String userFriendlyName = transform("MAP",astroMapFile,eventName) + " " + startEndConv
   val String userFriendlyName = transform("MAP",astroMapFile,eventName)
-  //logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName)
+  logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName)
   return userFriendlyName
 ]
 
