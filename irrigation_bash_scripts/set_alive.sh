@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/pi/scripts/irrLib.sh
+source /home/openhabian/scripts/irrLib.sh
 log "$0 ENTRY ---------------" 
 #set -x 
 /bin/date +"%d %H %M " > /tmp/openhab_alive
