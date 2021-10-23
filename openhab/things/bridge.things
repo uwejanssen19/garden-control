@@ -5,4 +5,4 @@ Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="19617de0
     //Thing uvindex local "Local UV Index" [location="XXX,YYY", forecastDays=7]
 }
 
-Bridge mqtt:broker:myUnsecureBroker [ host="localhost", username="pi", password="Chrome4Me", secure=false, retain = false, qos=1 ]
+Bridge mqtt:broker:myUnsecureBroker [ host="localhost", secure=false, retain = false, qos=1 ]

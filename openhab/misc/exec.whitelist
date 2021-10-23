@@ -1,0 +1,23 @@
+# For security reasons all commands that are used by the exec binding or transformation need to be whitelisted.
+# Every command needs to be listed on a separate line below.
+#/home/openhabian/scripts/depressure.sh
+#/home/openhabian/scripts/getExternalRouterAdress.sh
+#/home/openhabian/scripts/getForeCast.sh
+/home/openhabian/scripts/getPrecipitation.sh
+#/home/openhabian/scripts/getRainYesterday.sh
+/home/openhabian/scripts/getRandom.sh
+/home/openhabian/scripts/getwan.sh
+#/home/openhabian/scripts/irrLib.sh
+#/home/openhabian/scripts/irrOnOff.sh
+/home/openhabian/scripts/isRaining.sh
+/home/openhabian/scripts/Level.sh
+/home/openhabian/scripts/set_alive.sh
+#/home/openhabian/scripts/setPermissions.sh
+#/home/openhabian/scripts/supply4NextIrrigation.sh
+#/home/openhabian/scripts/testLib.sh
+#/home/openhabian/scripts/watch_openhab_cron.sh
+/home/openhabian/scripts/waterOnOff.sh
+/home/openhabian/scripts/willRain.sh
+/home/openhabian/scripts/irrOnOff.sh %2$s
+/home/openhabian/scripts/irrOnOff.sh "0"
+/home/openhabian/scripts/irrOnOff.sh "1"

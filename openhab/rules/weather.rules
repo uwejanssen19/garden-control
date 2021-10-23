@@ -28,7 +28,7 @@ var DEPRESSURE_TIME = 12
 var LAWN_IRRIGATION_TIME = 60 // seconds
 var MANUAL_IRRIGATION_TIME = 600 // seconds
 //var MANUAL_IRRIGATION_TIME = 20 // for test
-var String SCRIPT_DIR="/home/pi/scripts/"
+var String SCRIPT_DIR="/home/openhabian/scripts/"
 var Timer valveTimer = null
 var Timer irrTimer = null
 val int SOIL_HUM_TRESHOLD = 550
@@ -119,8 +119,9 @@ val Procedures$Procedure0 onIrrigationTimer = [
 
 val irrOnOffProc = [ 
     String onOff, String SCRIPT_DIR |
-                 executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
-                 logDebug("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
+                executeCommandLine(Duration.ofSeconds(1), SCRIPT_DIR+"irrOnOff.sh",onOff)
+                // OH2: executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
+                logInfo("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
 ]
 
 
@@ -333,7 +334,6 @@ rule "daemon"
   then
   
   val irrigating = (Irrigating.state == ON)
-  val minute = now.getMinute
   
   
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
@@ -369,6 +369,7 @@ rule "daemon"
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
         // save water: 
         // never let tap water run for more than time interval below
+        val minute = now.getMinute
         if ((minute % 9) == 0 ) {
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
