@@ -343,7 +343,7 @@ rule "daemon"
   logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   var float comingRainVal  = (ForecastRainVolumesGroup.state as DecimalType).floatValue
   RainProb.sendCommand(comingRainVal)
-  logInfo("Daemon","RainProb =  {} ",RainProb.state) 
+  logDebug("Daemon","RainProb =  {} ",RainProb.state) 
 
  
   // *********************************************************************************************************************************************
@@ -367,16 +367,17 @@ rule "daemon"
       logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
-        // save water: 
+              // save water: 
         // never let tap water run for more than time interval below
         val minute = now.getMinute
-        if ((minute % 9) == 0 ) {
+        logDebug("Daemon","##### CHECK minute = {}", minute)
+//        if ((minute % 9) == 0 ) { // nonsens since will happen only at xx:36 -> too late for saving water
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
           GardencontrolPowerSupply.postUpdate(OFF) 
           LawnIrrigationTimeLeft.sendCommand(-1)
-        }
+//        }
       }
     }
       
