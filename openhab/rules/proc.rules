@@ -14,7 +14,7 @@
 // constants
 // -----------------------------------------------------------------------------
 val String LEVEL_EMPTY = "1"
-val String SCRIPT_DIR="/home/pi/scripts/"
+val String SCRIPT_DIR="/home/openhabian/scripts/"
 val MAX_FILL_BARREL_TIME = 180
 val Number RAIN_SENSOR_HTTP_PORT = 8062
 val Number MCU_8266_HTTP_PORT = 8071
@@ -136,7 +136,8 @@ val readLevel = [
   logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
   Thread::sleep(2000)
-  var level = executeCommandLine(SCRIPT_DIR+"Level.sh", 6000)
+  var level = executeCommandLine(Duration.ofSeconds(6),SCRIPT_DIR+"Level.sh")
+
   logDebug("", "readLevel() result = {}",level)
   if (powerOff) {
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
