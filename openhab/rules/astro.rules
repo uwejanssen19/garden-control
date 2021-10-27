@@ -81,6 +81,7 @@ then
 //  val Number elevationNumber = 39.43685692371896
   logInfo("","rule NOON SunCulm1 = {}", elevationNumber) 
   SunCulm1.postUpdate(elevationNumber)
+  //SunCulm1.postUpdate(28.344169152600987) // test only
   updateAstroData.apply()
 end
 

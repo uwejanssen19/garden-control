@@ -1,4 +1,4 @@
-// This module periodically sends its data to mqtt garden_control, 1883
+// This module periodically sends its data to the mqtt server as defined in controllers, port 1883
 on MQTT#Connected do 
       publish %sysname%/time/value,%systime%
       publish %sysname%/a0/a0,[a0#a0]
