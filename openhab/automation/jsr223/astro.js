@@ -33,46 +33,34 @@
     // type: script.ScriptAction
     scriptExtension.importPreset("default");
     var log = Java.type("org.slf4j.LoggerFactory").getLogger("org.openhab.model.script.Rules.astro_js");
-    var myEvent = event;
-    log.info("event  = {}" ,myEvent);
-    log.info("converted event  = {}" ,makeAstroEventHumanReadable(myEvent));
-
-//        var mqttActions = actions.get("mqtt","mqtt:broker:myUnsecureBroker");
-//    mqttActions.publishMQTT("astroevent","convertedEvent",true);
-
-
-
+    var convertedEvent = makeAstroEventHumanReadable(event);
+//        log.info("event  = {}" ,convertedEvent);
+    log.info("converted event  = {}" ,convertedEvent);
+    // send converted event via mqtt
+    var mqttActions = actions.get("mqtt","mqtt:broker:myUnsecureBroker");
+    mqttActions.publishMQTT("astroevent", convertedEvent, true);
 
 function makeAstroEventHumanReadable (pEventString) {
-
-astroMapFile = "astroevents.map";
 // Format of event : 
 //   astro:sun:local:morningNight#event triggered START
 //   [0]  :[1]:[2] :[3]
-log.info("makeAstroEventHumanReadable::pEventString = " + pEventString + " type  = " + typeof pEventString);
-// find last chunk separated by ':'
+// we want to return the "mornigNight" part
+//log.info("makeAstroEventHumanReadable::pEventString = " + pEventString + " type  = " + typeof pEventString);
 var astroEventName = pEventString.toString();
-log.info("makeAstroEventHumanReadable::astroEventName   = " + astroEventName);
-log.info("makeAstroEventHumanReadable::astroEventName  type = " + typeof astroEventName);
-
+//  log.info("makeAstroEventHumanReadable::astroEventName   = " + astroEventName);
 astroParts = astroEventName.split(":");
-
-log.info("makeAstroEventHumanReadable::astroParts type  = " + typeof astroParts );
-log.info("makeAstroEventHumanReadable::astroParts = " + astroParts );
-log.info("makeAstroEventHumanReadable::astroParts length = " + astroParts.length);
-log.info("makeAstroEventHumanReadable::astroParts last elem = " + astroParts[astroParts.length-1]);
+// find last chunk separated by ':'
 lastPart = astroParts[astroParts.length-1];
-log.info("makeAstroEventHumanReadable::lastPart  = "+ lastPart);
+//  log.info("makeAstroEventHumanReadable::lastPart  = "+ lastPart);
 // now we got "<eventName>#event triggered START|END"
-// split again and keep first part reusing array
+// split again to get the actual event
 astroParts2 = lastPart.split("#");
-log.info("makeAstroEventHumanReadable::astroParts2 = {}", astroParts2);
+//  log.info("makeAstroEventHumanReadable::astroParts2 = {}", astroParts2);
 eventName = astroParts[1]+astroParts2[0];
-log.info("makeAstroEventHumanReadable::eventName = {}", eventName);
-
-//userFriendlyName = transform("MAP",astroMapFile,eventName);
-//var userFriendlyName = eventName;
-//logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName);
-//  return "userFriendlyName";
-return eventName;
+//  log.info("makeAstroEventHumanReadable::eventName = {}", eventName);
+astroMapFile = "astroevents.map";
+var Transformation = Java.type("org.openhab.core.transform.actions.Transformation");
+userFriendlyName = Transformation.transform("MAP",astroMapFile , eventName);
+log.info("makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName);
+return userFriendlyName;
 }

@@ -10,6 +10,8 @@ civilDawn=Buergerliche Morgen Daemmerung
 
 rise=Sonnenaufgang
 set=Sonnenuntergang
+sunrise=Sonnenaufgang
+sunset=Sonnenuntergang
 
 civilDusk=Buergerliche Abend Daemmerung
 nauticDusk=Nautische Abend Daemmerung
