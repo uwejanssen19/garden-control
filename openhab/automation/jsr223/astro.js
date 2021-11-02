@@ -1,3 +1,7 @@
+// ########################################################################################################
+// NOTE : do not copy this file to automation/jsr223 on target 
+// this file is only kept for backup purose until it is clear how to hanfle JS Rules in GIT
+// ########################################################################################################
 // triggers:
 //   - id: "2"
 //     configuration:
