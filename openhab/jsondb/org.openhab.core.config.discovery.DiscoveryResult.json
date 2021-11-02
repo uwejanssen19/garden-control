@@ -1,0 +1,113 @@
+{
+  "openweathermap:air-pollution:api:local": {
+    "class": "org.openhab.core.config.discovery.internal.DiscoveryResultImpl",
+    "value": {
+      "bridgeUID": {
+        "segments": [
+          "openweathermap",
+          "weather-api",
+          "api"
+        ],
+        "uid": "openweathermap:weather-api:api"
+      },
+      "thingUID": {
+        "segments": [
+          "openweathermap",
+          "air-pollution",
+          "api",
+          "local"
+        ],
+        "uid": "openweathermap:air-pollution:api:local"
+      },
+      "thingTypeUID": {
+        "segments": [
+          "openweathermap",
+          "air-pollution"
+        ],
+        "uid": ""
+      },
+      "properties": {
+        "location": "47.85625107168282,12.05131530761719"
+      },
+      "representationProperty": "location",
+      "flag": "NEW",
+      "label": "Lokale Luftqualität",
+      "timestamp": 1635630423908,
+      "timeToLive": -1
+    }
+  },
+  "openweathermap:onecall-history:api:local": {
+    "class": "org.openhab.core.config.discovery.internal.DiscoveryResultImpl",
+    "value": {
+      "bridgeUID": {
+        "segments": [
+          "openweathermap",
+          "weather-api",
+          "api"
+        ],
+        "uid": "openweathermap:weather-api:api"
+      },
+      "thingUID": {
+        "segments": [
+          "openweathermap",
+          "onecall-history",
+          "api",
+          "local"
+        ],
+        "uid": "openweathermap:onecall-history:api:local"
+      },
+      "thingTypeUID": {
+        "segments": [
+          "openweathermap",
+          "onecall-history"
+        ],
+        "uid": ""
+      },
+      "properties": {
+        "location": "47.85625107168282,12.05131530761719"
+      },
+      "representationProperty": "location",
+      "flag": "NEW",
+      "label": "One Call API History Data",
+      "timestamp": 1635630423893,
+      "timeToLive": -1
+    }
+  },
+  "openweathermap:onecall:api:local": {
+    "class": "org.openhab.core.config.discovery.internal.DiscoveryResultImpl",
+    "value": {
+      "bridgeUID": {
+        "segments": [
+          "openweathermap",
+          "weather-api",
+          "api"
+        ],
+        "uid": "openweathermap:weather-api:api"
+      },
+      "thingUID": {
+        "segments": [
+          "openweathermap",
+          "onecall",
+          "api",
+          "local"
+        ],
+        "uid": "openweathermap:onecall:api:local"
+      },
+      "thingTypeUID": {
+        "segments": [
+          "openweathermap",
+          "onecall"
+        ],
+        "uid": ""
+      },
+      "properties": {
+        "location": "47.85625107168282,12.05131530761719"
+      },
+      "representationProperty": "location",
+      "flag": "NEW",
+      "label": "One Call API Weather and Forecast",
+      "timestamp": 1635630423911,
+      "timeToLive": -1
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "overview": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "overview",
+      "timestamp": "Oct 18, 2021, 9:50:35 AM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Overview",
+        "layoutType": "responsive"
+      },
+      "slots": {
+        "default": [
+          {
+            "component": "oh-block",
+            "config": {},
+            "slots": {
+              "default": [
+                {
+                  "component": "oh-grid-cells",
+                  "config": {},
+                  "slots": {
+                    "default": [
+                      {
+                        "component": "oh-label-cell",
+                        "config": {
+                          "item": "SystemStatusText",
+                          "title": "SystemStatusText",
+                          "stateAsHeader": true,
+                          "expandable": false
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

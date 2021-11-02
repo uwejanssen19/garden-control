@@ -1,0 +1,16 @@
+{
+  "overview": {
+    "class": "org.openhab.core.ui.components.RootUIComponent",
+    "value": {
+      "uid": "overview",
+      "timestamp": "Oct 17, 2021, 9:16:33 PM",
+      "component": "oh-layout-page",
+      "config": {
+        "label": "Overview"
+      },
+      "slots": {
+        "default": []
+      }
+    }
+  }
+}

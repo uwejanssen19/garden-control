@@ -1,0 +1,132 @@
+{
+  "10e1f59e45": {
+    "class": "org.openhab.core.automation.dto.RuleDTO",
+    "value": {
+      "triggers": [
+        {
+          "id": "8",
+          "configuration": {
+            "channelUID": "astro:moon:local:set#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "2",
+          "configuration": {
+            "channelUID": "astro:moon:local:rise#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "3",
+          "configuration": {
+            "channelUID": "astro:sun:local:astroDawn#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "4",
+          "configuration": {
+            "channelUID": "astro:sun:local:nauticDawn#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "10",
+          "configuration": {
+            "channelUID": "astro:sun:local:civilDawn#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "11",
+          "configuration": {
+            "channelUID": "astro:sun:local:night#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "12",
+          "configuration": {
+            "channelUID": "astro:sun:local:daylight#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "6",
+          "configuration": {
+            "channelUID": "astro:sun:local:eveningNight#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "8",
+          "configuration": {
+            "channelUID": "astro:sun:local:morningNight#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "5",
+          "configuration": {
+            "channelUID": "astro:sun:local:rise#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "7",
+          "configuration": {
+            "channelUID": "astro:sun:local:set#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "9",
+          "configuration": {
+            "channelUID": "astro:sun:local:noon#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "13",
+          "configuration": {
+            "channelUID": "astro:sun:local:astroDusk#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "14",
+          "configuration": {
+            "channelUID": "astro:sun:local:civilDusk#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        },
+        {
+          "id": "15",
+          "configuration": {
+            "channelUID": "astro:sun:local:nauticDusk#event"
+          },
+          "type": "core.ChannelEventTrigger"
+        }
+      ],
+      "conditions": [],
+      "actions": [
+        {
+          "inputs": {},
+          "id": "1",
+          "configuration": {
+            "type": "application/javascript",
+            "script": "    var log \u003d Java.type(\"org.slf4j.LoggerFactory\").getLogger(\"org.openhab.model.script.Rules.astro_js\");\n    var convertedEvent \u003d makeAstroEventHumanReadable(event);\n//        log.info(\"event  \u003d {}\" ,convertedEvent);\n    log.info(\"converted event  \u003d {}\" ,convertedEvent);\n    // send converted event via mqtt\n    var mqttActions \u003d actions.get(\"mqtt\",\"mqtt:broker:myUnsecureBroker\");\n    mqttActions.publishMQTT(\"astroevent\", convertedEvent, true);\n\nfunction makeAstroEventHumanReadable (pEventString) {\n// Format of event : \n//   astro:sun:local:morningNight#event triggered START\n//   [0]  :[1]:[2] :[3]\n// we want to return the \"mornigNight\" part\n//log.info(\"makeAstroEventHumanReadable::pEventString \u003d \" + pEventString + \" type  \u003d \" + typeof pEventString);\nvar astroEventName \u003d pEventString.toString();\n//  log.info(\"makeAstroEventHumanReadable::astroEventName   \u003d \" + astroEventName);\nastroParts \u003d astroEventName.split(\":\");\n// find last chunk separated by \u0027:\u0027\nlastPart \u003d astroParts[astroParts.length-1];\n//  log.info(\"makeAstroEventHumanReadable::lastPart  \u003d \"+ lastPart);\n// now we got \"\u003ceventName\u003e#event triggered START|END\"\n// split again to get the actual event\nastroParts2 \u003d lastPart.split(\"#\");\n//  log.info(\"makeAstroEventHumanReadable::astroParts2 \u003d {}\", astroParts2);\n  if ((astroParts[1] \u003d\u003d\u003d \"sun\") \u0026\u0026 (astroParts2[1] \u003d\u003d\u003d \"rise\" || astroParts2[1] \u003d\u003d\u003d \"set\")) {\n    eventName \u003d astroParts[1]+astroParts2[0];\n  } else {\n    eventName \u003d astroParts2[0];\n  }\n//  log.info(\"makeAstroEventHumanReadable::eventName \u003d {}\", eventName);\nastroMapFile \u003d \"astroevents.map\";\nvar Transformation \u003d Java.type(\"org.openhab.core.transform.actions.Transformation\");\nuserFriendlyName \u003d Transformation.transform(\"MAP\",astroMapFile , eventName);\nlog.info(\"makeAstroEventHumanReadable::userFriendlyName \u003d {}\", userFriendlyName);\nreturn userFriendlyName;\n}\n"
+          },
+          "type": "script.ScriptAction"
+        }
+      ],
+      "configuration": {},
+      "configDescriptions": [],
+      "uid": "10e1f59e45",
+      "name": "astro event js",
+      "tags": [],
+      "visibility": "VISIBLE"
+    }
+  }
+}

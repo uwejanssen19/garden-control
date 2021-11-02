@@ -1,31 +1,31 @@
-val makeAstroEventHumanReadable = [ 
-  String pEventString |
-  val String astroMapFile = "astroevents.map"
-  // Format of event : 
-  //   astro:sun:local:morningNight#event triggered START
-  //   [0]  :[1]:[2] :[3]
-  logInfo("","makeAstroEventHumanReadable::pEventString = {}", pEventString)
-  // find last chunk separated by ':'
-  val astroParts = pEventString.split(":")
-  // now we got "<eventName>#event triggered START|END"
-  // split again and keep first part reusing array
-  logInfo("","makeAstroEventHumanReadable::astroParts[3] = {}", astroParts.get(3))
-  val astroParts2 = astroParts.get(3).split("#")
-  val String eventName = astroParts2.get(0)
-  logInfo("","makeAstroEventHumanReadable::eventName = {}", eventName)
+// val makeAstroEventHumanReadable = [ 
+//   String pEventString |
+//   val String astroMapFile = "astroevents.map"
+//   // Format of event : 
+//   //   astro:sun:local:morningNight#event triggered START
+//   //   [0]  :[1]:[2] :[3]
+//   logInfo("","makeAstroEventHumanReadable::pEventString = {}", pEventString)
+//   // find last chunk separated by ':'
+//   val astroParts = pEventString.split(":")
+//   // now we got "<eventName>#event triggered START|END"
+//   // split again and keep first part reusing array
+//   logInfo("","makeAstroEventHumanReadable::astroParts[3] = {}", astroParts.get(3))
+//   val astroParts2 = astroParts.get(3).split("#")
+//   val String eventName = astroParts2.get(0)
+//   logInfo("","makeAstroEventHumanReadable::eventName = {}", eventName)
 
-  //val remainder /*e.g. event triggered START*/ = astroParts2.get(1)
-  //val startEndParts = remainder.split(' ')  // create list with parts event trig START/END
-  //val startEnd = startEndParts.get(2) // obtain last
-  //logInfo("","makeAstroEventHumanReadable::startEnd = {}", startEnd)
-  //val startEndConv = transform("MAP", astroMapFile,startEnd) // translate into German
+//   //val remainder /*e.g. event triggered START*/ = astroParts2.get(1)
+//   //val startEndParts = remainder.split(' ')  // create list with parts event trig START/END
+//   //val startEnd = startEndParts.get(2) // obtain last
+//   //logInfo("","makeAstroEventHumanReadable::startEnd = {}", startEnd)
+//   //val startEndConv = transform("MAP", astroMapFile,startEnd) // translate into German
 
-  //logInfo("","makeAstroEventHumanReadable::startEndConv = {}", startEndConv)
-//  val String userFriendlyName = transform("MAP",astroMapFile,eventName) + " " + startEndConv
-  val String userFriendlyName = transform("MAP",astroMapFile,eventName)
-  logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName)
-  return userFriendlyName
-]
+//   //logInfo("","makeAstroEventHumanReadable::startEndConv = {}", startEndConv)
+// //  val String userFriendlyName = transform("MAP",astroMapFile,eventName) + " " + startEndConv
+//   val String userFriendlyName = transform("MAP",astroMapFile,eventName)
+//   logInfo("","makeAstroEventHumanReadable::userFriendlyName = {}", userFriendlyName)
+//   return userFriendlyName
+// ]
 
 val Procedures$Procedure0 updateAstroData = [ 
   val String fmtTime = "%1$tH:%1$tM"
@@ -64,15 +64,6 @@ val Procedures$Procedure0 updateAstroData = [
 
 ]
 
-// rule "astro update" // (used for checking astro values)" 
-// when
-//  //Time cron "0 0/1 * * * ?" // time spec for future test
-//    Time cron "0 0/30 * * * ?" // time spec for release edition
-// then
-//   logInfo("","invoking updateAstroData")
-// //  updateAstroData.apply()  
-// end
-
 rule "noon" 
 when 
   Channel "astro:sun:local:noon#event" triggered START
@@ -92,44 +83,44 @@ end
 //     updateAstroData.apply()
 // end
 
-rule "astro event DSL rule"
-when 
-  Channel "astro:sun:local:night#event" triggered START or
-  Channel "astro:sun:local:daylight#event" triggered START or
-  Channel "astro:sun:local:morningNight#event" triggered START or 
+// rule "astro event DSL rule"
+// when 
+//   Channel "astro:sun:local:night#event" triggered START 
+// or   Channel "astro:sun:local:daylight#event" triggered START
+// or   Channel "astro:sun:local:morningNight#event" triggered START
 
-  Channel "astro:sun:local:astroDawn#event" triggered START or
-  Channel "astro:sun:local:nauticDawn#event" triggered START or
-  Channel "astro:sun:local:civilDawn#event" triggered START or
+// or   Channel "astro:sun:local:astroDawn#event" triggered START //
+// or   Channel "astro:sun:local:nauticDawn#event" triggered START //
+// or   Channel "astro:sun:local:civilDawn#event" triggered START //
 
-  Channel "astro:sun:local:rise#event" triggered START or
-  Channel "astro:sun:local:noon#event" triggered START or
+// or   Channel "astro:sun:local:rise#event" triggered START //
+// or   Channel "astro:sun:local:noon#event" triggered START //
+// or   Channel "astro:sun:local:set#event" triggered START // 
 
-  Channel "astro:sun:local:civilDusk#event" triggered START or
-  Channel "astro:sun:local:nauticDusk#event" triggered START or
-  Channel "astro:sun:local:astroDusk#event" triggered START or
+// or   Channel "astro:sun:local:civilDusk#event" triggered START 
+// or   Channel "astro:sun:local:nauticDusk#event" triggered START 
+// or   Channel "astro:sun:local:astroDusk#event" triggered START 
 
-  Channel "astro:sun:local:eveningNight#event" triggered START or
-  Channel "astro:sun:local:riseSet#event" triggered   
+// or   Channel "astro:sun:local:eveningNight#event" triggered START 
+ 
 
+// then 
 
-then 
-
-    logInfo("","do NOTHING ############")
-    return;
-    logInfo("","receivedEvent {} detected at  {}", receivedEvent, now)
+//     logInfo("","do NOTHING ############")
+//     return;
+//     logInfo("","receivedEvent {} detected at  {}", receivedEvent, now)
     
-    val convertedEvent = makeAstroEventHumanReadable.apply(receivedEvent)
-    //logInfo("","convertedEvent = {}", convertedEvent)
-    LastEvent.postUpdate(convertedEvent)
-    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
-    mqttActions.publishMQTT("astroevent",convertedEvent,true)
-end 
-/*
+//     val convertedEvent = makeAstroEventHumanReadable.apply(receivedEvent)
+//     //logInfo("","convertedEvent = {}", convertedEvent)
+//     LastEvent.postUpdate(convertedEvent)
+//     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+//     mqttActions.publishMQTT("astroevent",convertedEvent,true)
+// end 
+// /*
 
-var logger = (logger === undefined) ? Java.type("org.slf4j.LoggerFactory").getLogger("org.openhab.model.script.rules_tools.Time of Day") : logger;
+// var logger = (logger === undefined) ? Java.type("org.slf4j.LoggerFactory").getLogger("org.openhab.model.script.rules_tools.Time of Day") : logger;
 
-var timeOfDay = context.getAttribute("triggeringItem").toString().split("_")[1];
-logger.info("Transitioning to " + timeOfDay);
-events.sendCommand("TimeOfDay_Example", timeOfDay);
-*/
+// var timeOfDay = context.getAttribute("triggeringItem").toString().split("_")[1];
+// logger.info("Transitioning to " + timeOfDay);
+// events.sendCommand("TimeOfDay_Example", timeOfDay);
+// */

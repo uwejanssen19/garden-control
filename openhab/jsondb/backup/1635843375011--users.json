@@ -1,0 +1,46 @@
+{
+  "openhab": {
+    "class": "org.openhab.core.auth.ManagedUser",
+    "value": {
+      "name": "openhab",
+      "passwordHash": "SwxRv1BBeNPxFRspHY+2LQ3iOmenj7ztH8fweorEQBs+aoGkLoOQ/AZIef8imQuVR3+0TyTuDFR6UVL3iocDZg\u003d\u003d",
+      "passwordSalt": "nKo64KIyT/kRuDd4H9YxS3Rc61xXqgHGAgXgFt8HhkSRNvjFYgWk6je55piijkJ/4Chw8IYAaonNpPypgAmz1w\u003d\u003d",
+      "roles": [
+        "administrator"
+      ],
+      "sessions": [
+        {
+          "sessionId": "ce5f45a0-4df1-4d71-a765-4222307ebf4b",
+          "refreshToken": "908c84a2cf8544ed9aa9cbd974c20c05",
+          "createdTime": "Oct 17, 2021, 3:21:06 PM",
+          "lastRefreshTime": "Nov 1, 2021, 4:03:48 PM",
+          "clientId": "http://openhabian:8080",
+          "redirectUri": "http://openhabian:8080",
+          "scope": "admin",
+          "sessionCookie": true
+        },
+        {
+          "sessionId": "d8960104-d8e6-4706-b127-f2029fa605ba",
+          "refreshToken": "e3e2ccadc1ec480a97d3375e313edbb8",
+          "createdTime": "Oct 17, 2021, 9:38:20 PM",
+          "lastRefreshTime": "Oct 18, 2021, 9:02:27 AM",
+          "clientId": "http://192.168.178.85:8080",
+          "redirectUri": "http://192.168.178.85:8080",
+          "scope": "admin",
+          "sessionCookie": true
+        },
+        {
+          "sessionId": "013a3ab3-7754-4173-b32a-eb98b6234bc5",
+          "refreshToken": "803a685cf2fc41658e764f8383ea5f4b",
+          "createdTime": "Oct 31, 2021, 9:55:40 AM",
+          "lastRefreshTime": "Nov 2, 2021, 9:56:14 AM",
+          "clientId": "http://openhabian:8080",
+          "redirectUri": "http://openhabian:8080",
+          "scope": "admin",
+          "sessionCookie": true
+        }
+      ],
+      "apiTokens": []
+    }
+  }
+}
