@@ -1,3 +1,4 @@
+// this procedure is now part of the UI rule asto event JS
 // val makeAstroEventHumanReadable = [ 
 //   String pEventString |
 //   val String astroMapFile = "astroevents.map"
@@ -76,6 +77,7 @@ then
   updateAstroData.apply()
 end
 
+// rule moved to astro event JS rule in OH 3 UI (stored and maintained in jsondb and also in automation/jsr223/astro.js )
 // rule "Use Update Level for Astro Data Update"
 // when 
 //   Item UpdateLevelSwitch changed
