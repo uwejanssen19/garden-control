@@ -50,7 +50,7 @@ val Functions$Function0<Boolean> isLastLawnIrrigationCron = [
   // i.e. if current hour == last hour of range AND current minute == last minute of range
   // Calculation of last event is based upon cron entry "0 0/1 8-20 * 3-10 ?" 
 
-  val hour = now.getHourOfDay
+  val hour = now.getHour
   val minute = now.getMinute
   
   val Boolean retVal = (hour ==  20 && minute == 59) // last occurrence 

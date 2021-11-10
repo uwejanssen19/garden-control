@@ -69,7 +69,7 @@ rule "noon"
 when 
   Channel "astro:sun:local:noon#event" triggered START
 then
-  val Number elevationNumber = Elevation.state
+  val Number elevationNumber = Elevation.state as DecimalType
 //  val Number elevationNumber = 39.43685692371896
   logInfo("","rule NOON SunCulm1 = {}", elevationNumber) 
   SunCulm1.postUpdate(elevationNumber)

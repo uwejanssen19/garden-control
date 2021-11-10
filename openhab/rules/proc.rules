@@ -23,7 +23,7 @@ val Number GRAFANA_PORT = 8030
 val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
 val String GARDEN_CONTROL_SUFFIX = 'garden_control'
 val String OPEN_WEATHER_SUFFIX = 'open_weather'
-val String WAN_ADDRESS_FRITZ = 'xdbu92gos1irkzbd.myfritz.net'
+val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
 val Number SOIL_TRESH = 550
 
 // -----------------------------------------------------------------------------
@@ -36,7 +36,7 @@ val Number SOIL_TRESH = 550
 // -----------------------------------------------------------------------------
 val Functions$Function0<String> getEmailText = [
   if (wanAddress == NULL) {
-    wanAddress = WAN_ADDRESS_FRITZ
+    wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
   }
   logInfo("getEmailText::","WAN ADDRESS = {} ",wanAddress.state)
 
@@ -68,15 +68,15 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
   val Boolean isNotRaining = (isRaining == "0")
   
-  var float rainAv = 0.0
+  var float rainAv = 0
   logInfo("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
   //rainAv = (RainAverage.state as DecimalType)?.floatValue
-  var int hum = 0
+  var Number hum = 0
   if (SoilHumTreshold.state == UNDEF || SoilHumTreshold.state == NULL ) {
-    SoilHumTreshold.state = SOIL_TRESH
+    SoilHumTreshold.postUpdate(SOIL_TRESH)
   }
   if ( Hum_Solar1.state == UNDEF || Hum_Solar1.state == NULL) {
-    hum = SoilHumTreshold.state // prevent watering
+    hum = SoilHumTreshold.state  as DecimalType // prevent watering
     logInfo("shallIrrigate::","Hum_Solar undefined, in order to prevent watering set humidity value to  treshold +1  ( {} )",hum)
   } else {
     hum = (Hum_Solar1.state as DecimalType).intValue
@@ -161,15 +161,17 @@ then
   val mailActions = getActions("mail","mail:smtp:mysmtp")
   val String levelMapFile = "waterLevel.map"
   var levelString = transform("MAP",levelMapFile,/*level.toString*/"0")
-    mailActions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
+  mailActions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
 
   //Thread::sleep(500) // give time to update variables
-  //logDebug("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
+  //logInfo("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   // just for test since we do not want to wait for some timer to occur
   if (receivedCommand == ON) {
 //    val willIrrigate = shallIrrigate.apply()
   //  logInfo("", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
     var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
+    logInfo("", "Update WL Switch: AFTER readLevel = {}", level)
+
     //Display_level_out?.postUpdate(level) 
     Level_out.postUpdate(level.toString)
     StatusText.sendCommand("level = "+level)
@@ -319,7 +321,7 @@ rule "Irrigation OFF"
     val String levelMapFile = "waterLevel.map"
     val levelString = transform("MAP",levelMapFile,level.toString)
     
-    sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+levelString)
+    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+levelString)
     logDebug("", "Irrigation OFF: EXIT")
 end
 // -----------------------------------------------------------------------------
@@ -331,6 +333,6 @@ rule "WAN Address change"
     Item wanAddress changed 
   then 
     logInfo("", "WAN Address change: "+getEmailText.apply())
-    sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+getEmailText.apply())
+    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+getEmailText.apply())
     logInfo("", "WAN Address change: EXIT")
 end
