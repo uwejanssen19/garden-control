@@ -367,17 +367,17 @@ rule "daemon"
       logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
-              // save water: 
+        // save water: 
         // never let tap water run for more than time interval below
-        val minute = now.getMinute
-        logDebug("Daemon","##### CHECK minute = {}", minute)
-//        if ((minute % 9) == 0 ) { // nonsens since will happen only at xx:36 -> too late for saving water
+      val minute = now.getMinute
+        // logDebug("Daemon","##### CHECK minute = {}", minute)
+        if ((minute % 9) == 0 ) { // stop after at least xx minutes 
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
           GardencontrolPowerSupply.postUpdate(OFF) 
           LawnIrrigationTimeLeft.sendCommand(-1)
-//        }
+        }
       }
     }
       

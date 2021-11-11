@@ -54,12 +54,15 @@ val Functions$Function0<String> getEmailText = [
 val Functions$Function0<Boolean> shallIrrigate = [ 
   // if switch is = ON OR either not raining or coming rain less than defined amount
   // logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
-  // logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
+  // logInfo("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   
   val isRaining = isRaining_out.state.toString
+  var float comingRainVal = 0
   // logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
-  var float comingRainVal  = (ForecastRainVolumesGroup?.state as DecimalType)?.floatValue
+  if ( (ForecastRainVolumesGroup.state != NULL) && (ForecastRainVolumesGroup.state != UNDEF)) {
+    comingRainVal = (ForecastRainVolumesGroup.state as DecimalType).floatValue
+  }
 
   val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
   val Boolean NoIrrigationWanted = (NoIrrigationPreset?.state == ON)
@@ -206,13 +209,17 @@ rule "Fill barrel FNI"
 // fill up barrel except when raining or rain has been forecast
   when Item Fill_Switch received command
   then
-    logDebug("", "FILL barrel FNI: ENTRY received command = " + receivedCommand.toString)
+
+    //logDebug("proc-2", "FILL barrel FNI: ENTRY received command = " + receivedCommand)
     var String level = LEVEL_EMPTY
 
     switch(receivedCommand){
         case ON: {
-          if (shallIrrigate.apply()) { // will irrigate
-             logDebug("", "FILL barrel FNI: starting fill barrel cycle")
+    logInfo("myLogger.fill","##### CHECK ######")
+          if (/*true*/shallIrrigate.apply()) { // will irrigate
+            //  return
+
+            //  logDebug("", "FILL barrel FNI: starting fill barrel cycle")
           
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // set time limit 

@@ -21,3 +21,4 @@
 /home/openhabian/scripts/irrOnOff.sh %2$s
 /home/openhabian/scripts/irrOnOff.sh "0"
 /home/openhabian/scripts/irrOnOff.sh "1"
+/home/openhabian/scripts/waterOnOff.sh %2$s
