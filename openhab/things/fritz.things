@@ -1,1 +1,1 @@
-Bridge avmfritz:fritzbox:1 "FRITZ!Box" [ ipAddress="192.168.178.1", password="xxx", user="" ]
+Bridge avmfritz:fritzbox:1 "FRITZ!Box" [ ipAddress="192.168.178.1", password="fakepwd", user="" ]
