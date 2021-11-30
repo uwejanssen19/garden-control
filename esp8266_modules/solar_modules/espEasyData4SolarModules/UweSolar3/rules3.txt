@@ -1,0 +1,89 @@
+On rules#timer=2 do
+  Serial.println('TIMER 2')
+  gpio,2,1
+  if [switch#pmode]=0
+     gpio,2,1 
+     if [a0#a0] > 3.9 // if enough power send more frequently
+       let,14,3600
+     else
+       let,14,4300
+     endif
+     delay,500 // wait for establishing wlan
+     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm now sleep for %v14% s"
+     if [var#6]=1 // sent?
+       deepsleep,%v14%
+     else 
+       //try again after some time
+       timerset,1,0 // cancel t1
+       timerset,2,10
+     endif
+  else       
+     gpio,2,0
+     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dB %ssid% (timer2, program mode)"
+     timerset,2,0 // cancel t1
+     timerset,1,40
+  endif
+endon  
+
+on bme#temp do 
+      delay, 400 // wait for devices to have their stuff ready
+      publish %sysname%/time/value,%systime%
+      publish %sysname%/a0/a0,[a0#a0]
+      publish %sysname%/bme/temp,[bme#temp]
+      publish %sysname%/bme/press,[bme#press]
+      let,6,1 // set the 'sent'flag
+endon
+
+on wifi#disconnect do
+  pulse,2,0,1600
+  if [switch#pmode]=0
+    timerset,2,1 // sleep
+    timerset,1,0
+  endif
+endon
+
+
+
+On switch#pmode do
+  // if switch programming mode=OFF goto BED
+  if [switch#pmode]=1
+    serialsend,'pmode TRUE'
+    gpio,2,0
+    timerset,1,1
+    timerset,2,0
+  else 
+    serialsend,'pmode FALSE'
+    timerset,2,1
+    timerset,1,0
+  endif
+endon
+
+on system#wake do
+  let,6,0
+  timerset,2,1
+  timerset,1,0
+endon
+
+on system#boot do
+  let,6,0
+  timerset,2,1
+  timerset,1,0
+endon
+
+On rules#timer=1 do
+    delay,500
+      Publish %sysname%/time/value,%systime%
+      publish %sysname%/a0/a0,[a0#a0]
+      publish %sysname%/bme/temp,[bme#temp]
+  if [switch#pmode]=1 // programming mode
+  Serial.println("Sending to mqtt server")
+    gpio,2,0
+     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (timer1, program mode)"
+    timerset,1,15 // repeat sending mqtt
+    timerset,2,0
+
+  else 
+    timerset,2,1
+    timerset,1,0
+  endif
+endon

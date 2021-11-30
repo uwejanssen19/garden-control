@@ -1,10 +1,11 @@
 // Name of file and name of sitemap has to be the same
 sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
 {
-//        Frame label="Testanzeige" {
-//            Text item=temperature_out label= "Fiktive Temperatur: [%d Grad Celsius]"
-//        }
-        
+        Frame label="Stationsdaten" {
+            Default item=wanAddress label= "Öffentliche IP Adresse: [%s]"
+            Default item=FritzBox_CallList28 label= "Anrufe in Abwesenheit [%s]"
+        }
+       
         Frame label="Wasserstand" {        
             Default item=LaserLevel label="Wasserstand Lasermessung: [%s]" icon="cistern"
             Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern"
