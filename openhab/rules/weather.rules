@@ -22,6 +22,7 @@
 // -----------------------------------------------------------------------------
 // constants
 // -----------------------------------------------------------------------------
+import java.time.format.DateTimeFormatter
 
 
 var DEPRESSURE_TIME = 12
@@ -455,4 +456,19 @@ then
   SystemStatusText.sendCommand("System started")
   SoilHumTreshold.sendCommand(SOIL_HUM_TRESHOLD)
   logInfo("SysStart or InitSwitch","EXIT")
+end 
+/*
+ * 
+ * Update Time for Solar Modules since they do not always send a proper time"
+ *
+ */
+rule "SolarTimeUpdate"
+when Item gSolar3Data changed
+then 
+  val lastUpdate = now()
+//  val DateTimeFormatter localFormatter = DateTimeFormatter.ISO_LOCAL_TIME
+  val DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("hh:mm")
+  val localTimeStr = lastUpdate.format(localFormatter)
+  // logInfo("SolarTimeUpdate", "fmt time = "+ localTimeStr)
+  Time_Solar3_OH.postUpdate(localTimeStr)
 end 

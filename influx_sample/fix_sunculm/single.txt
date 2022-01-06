@@ -1,0 +1,12 @@
+SunCulm1 value=32.61 453960
+SunCulm1 value=32.24 453984
+SunCulm1 value=31.87 454008
+SunCulm1 value=31.50 454032
+SunCulm1 value=31.14 454056
+SunCulm1 value=30.78 454080
+SunCulm1 value=30.43 454104
+SunCulm1 value=30.07 454128
+SunCulm1 value=29.72 454152
+SunCulm1 value=29.38 454176
+SunCulm1 value=29.04 454200
+SunCulm1 value=28.70 454224

@@ -3,5 +3,8 @@
     "openhab.port": 8080,
     "arduino.commandPath": "arduino.exe",
     "arduino.path": "D:\\install\\Arduino",
-    "C_Cpp.default.includePath": ["arduino.Path\\libraries"]
+    "C_Cpp.default.includePath": [
+        "arduino.Path\\libraries"
+    ],
+    "openhab.useRestApi": false
 }

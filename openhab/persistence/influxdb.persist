@@ -27,9 +27,10 @@ Items {
     LaserLevel : strategy = every10Minutes
 
     LocalCurrentRainVolume : strategy = everyHour
-
+    LocalCurrentCloudiness: strategy = every10Minutes
     //SunCulm :  strategy = everyDay
     SunCulm1 :  strategy = everyHalfHour
 
     Hum_Solar1 : strategy = every10Minutes
+    SolarPlug_Leistung : strategy = every10Minutes
 }

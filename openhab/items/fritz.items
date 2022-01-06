@@ -1,4 +1,10 @@
-String CallState     "Call State [%s]"               { channel="avmfritz:fritzbox:1:call_state" }
-Call   IncomingCall  "Incoming call: [%1$s to %2$s]" { channel="avmfritz:fritzbox:1:incoming_call" } 
-Call   OutgoingCall  "Outgoing call: [%1$s to %2$s]" { channel="avmfritz:fritzbox:1:outgoing_call" }
-Call   ActiveCall    "Call established [%1$s]"       { channel="avmfritz:fritzbox:1:active_call" }
+Call CallState     "Call State [%s]"               { channel="avmfritz:fritzbox:1:call_state" }
+Call IncomingCall  "Incoming call: [%1$s to %2$s]" { channel="avmfritz:fritzbox:1:incoming_call" } 
+Call OutgoingCall  "Outgoing call: [%1$s to %2$s]" { channel="avmfritz:fritzbox:1:outgoing_call" }
+Call ActiveCall    "Call established [%1$s]"       { channel="avmfritz:fritzbox:1:active_call" }
+//String NameFoundInPhonebook "Found in Phonebook: [%s]"
+Group:Switch gSolarPlug_ON_OFF
+Call FritzBox_MC1
+Call FritzBox_MC2
+Call FritzBox_MC3
+Call FritzBox_MC4

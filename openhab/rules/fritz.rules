@@ -1,0 +1,72 @@
+rule "call list change"
+when Item FritzBox_CallList28 changed 
+then {
+	//logInfo("call list change","FritzBox_CallList28 changed: {}", FritzBox_CallList28)
+
+
+		var Integer i =0			// Loop counter, starts with 0
+		var Integer j =0			// Counter für missed calls
+		var Boolean entry			// false, is either the CallList is empty or the max. count of missed calls is reached
+		var String calltype			// calling type, 2 is "missed call"
+		var String telnr			// number of the caller
+		var String caller			// caller name from the phonebook
+		var String datum			// date and time of the call
+		val fboxactions = getActions("tr064","tr064:fritzbox:fbox")	// actions for the phonebook, does NOT work in OpenHAB version 3.0.1, install a newer version of the tr064 binding!!!
+
+		logInfo ("call list change", "========== Fritzbox CallList ==========")
+		//val String rawData = '[{"length":1,"radius":11},{"length":2,"radius":22},{"length":3,"radius":33}]'
+
+		// var first = transform("JSONPATH", "$.[3]", FritzBox_CallList28.state.toString) 
+		// logInfo ("call list change","first = "+first)
+		// var sec = transform("JSONPATH", "$.[2]", rawData) 
+		//var firstEntry = transform("JSONPATH", "$.[]", FritzBox_CallList28.state.toString) 
+//		logInfo ("call list change","second entry  = "+sec)
+		FritzBox_MC1.postUpdate("")  // clear the result strings
+		FritzBox_MC2.postUpdate("")
+		FritzBox_MC3.postUpdate("")
+		FritzBox_MC4.postUpdate("")
+		if (true) {
+		do {
+			// $.[0] JSONPATH parses a single entry of the list: from 0 until ...
+			// remember: JSONPATH returns the complete json-struct if the path can not be resolved!
+			// If the first char of the path start with "[", we have reached the end of the struct
+			logInfo("call list change","checking entry : {}", transform("JSONPATH","$["+i+"]",FritzBox_CallList28.state.toString))
+			calltype =transform("JSONPATH", "$.["+ i +"].type", FritzBox_CallList28.state.toString)
+            logInfo("call list change", "calltype = {}",calltype)
+			entry = ! calltype.startsWith("[")
+			if (entry && calltype == "2") {
+				// valid entry and the type == 2, this is a "missed call"
+				telnr = transform("JSONPATH", "$.["+ i +"].remoteNumber", FritzBox_CallList28.state.toString)
+            logInfo("call list change", "calltype = {}",calltype)
+				caller = fboxactions.phonebookLookup(telnr, 10)         // looking for a phonebook entry...
+				if (! caller.equals(telnr)) telnr = caller +" ("+ telnr +")"  // ...which exists
+				datum = transform("JSONPATH", "$.["+ i +"].date", FritzBox_CallList28.state.toString)
+				datum = " at "+ datum.substring(8,10) +"."+ datum.substring(5,7) +". "+ datum.substring(11,16)  // add the date and time of the call
+				switch (j) {   // the list is automatically sorted by date/time from newest to oldest entry
+					case 0: FritzBox_MC1.postUpdate(telnr + datum)
+					case 1: FritzBox_MC2.postUpdate(telnr + datum)
+					case 2: FritzBox_MC3.postUpdate(telnr + datum)
+					case 3: FritzBox_MC4.postUpdate(telnr + datum)
+					case 4: entry =false  // we restrict the missed calls to at most 4 entries...
+					}
+				j = j +1
+				}
+			i = i +1
+			} while (entry)
+		}
+}
+end
+
+rule "Solar Main Switch"
+when  Item SolarPlug_ON_OFF changed 
+then  
+ logInfo ("Solar Switch","Solar Main Switch turned {}", SolarPlug_ON_OFF.state.toString)
+  val mailActions = getActions("mail","mail:smtp:mysmtp")
+val String mailTextAndSubject  = "Solar Main Switch turned " +SolarPlug_ON_OFF.state.toString
+  //val String fakeCia  = "Please report to CIA ASAP or your you will be sentenced.
+//  \n(HOAX)"
+  
+mailActions.sendMail("uwe@janssen-muenchen.de, barbara@janssen-muenchen.de",mailTextAndSubject, mailTextAndSubject)
+  //mailActions.sendMail("uwe@janssen-muenchen.de, barbara@janssen-muenchen.de","your CIA activities", fakeCia)
+
+end

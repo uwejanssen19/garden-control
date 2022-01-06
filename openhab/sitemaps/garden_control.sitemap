@@ -1,9 +1,8 @@
 // Name of file and name of sitemap has to be the same
-sitemap garden_control label="Raspberry Pi Garden Irrigation Control"
+sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
 {
         Frame label="Stationsdaten" {
-            Default item=wanAddress label= "Öffentliche IP Adresse: [%s]"
-            Default item=FritzBox_CallList28 label= "Anrufe in Abwesenheit [%s]"
+            Default item=wanAddress label= "Öffentliche IP Adresse: [%s]" // do not removed since it is linked with channel via UI
         }
        
         Frame label="Wasserstand" {        

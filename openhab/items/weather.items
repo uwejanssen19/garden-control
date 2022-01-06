@@ -55,12 +55,13 @@ Number Temp_Solar2 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_mo
 Number Hum_Solar2 <humidity> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:hum_channel" }
 Number Press_Solar2 <pressure> { channel="mqtt:topic:myUnsecureBroker:solar_module2_thing:press_channel" }
 
-String Time_Solar3 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:time_channel" }
-Number Vcc_Solar3 <battery> (gBatteries,gBatteriesMin) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:vcc_channel" }
-String Status_Solar3 { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:status_channel" }
-Number Temp_Solar3 <temperature> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:temp_channel" }
-Number Hum_Solar3 <humidity> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:hum_channel" }
-Number Press_Solar3 <pressure> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:press_channel" }
+Group gSolar3Data 
+//String Time_Solar3 <time> { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:time_channel" }
+Number Vcc_Solar3 <battery> (gBatteries,gBatteriesMin, gSolar3Data) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:vcc_channel" }
+String Status_Solar3 (gSolar3Data) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:status_channel" }
+Number Temp_Solar3 <temperature> (gSolar3Data) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:temp_channel" }
+Number Hum_Solar3 <humidity> (gSolar3Data) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:hum_channel" }
+Number Press_Solar3 <pressure> (gSolar3Data) { channel="mqtt:topic:myUnsecureBroker:solar_module3_thing:press_channel" }
 
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 
@@ -72,8 +73,8 @@ Number LawnIrrigationCounter
 // END
 
 Group gWeatherItems
-  Number RainAverage (gWeatherItems)
-  Number TempAverage (gWeatherItems)
+Number RainAverage (gWeatherItems)
+Number TempAverage (gWeatherItems)
 
 Number  Vcc_Solar1_Display <battery> 
 Number  Vcc_Solar2_Display <battery> 
@@ -86,3 +87,4 @@ Number RainProb <rain> { channel="mqtt:topic:myUnsecureBroker:rainProb_thing:rai
 //String OH2_Service  "OH2 Service"   { channel="exec:command:oh2service:input" }
 //String PI_Service   "PI Service"    { channel="exec:command:piservice:input" }
 Number SoilHumTreshold
+String Time_Solar3_OH
