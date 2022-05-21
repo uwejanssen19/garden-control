@@ -463,12 +463,12 @@ end
  *
  */
 rule "SolarTimeUpdate"
-when Item gSolar3Data changed
+when Member of gSolar3Data changed
 then 
   val lastUpdate = now()
 //  val DateTimeFormatter localFormatter = DateTimeFormatter.ISO_LOCAL_TIME
-  val DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("hh:mm")
+  val DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("HH:mm")
   val localTimeStr = lastUpdate.format(localFormatter)
-  // logInfo("SolarTimeUpdate", "fmt time = "+ localTimeStr)
+  //logInfo("SolarTimeUpdate", "fmt time = "+ localTimeStr)
   Time_Solar3_OH.postUpdate(localTimeStr)
 end 

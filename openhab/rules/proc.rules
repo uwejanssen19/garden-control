@@ -72,27 +72,32 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean isNotRaining = (isRaining == "0")
   
   var float rainAv = 0
-  logInfo("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
-  //rainAv = (RainAverage.state as DecimalType)?.floatValue
+// logInfo("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
+// rainAv = (RainAverage.state as DecimalType)?.floatValue
+  val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
+  
   var Number hum = 0
+  // handle treshold constant if not set 
   if (SoilHumTreshold.state == UNDEF || SoilHumTreshold.state == NULL ) {
     SoilHumTreshold.postUpdate(SOIL_TRESH)
   }
   if ( Hum_Solar1.state == UNDEF || Hum_Solar1.state == NULL) {
     hum = SoilHumTreshold.state  as DecimalType // prevent watering
     logInfo("shallIrrigate::","Hum_Solar undefined, in order to prevent watering set humidity value to  treshold +1  ( {} )",hum)
+    Hum_Solar1.postUpdate(hum+1)
   } else {
+    // Hum_Solar1 had a valid value
     hum = (Hum_Solar1.state as DecimalType).intValue
   }
   logInfo("shallIrrigate::","hum treshold global var = {} , Hum_Solar1 = {} ", SoilHumTreshold, Hum_Solar1)
 
   
-  val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
-   logInfo("shallIrrigate::","before dryEnough = ...")
-  val Boolean dryEnough = (hum  < (SoilHumTreshold.state as DecimalType))
+  logInfo("shallIrrigate::","before dryEnough = ...")
+  var Boolean dryEnough = (hum  < (SoilHumTreshold.state as DecimalType))
    logInfo("shallIrrigate::","after dryEnough =  ...")
   // logInfo("shallIrrigate::","hum =  {} ",hum)
   // logInfo("shallIrrigate::","soil hum TRESHOLD = {} ",SoilHumTreshold)
+  dryEnough = true // soil sensor not working right now
   logInfo("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SoilHumTreshold.state, dryEnough)
 
   val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain && dryEnough)
@@ -139,7 +144,7 @@ val readLevel = [
   logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
   Thread::sleep(2000)
-  var level = executeCommandLine(Duration.ofSeconds(6),SCRIPT_DIR+"Level.sh")
+  var level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
 
   logDebug("", "readLevel() result = {}",level)
   if (powerOff) {
@@ -181,8 +186,8 @@ then
     StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
 
-    logInfo("","TempAverage before update = {} ",TempAverage.state)
-    TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
+    //logInfo("","TempAverage before update = {} ",TempAverage.state)
+    //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
 
     // logInfo("","TempAverage after update  = {} ",TempAverage.state)
 

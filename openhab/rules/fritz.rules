@@ -11,6 +11,9 @@ then {
 		var String telnr			// number of the caller
 		var String caller			// caller name from the phonebook
 		var String datum			// date and time of the call
+		var String localNumber		// number of the callee (fax or phone)
+
+
 		val fboxactions = getActions("tr064","tr064:fritzbox:fbox")	// actions for the phonebook, does NOT work in OpenHAB version 3.0.1, install a newer version of the tr064 binding!!!
 
 		logInfo ("call list change", "========== Fritzbox CallList ==========")
@@ -33,12 +36,14 @@ then {
 			logInfo("call list change","checking entry : {}", transform("JSONPATH","$["+i+"]",FritzBox_CallList28.state.toString))
 			calltype =transform("JSONPATH", "$.["+ i +"].type", FritzBox_CallList28.state.toString)
             logInfo("call list change", "calltype = {}",calltype)
+			localNumber = transform("JSONPATH", "$.["+ i +"].localNumber", FritzBox_CallList28.state.toString)
 			entry = ! calltype.startsWith("[")
 			if (entry && calltype == "2") {
 				// valid entry and the type == 2, this is a "missed call"
 				telnr = transform("JSONPATH", "$.["+ i +"].remoteNumber", FritzBox_CallList28.state.toString)
-            logInfo("call list change", "calltype = {}",calltype)
+				val Boolean isFax = localNumber.startsWith("8077040")
 				caller = fboxactions.phonebookLookup(telnr, 10)         // looking for a phonebook entry...
+				telnr = if (isFax) "FAX from "+telnr else telnr
 				if (! caller.equals(telnr)) telnr = caller +" ("+ telnr +")"  // ...which exists
 				datum = transform("JSONPATH", "$.["+ i +"].date", FritzBox_CallList28.state.toString)
 				datum = " at "+ datum.substring(8,10) +"."+ datum.substring(5,7) +". "+ datum.substring(11,16)  // add the date and time of the call
