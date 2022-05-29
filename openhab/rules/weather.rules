@@ -86,6 +86,7 @@ val Procedures$Procedure0 onValveTimer = [
         val irrigating = (Irrigating.state == ON)
         logDebug("Procedure onValveTimer", "ENTRY")
         water_on_off.sendCommand("0")
+        //Valve_Switch.postUpdate(OFF) // expires itself
         if (!irrigating) {
           logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", turn power OFF")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
@@ -94,7 +95,6 @@ val Procedures$Procedure0 onValveTimer = [
           logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", leave power ON")
         }
 
-        Valve_Switch.postUpdate(OFF)
 
         logDebug("Procedure onValveTimer", "EXIT") 
 ]
@@ -336,13 +336,14 @@ rule "daemon"
   then
   
   val irrigating = (Irrigating.state == ON)
+  logDebug("Daemon", "ENTRY, Irrigating.state = {}",Irrigating.state)
   
   
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
   Set_alive.sendCommand(ON)
-  logInfo("daemon", "updating set_alive file")
+  logDebug("Daemon", "updating set_alive file")
   // forward rain probability to MQTT item 
-  logDebug("Daemon","ENTRY ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
+  logDebug("Daemon","ForecastRainVolumesGroup ( SUM )  = {} ",ForecastRainVolumesGroup.state.toString)
   var float comingRainVal  = (ForecastRainVolumesGroup.state as DecimalType).floatValue
   RainProb.sendCommand(comingRainVal)
   logDebug("Daemon","RainProb =  {} ",RainProb.state) 
@@ -369,11 +370,18 @@ rule "daemon"
       logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
-        // save water: 
-          Valve_Switch?.sendCommand(OFF)
-          water_on_off?.sendCommand("0")
-          GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
-          GardencontrolPowerSupply.postUpdate(OFF) 
+          // save water: 
+          // turn it on first since heavens knows why 
+          // it is required to turn it on before turning it off
+          water_on_off.sendCommand("1")
+          Thread::sleep(2000) // wait 2s
+          water_on_off.sendCommand("0")
+          GardencontrolPowerSupply.sendCommand(OFF)
+          logDebug("Daemon","found irrigation is inactive, so I turned off tap water")
+          //Valve_Switch?.sendCommand(OFF)
+          //water_on_off?.sendCommand("0")
+          //GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
+          //GardencontrolPowerSupply.postUpdate(OFF) 
           LawnIrrigationTimeLeft.sendCommand(-1)
       }
     }
