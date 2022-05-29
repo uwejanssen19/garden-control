@@ -331,7 +331,8 @@ end
 rule "daemon"
   when 
     //Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 2/10 * * * ?" // time spec for release edition
+    Time cron "0 2/10 * * * ?" // time spec for release edition: 2/10 means every 10 minutes 2 minutes after minutes % 10
+    // e.g. 12, 22, 32, 42 etc.
   then
   
   val irrigating = (Irrigating.state == ON)
@@ -369,16 +370,11 @@ rule "daemon"
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
         // save water: 
-        // never let tap water run for more than time interval below
-      val minute = now.getMinute
-        // logDebug("Daemon","##### CHECK minute = {}", minute)
-        if ((minute % 9) == 0 ) { // stop after at least xx minutes 
           Valve_Switch?.sendCommand(OFF)
           water_on_off?.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
           GardencontrolPowerSupply.postUpdate(OFF) 
           LawnIrrigationTimeLeft.sendCommand(-1)
-        }
       }
     }
       
