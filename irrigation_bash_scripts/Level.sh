@@ -8,5 +8,5 @@ ret=$(readLevel)
 [[ $ret -eq 1 ]] && STATE=$LOW || STATE=$HIGH
 log "$0 $STATE "
 log "$0 EXIT "
-echo "$ret"
+echo -n "$ret"
 

@@ -14,6 +14,7 @@
 // constants
 // -----------------------------------------------------------------------------
 val String LEVEL_EMPTY = "1"
+val String LEVEL_FULL = "0"
 val String SCRIPT_DIR="/home/openhabian/scripts/"
 val MAX_FILL_BARREL_TIME = 180
 val Number RAIN_SENSOR_HTTP_PORT = 8062
@@ -24,7 +25,8 @@ val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
 val String GARDEN_CONTROL_SUFFIX = 'garden_control'
 val String OPEN_WEATHER_SUFFIX = 'open_weather'
 val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
-val Number SOIL_TRESH = 550
+val String LEVEL_MAP_FILE = "waterLevel.map"
+val Number SOIL_TRESH = 550 
 
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
@@ -35,16 +37,16 @@ val Number SOIL_TRESH = 550
 //  Function getEmailText
 // -----------------------------------------------------------------------------
 val Functions$Function0<String> getEmailText = [
-  if (wanAddress == NULL) {
-    wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
-  }
-  logInfo("getEmailText::","WAN ADDRESS = {} ",wanAddress.state)
+  val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
+  wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
 
   val String emailText='
     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
     Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
     Astro Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=astro\n
     Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n'
+  //logDebug("getEmailText","EmailText  = {}",emailText)
+
   return emailText
 ]
 // -----------------------------------------------------------------------------
@@ -56,10 +58,10 @@ val Functions$Function0<Boolean> shallIrrigate = [
   // logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
   // logInfo("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
-  
+  val Number SOIL_TRESH = 550 
   val isRaining = isRaining_out.state.toString
   var float comingRainVal = 0
-  // logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
+  logDebug("shallIrrigate::","isRaining_out is = {}", isRaining)
   if ( (ForecastRainVolumesGroup.state != NULL) && (ForecastRainVolumesGroup.state != UNDEF)) {
     comingRainVal = (ForecastRainVolumesGroup.state as DecimalType).floatValue
   }
@@ -77,14 +79,13 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
   
   var Number hum = 0
-  // handle treshold constant if not set 
-  if (SoilHumTreshold.state == UNDEF || SoilHumTreshold.state == NULL ) {
-    SoilHumTreshold.postUpdate(SOIL_TRESH)
-  }
+  logDebug("shallIrrigate", "setting SOIL_TRESH = {}", SOIL_TRESH)
+  SoilHumTreshold.postUpdate(SOIL_TRESH)
+  logDebug("shallIrrigate", "after fixing state , SoilHumTreshold = {}", SoilHumTreshold)
   if ( Hum_Solar1.state == UNDEF || Hum_Solar1.state == NULL) {
-    hum = SoilHumTreshold.state  as DecimalType // prevent watering
-    logInfo("shallIrrigate::","Hum_Solar undefined, in order to prevent watering set humidity value to  treshold +1  ( {} )",hum)
-    Hum_Solar1.postUpdate(hum+1)
+    hum = SoilHumTreshold.state // prevent watering
+    logInfo("shallIrrigate::","Hum_Solar undefined, in order to force watering set humidity value to  treshold -1  ( {} )",hum)
+    Hum_Solar1.postUpdate(hum-1)
   } else {
     // Hum_Solar1 had a valid value
     hum = (Hum_Solar1.state as DecimalType).intValue
@@ -143,10 +144,10 @@ val readLevel = [
   |
   logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-  Thread::sleep(2000)
-  var level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
+  Thread::sleep(4000)
+  var Number level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
 
-  logDebug("", "readLevel() result = {}",level)
+  logDebug("proc rules readLevel", "readLevel() result = {}",level)
   if (powerOff) {
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
   }
@@ -166,44 +167,45 @@ rule "Update Water Level Switch"
 when 
   Item UpdateLevelSwitch received command
 then 
-  val mailActions = getActions("mail","mail:smtp:mysmtp")
-  val String levelMapFile = "waterLevel.map"
-  var levelString = transform("MAP",levelMapFile,/*level.toString*/"0")
-  mailActions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
 
   //Thread::sleep(500) // give time to update variables
-  //logInfo("", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
-  // just for test since we do not want to wait for some timer to occur
+  //logInfo("proc.rules.UPD", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   if (receivedCommand == ON) {
-//    val willIrrigate = shallIrrigate.apply()
-  //  logInfo("", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
-    var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
-    logInfo("", "Update WL Switch: AFTER readLevel = {}", level)
-
+  // call of shallIrrigate() is just for test since we do not want to wait for some timer to occur
+  // val willIrrigate = shallIrrigate.apply()
+  // logInfo("proc.rules.UPD", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
+    var String level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true).toString
     //Display_level_out?.postUpdate(level) 
-    Level_out.postUpdate(level.toString)
-    StatusText.sendCommand("level = "+level)
-    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
+    Level_out.sendCommand(level)
+    logDebug("proc.rules.UPD", "UPD ENTRY: Level_out  = {} ", Level_out)
+
+    logDebug("proc.rules.UPD","##### CHECK ######")
+    logDebug("proc.rules.UPD", "Update WL Switch: check for LF in level  = ___{}___", level)
+
+    val levelText = transform("MAP",LEVEL_MAP_FILE, level) // damn transform does not work (spent 2 hours in vain)
+    logDebug("proc.rules.UPD", "Update WL Switch: AFTER transforming.  levelString = {} ", levelText)
+    //getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Level Test ", "Wasserstand: "+levelText)
+    StatusText.sendCommand("level = "+levelText)
+//    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
 
-    //logInfo("","TempAverage before update = {} ",TempAverage.state)
+    //logInfo("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
     //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
 
-    // logInfo("","TempAverage after update  = {} ",TempAverage.state)
+    // logInfo("proc.rules.UPD","TempAverage after update  = {} ",TempAverage.state)
 
     // val float tmpAv = (TempAverage?.state as DecimalType).floatValue
-    // logInfo("","TempAverage float value = {} ",tmpAv)
+    // logInfo("proc.rules.UPD","TempAverage float value = {} ",tmpAv)
     // val Boolean wasHot = (tmpAv > 24.0)
-    // logInfo("","TempAverage wasHot last day = {} ",wasHot)
+    // logInfo("proc.rules.UPD","TempAverage wasHot last day = {} ",wasHot)
 
-    levelString = transform("MAP",levelMapFile,level.toString)
-    //logInfo("", "BEFORE sendmail")
+    //logInfo("proc.rules.UPD", "BEFORE sendmail")
     //sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
-    //logInfo("", "AFTER sendmail")
-    mailActions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelString, getEmailText.apply())
-    //logDebug("", "WanAddress =  {} ",wanAddress)
+    //logInfo("proc.rules.UPD", "AFTER sendmail")
+    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Water Level = "+levelText, getEmailText.apply())
+    //logDebug("proc.rules.UPD", "WanAddress =  {} ",wanAddress)
   }
-  //logDebug("", "Update Water Level Switch: EXIT")
+  logDebug("proc.rules.UPD", "EXIT Update Water Level")
 end
 
 // -----------------------------------------------------------------------------
@@ -281,7 +283,7 @@ rule "Irrigation ON"
   then
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
-    val mailActions = getActions("mail","mail:smtp:mysmtp")
+    
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
@@ -291,8 +293,8 @@ rule "Irrigation ON"
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
-      logInfo("Irrigation ON"," irrigating set to " + Irrigating.state.toString)
-      mailActions.sendMail("uwe@janssen-muenchen.de",
+      logInfo("Irrigation ON"," BEFORE MAIL, irrigating set to " + Irrigating.state.toString)
+      getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
 //      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString)
       "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: VOLL")
@@ -302,7 +304,7 @@ rule "Irrigation ON"
       Irrigating.postUpdate(OFF)
       logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
 
-      mailActions.sendMail("uwe@janssen-muenchen.de",
+      getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de",
       "Keine Bewaesserung",
       //getEmailText.apply()+"KEINE Bewaesserung, es regnet oder Regen mit " + ForecastRainVolumesGroup.state + " ist angesagt.\nOder Bodenfeuchte (= "
       //+ Hum_Solar1.state + ") >= " +SoilHumTreshold.state)
@@ -330,21 +332,9 @@ rule "Irrigation OFF"
     Irrigating.postUpdate(OFF)
 
     var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
-    val String levelMapFile = "waterLevel.map"
-    val levelString = transform("MAP",levelMapFile,level.toString)
+    var levelText = "LEER"
+    if (level == "0")  levelText = "VOLL"
     
-    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+levelString)
+    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+levelText)
     logDebug("", "Irrigation OFF: EXIT")
-end
-// -----------------------------------------------------------------------------
-//  WAN Address change
-// -----------------------------------------------------------------------------
-
-rule "WAN Address change"
-  when
-    Item wanAddress changed 
-  then 
-    logInfo("", "WAN Address change: "+getEmailText.apply())
-    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","WAN Address change", "New links available:\n"+getEmailText.apply())
-    logInfo("", "WAN Address change: EXIT")
 end

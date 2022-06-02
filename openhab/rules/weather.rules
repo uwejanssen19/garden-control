@@ -86,7 +86,7 @@ val Procedures$Procedure0 onValveTimer = [
         val irrigating = (Irrigating.state == ON)
         logDebug("Procedure onValveTimer", "ENTRY")
         water_on_off.sendCommand("0")
-        //Valve_Switch.postUpdate(OFF) // expires itself
+        Valve_Switch.postUpdate(OFF) // expires itself but late
         if (!irrigating) {
           logDebug("Procedure onValveTimer", "irrigating state = "+ irrigating+", turn power OFF")
           GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
@@ -122,7 +122,7 @@ val irrOnOffProc = [
     String onOff, String SCRIPT_DIR |
                 executeCommandLine(Duration.ofSeconds(1), SCRIPT_DIR+"irrOnOff.sh",onOff)
                 // OH2: executeCommandLine(SCRIPT_DIR+"irrOnOff.sh"+"@@"+onOff, 1000)
-                logInfo("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
+                logDebug("Procedure irrOnOffProc", "invoked irrOnOff with parameter " + onOff)
 ]
 
 
@@ -206,71 +206,75 @@ end
 //  NOTE: You need to swap water tap hose and lawn irrigation hose
 // -----------------------------------------------------------------------------
 
-rule "Lawn irrigation"
-// Lawn irrigation
+// rule "Lawn irrigation"
+// // Lawn irrigation
 
-  when 
-    //Time cron "0 0/1 22 * 3-10 ?"  // TEST
-    Time cron "0 0/1 8-20 * 3-8 ?"  
-  then
-    logDebug("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
-    if (isLastLawnIrrigationCron.apply()) {
-      StatusText.sendCommand("LAST lawn irrigation cron executed")
-      // turn OFF everything
-      LawnIrrigationTimeLeft.sendCommand(-1)
-      water_on_off.sendCommand("0")
-      Valve_Switch?.sendCommand(OFF)
-      Valve_Switch.postUpdate(OFF)
-      IgnoreWeatherSwitch?.sendCommand(OFF)
-      IgnoreWeatherSwitch.postUpdate(OFF)
-      GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
-    } else {
-      val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && shallDoLawnIrrigation.apply())
-      logDebug("Lawn irrigation","willDoLawn = {}", willDoLawn)
-      //StatusText.sendCommand("willDoLawn = "+willDoLawn)
-      val interval = LawnIrrigationInterVal.state as Number
-      if (willDoLawn) {
-        // count down
-        var counterVal = LawnIrrigationTimeLeft.state as Number
-        LawnIrrigationTimeLeft.postUpdate(counterVal-1) // display
-        logDebug("Lawn irrigation","counter =  {}", counterVal)
-        if (counterVal == 0 ) {
-          logDebug("Lawn irrigation","Mode = ON -> start Lawn irrigation") 
-          GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-          Thread::sleep(2000) // wait 2s
-          Valve_Switch.postUpdate(ON)
-          water_on_off.sendCommand("1")
-          // start over 
-          LawnIrrigationTimeLeft.sendCommand(interval-1) // for display
-          createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onValveTimer)
-        }
-      } else {
-        LawnIrrigationTimeLeft.sendCommand(-1)
-      }
-    } // last cron ?
-    logDebug("Lawn irrigation","EXIT") 
-   end
+//   when 
+//     //Time cron "0 0/1 22 * 3-10 ?"  // TEST
+//     Time cron "0 0/1 8-20 * 3-8 ?"  
+//   then
+//     if (LawnIrrigationInterVal.state == NULL || LawnIrrigationInterVal.state == UNDEF) {
+//             LawnIrrigationInterVal.postUpdate(10)
+//     }
+//     logDebug("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
+//     if (isLastLawnIrrigationCron.apply()) {
+//       StatusText.sendCommand("LAST lawn irrigation cron executed")
+//       // turn OFF everything
+//       LawnIrrigationTimeLeft.sendCommand(-1)
+//       water_on_off.sendCommand("0")
+//       Valve_Switch?.sendCommand(OFF)
+//       Valve_Switch.postUpdate(OFF)
+//       IgnoreWeatherSwitch?.sendCommand(OFF)
+//       IgnoreWeatherSwitch.postUpdate(OFF)
+//       GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+//     } else {
+//       val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && shallDoLawnIrrigation.apply())
+//       logDebug("Lawn irrigation","willDoLawn = {}", willDoLawn)
+//       //StatusText.sendCommand("willDoLawn = "+willDoLawn)
+//       val interval = LawnIrrigationInterVal.state
+//       if (willDoLawn) {
+//         // count down
+//         var counterVal = LawnIrrigationTimeLeft.state as Number
+//         LawnIrrigationTimeLeft.postUpdate(counterVal-1) // count down
+//         logDebug("Lawn irrigation","counter =  {}", counterVal)
+//         if (counterVal == 0 ) {
+//           logDebug("Lawn irrigation","Mode = ON -> start Lawn irrigation") 
+//           GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+//           Thread::sleep(2000) // wait 2s
+//           Valve_Switch.postUpdate(ON)
+//           water_on_off.sendCommand("1")
+//           // start over 
+//           LawnIrrigationTimeLeft.sendCommand(interval-1) // for display
+//           createTimer (now.plusSeconds(LAWN_IRRIGATION_TIME), onValveTimer)
+//         }
+//       } else {
+//         LawnIrrigationTimeLeft.sendCommand(-1)
+//       }
+//     } // last cron ?
+//     logDebug("Lawn irrigation","EXIT") 
+//    end
 
-rule "Time Interval Changed" 
-when Item LawnIrrigationInterVal changed 
-then 
-    val interval = LawnIrrigationInterVal.state as Number
-    LawnIrrigationTimeLeft.sendCommand(interval)
-end
+// rule "Time Interval Changed" 
+// when Item LawnIrrigationInterVal changed 
+// then 
+//     val interval = LawnIrrigationInterVal.state as Number
+//     LawnIrrigationTimeLeft.sendCommand(interval)
+// end
 
-rule "LawnIrrigationSwitch OFF" 
-when Item LawnIrrigationSwitch changed to OFF
-then 
-  LawnIrrigationTimeLeft.sendCommand(-1)
-  GardencontrolPowerSupply.postUpdate(OFF)
-end
+// rule "LawnIrrigationSwitch OFF" 
+// when Item LawnIrrigationSwitch changed to OFF
+// then 
+//   LawnIrrigationTimeLeft.sendCommand(-1)
+//   GardencontrolPowerSupply.postUpdate(OFF)
+// end
 
-rule "LawnIrrigationSwitch ON" 
-when Item LawnIrrigationSwitch changed to ON
-then 
-  LawnIrrigationTimeLeft.sendCommand(LawnIrrigationInterVal.state as Number)
-end
+// rule "LawnIrrigationSwitch ON" 
+// when Item LawnIrrigationSwitch changed to ON
+// then 
+//   LawnIrrigationTimeLeft.sendCommand(LawnIrrigationInterVal.state as Number)
+// end
 
+//###############################################################################################################################
 // needed if openweather tells it rains but actually does not.
 // This way the user can 'overrride' the rain fact 
 // but the interval has to set to a valid value
@@ -373,8 +377,6 @@ rule "daemon"
           // save water: 
           // turn it on first since heavens knows why 
           // it is required to turn it on before turning it off
-          water_on_off.sendCommand("1")
-          Thread::sleep(2000) // wait 2s
           water_on_off.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF)
           logDebug("Daemon","found irrigation is inactive, so I turned off tap water")

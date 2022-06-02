@@ -5,7 +5,7 @@ HIGH='water ### HIGH ###'
 STATE=""
 IRRIGATION_PUMP_PORT=17
 TAP_WATER_VALVE_PORT=18
-LEVEL_SENSOR_PORT=23
+LEVEL_SENSOR_PORT=27
 LOG_FILE=/tmp/waterOnOff.log
 CURRENT_WEATHER_RESPONSE=/tmp/weather.json
 MAX_READ_COUNT=4
@@ -36,25 +36,27 @@ function readLevel {
   # When high water mark is reached the GPIO pin $LEVEL_SENSOR_PORT values will be 0
   # Thus '1' means low water and '0' means high water
   # set mode of port to input
-  gpio -g mode $LEVEL_SENSOR_PORT up
+  #gpio -g mode $LEVEL_SENSOR_PORT up
+  raspi-gpio set $LEVEL_SENSOR_PORT ip pu
 
   #read until value is stable
   newVal=0
 
   #log "turn pump on in order to have power supply for level sensor relais" 
   irrOnOff 1
-  sleep 1
+  sleep 3
   newVal=$(gpio -g read $LEVEL_SENSOR_PORT)
   # turn off here
   irrOnOff 0
   #log "turn pump OFF"
   #log "readLevel EXIT "
-  echo $newVal
+  echo -n $newVal
 }
 
 function init () {
   # gpio $LEVEL_SENSOR_PORT is input and pulled up
-    gpio -g mode $LEVEL_SENSOR_PORT in
+  raspi-gpio set 23 ip pu
+    # gpio -g mode $LEVEL_SENSOR_PORT in
   # gpio $IRRIGATION_PUMP_PORT and $TAP_WATER_VALVE_PORT output
     gpio -g mode $IRRIGATION_PUMP_PORT out
     gpio -g mode $TAP_WATER_VALVE_PORT out
@@ -74,13 +76,13 @@ function isRaining() {
   ret=$(python -mjson.tool $CURRENT_WEATHER_RESPONSE | grep -i regen)
   if [ $? == "0" ]
   then 
-    #log 'currently raining' 
+    log 'currently raining' 
     ret=1
   else 
-    #log 'Not raining' 
+    log 'Not raining' 
     ret=0
   fi
-  echo $ret
+  echo -n $ret
 }
 
 function getForeCast() {

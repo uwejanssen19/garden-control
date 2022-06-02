@@ -1,8 +1,6 @@
 key=value
-1=LEER
-0=VOLL
 LEER=1
 VOLL=0
--=LEER
-=LEER
-
+1=LEER
+0=VOLL
+=Undefined Level Value
