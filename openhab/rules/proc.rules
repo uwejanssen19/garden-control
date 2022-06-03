@@ -16,7 +16,7 @@
 val String LEVEL_EMPTY = "1"
 val String LEVEL_FULL = "0"
 val String SCRIPT_DIR="/home/openhabian/scripts/"
-val MAX_FILL_BARREL_TIME = 180
+val MAX_FILL_BARREL_TIME = 300
 val Number RAIN_SENSOR_HTTP_PORT = 8062
 val Number MCU_8266_HTTP_PORT = 8071
 val Number SONOFF_HTTP_PORT = 8066
@@ -56,7 +56,7 @@ val Functions$Function0<String> getEmailText = [
 val Functions$Function0<Boolean> shallIrrigate = [ 
   // if switch is = ON OR either not raining or coming rain less than defined amount
   // logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
-  // logInfo("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
+  // logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
   val Number SOIL_TRESH = 550 
   val isRaining = isRaining_out.state.toString
@@ -74,7 +74,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val Boolean isNotRaining = (isRaining == "0")
   
   var float rainAv = 0
-// logInfo("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
+// logDebug("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
 // rainAv = (RainAverage.state as DecimalType)?.floatValue
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
   
@@ -84,31 +84,31 @@ val Functions$Function0<Boolean> shallIrrigate = [
   logDebug("shallIrrigate", "after fixing state , SoilHumTreshold = {}", SoilHumTreshold)
   if ( Hum_Solar1.state == UNDEF || Hum_Solar1.state == NULL) {
     hum = SoilHumTreshold.state // prevent watering
-    logInfo("shallIrrigate::","Hum_Solar undefined, in order to force watering set humidity value to  treshold -1  ( {} )",hum)
+    logDebug("shallIrrigate::","Hum_Solar undefined, in order to force watering set humidity value to  treshold -1  ( {} )",hum)
     Hum_Solar1.postUpdate(hum-1)
   } else {
     // Hum_Solar1 had a valid value
     hum = (Hum_Solar1.state as DecimalType).intValue
   }
-  logInfo("shallIrrigate::","hum treshold global var = {} , Hum_Solar1 = {} ", SoilHumTreshold, Hum_Solar1)
+  logDebug("shallIrrigate::","hum treshold global var = {} , Hum_Solar1 = {} ", SoilHumTreshold, Hum_Solar1)
 
   
-  logInfo("shallIrrigate::","before dryEnough = ...")
+  logDebug("shallIrrigate::","before dryEnough = ...")
   var Boolean dryEnough = (hum  < (SoilHumTreshold.state as DecimalType))
-   logInfo("shallIrrigate::","after dryEnough =  ...")
-  // logInfo("shallIrrigate::","hum =  {} ",hum)
-  // logInfo("shallIrrigate::","soil hum TRESHOLD = {} ",SoilHumTreshold)
+   logDebug("shallIrrigate::","after dryEnough =  ...")
+  // logDebug("shallIrrigate::","hum =  {} ",hum)
+  // logDebug("shallIrrigate::","soil hum TRESHOLD = {} ",SoilHumTreshold)
   dryEnough = true // soil sensor not working right now
-  logInfo("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SoilHumTreshold.state, dryEnough)
+  logDebug("shallIrrigate::","Soil Humidity( = {} ) < {} = {}", hum, SoilHumTreshold.state, dryEnough)
 
   val Boolean weatherSuitableForIrrigating  =  (isNotRaining && willNotRain && didNotRain && dryEnough)
     
-  logInfo("shallIrrigate::","RainAverage( = {} ) < {} = {} ", RainAverage.state, RAIN_TRESHOLD, didNotRain)
-//  logInfo("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
-//  logInfo("shallIrrigate:","isNotRaining = {} ",isNotRaining)
-//  logInfo("shallIrrigate:","didNotRain = {} ",didNotRain)
+  logDebug("shallIrrigate::","RainAverage( = {} ) < {} = {} ", RainAverage.state, RAIN_TRESHOLD, didNotRain)
+//  logDebug("shallIrrigate::","switchStateSetToIgnore = {} ",switchStateSetToIgnore)
+//  logDebug("shallIrrigate:","isNotRaining = {} ",isNotRaining)
+//  logDebug("shallIrrigate:","didNotRain = {} ",didNotRain)
   logInfo("shallIrrigate:","weatherSuitableForIrrigating = {} ",weatherSuitableForIrrigating)
- logInfo("shallIrrigate:","NoIrrigationWanted = {} ",NoIrrigationWanted)
+ logDebug("shallIrrigate:","NoIrrigationWanted = {} ",NoIrrigationWanted)
  
     
   if (!NoIrrigationWanted && (switchStateSetToIgnore || weatherSuitableForIrrigating)) {
@@ -169,11 +169,11 @@ when
 then 
 
   //Thread::sleep(500) // give time to update variables
-  //logInfo("proc.rules.UPD", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
+  //logDebug("proc.rules.UPD", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
   if (receivedCommand == ON) {
   // call of shallIrrigate() is just for test since we do not want to wait for some timer to occur
   // val willIrrigate = shallIrrigate.apply()
-  // logInfo("proc.rules.UPD", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
+  // logDebug("proc.rules.UPD", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
     var String level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true).toString
     //Display_level_out?.postUpdate(level) 
     Level_out.sendCommand(level)
@@ -189,19 +189,19 @@ then
 //    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
     RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
 
-    //logInfo("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
+    //logDebug("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
     //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
 
-    // logInfo("proc.rules.UPD","TempAverage after update  = {} ",TempAverage.state)
+    // logDebug("proc.rules.UPD","TempAverage after update  = {} ",TempAverage.state)
 
     // val float tmpAv = (TempAverage?.state as DecimalType).floatValue
-    // logInfo("proc.rules.UPD","TempAverage float value = {} ",tmpAv)
+    // logDebug("proc.rules.UPD","TempAverage float value = {} ",tmpAv)
     // val Boolean wasHot = (tmpAv > 24.0)
-    // logInfo("proc.rules.UPD","TempAverage wasHot last day = {} ",wasHot)
+    // logDebug("proc.rules.UPD","TempAverage wasHot last day = {} ",wasHot)
 
-    //logInfo("proc.rules.UPD", "BEFORE sendmail")
+    //logDebug("proc.rules.UPD", "BEFORE sendmail")
     //sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
-    //logInfo("proc.rules.UPD", "AFTER sendmail")
+    //logDebug("proc.rules.UPD", "AFTER sendmail")
     getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Water Level = "+levelText, getEmailText.apply())
     //logDebug("proc.rules.UPD", "WanAddress =  {} ",wanAddress)
   }
@@ -219,10 +219,13 @@ rule "Fill barrel FNI"
 
     //logDebug("proc-2", "FILL barrel FNI: ENTRY received command = " + receivedCommand)
     var String level = LEVEL_EMPTY
+    // pretend we are using tap water on purpose
+    // other wise the daemon rule might turn water off
+    LawnIrrigationSwitch.postUpdate(ON)
 
     switch(receivedCommand){
         case ON: {
-    logInfo("myLogger.fill","##### CHECK ######")
+    logDebug("myLogger.fill","##### CHECK ######")
           if (/*true*/shallIrrigate.apply()) { // will irrigate
             //  return
 
@@ -263,8 +266,9 @@ rule "Fill barrel FNI"
 
         } // end case ON
         case OFF: water_on_off.sendCommand("0")
-        default: logError("", "FILL barrel I Do not know how to handle " + receivedCommand.toString)
+        default: logError("", "Switch/case neither ON nor OFF do not know how to handle " + receivedCommand.toString)
     }
+    LawnIrrigationSwitch.postUpdate(OFF)
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
 
 end

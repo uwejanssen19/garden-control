@@ -335,7 +335,7 @@ end
 rule "daemon"
   when 
     //Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 2/10 * * * ?" // time spec for release edition: 2/10 means every 10 minutes 2 minutes after minutes % 10
+    Time cron "0 5/10 * * * ?" // time spec for release edition: 5/10 means every 10 minutes 5 minutes after minutes % 10
     // e.g. 12, 22, 32, 42 etc.
   then
   
@@ -375,8 +375,6 @@ rule "daemon"
       irrOnOffProc?.apply("0", SCRIPT_DIR)
       if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
           // save water: 
-          // turn it on first since heavens knows why 
-          // it is required to turn it on before turning it off
           water_on_off.sendCommand("0")
           GardencontrolPowerSupply.sendCommand(OFF)
           logDebug("Daemon","found irrigation is inactive, so I turned off tap water")
