@@ -222,7 +222,6 @@ rule "Fill barrel FNI"
     // pretend we are using tap water on purpose
     // other wise the daemon rule might turn water off
     LawnIrrigationSwitch.postUpdate(ON)
-    var gMaxTimer = NULL
 
     switch(receivedCommand){
         case ON: {
@@ -234,7 +233,6 @@ rule "Fill barrel FNI"
           
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // set time limit 
-            gMaxTimer = maxTimer
             while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
               logDebug("FILL barrel FNI"," INSIDE while loop since level is empty or filltimer active")
               GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
@@ -269,7 +267,6 @@ rule "Fill barrel FNI"
         } // end case ON
         case OFF: {
                   water_on_off.sendCommand("0")
-                  gMaxTimer?.cancel()
                   Fill_Switch.postUpdate(OFF)
                   FillTimerActive.postUpdate(OFF)
         }
