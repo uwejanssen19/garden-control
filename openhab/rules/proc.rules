@@ -302,22 +302,32 @@ rule "Irrigation ON"
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
+      val parameterText = "Wasserstand: "+Level_out.state.toString
       logInfo("Irrigation ON"," BEFORE MAIL, irrigating set to " + Irrigating.state.toString)
       getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
-//      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: "+Level_out.state.toString)
-      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: VOLL")
+      "Bewaesserung findet statt.\n"+getEmailText.apply()+parameterText)
+//      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: VOLL")
     } else {
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
       logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
+      val levelText = transform('MAP',LEVEL_MAP_FILE,Level_out.state.toString)
+      val parameterText = "KEINE Bewaesserung, denn:\n
+      - es regnet oder\n
+      - Regen ist angesagt (" + ForecastRainVolumesGroup.state + ") oder\n
+      - Falls Feuchtesensor in Betrieb: Bodenfeuchte zu hoch (>750)\n\n
+      Wasserstand derzeit: "+levelText+"\n"
+      val mailText = getEmailText.apply()+parameterText
+      logInfo("proc-1", "levelText  = {}", mailText)
 
-      getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de",
-      "Keine Bewaesserung",
-      //getEmailText.apply()+"KEINE Bewaesserung, es regnet oder Regen mit " + ForecastRainVolumesGroup.state + " ist angesagt.\nOder Bodenfeuchte (= "
-      //+ Hum_Solar1.state + ") >= " +SoilHumTreshold.state)
-      getEmailText.apply()+"KEINE Bewaesserung, es regnet oder Regen mit " + ForecastRainVolumesGroup.state + " ist angesagt.\nOder Bodenfeuchte zu hoch, (>750)")
+      getActions("mail","mail:smtp:mysmtp")
+      .sendMail(
+        "uwe@janssen-muenchen.de",
+        "Keine Bewaesserung",
+        mailText
+      )
     }
 end
 
