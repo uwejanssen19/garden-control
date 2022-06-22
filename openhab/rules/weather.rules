@@ -144,7 +144,7 @@ rule "Manual irrigation"
             cmd = "1"
             Irrigating.postUpdate(ON)
             StatusText.postUpdate("Irrigation started")
-            //irrTimer = createTimer(now.plusSeconds(MANUAL_IRRIGATION_TIME), onIrrigationTimer)
+            irrTimer = createTimer(now.plusSeconds(MANUAL_IRRIGATION_TIME), onIrrigationTimer)
         }
         case OFF: {
           if (irrTimer !== null && !irrTimer.hasTerminated) {

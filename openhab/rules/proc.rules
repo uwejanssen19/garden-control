@@ -142,7 +142,7 @@ val Procedures$Procedure0 onFillTimer = [
 val readLevel = [ 
   String SCRIPT_DIR, Boolean powerOff
   |
-  logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
+  //logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
   Thread::sleep(4000)
   var Number level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
@@ -187,7 +187,7 @@ then
     //getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Level Test ", "Wasserstand: "+levelText)
     StatusText.sendCommand("level = "+levelText)
 //    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
-    RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusDays(1)).toString)
+    RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusHours(12)).toString)
 
     //logDebug("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
     //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)

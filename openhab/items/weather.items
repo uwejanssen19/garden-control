@@ -25,7 +25,7 @@ Switch NoIrrigationPreset {expire="9h,OFF"}
 
 Number Display_level_out
 // reading level will not take more than 8 s
-Switch UpdateLevelSwitch {expire="60s,OFF"} 
+Switch UpdateLevelSwitch {expire="30s,OFF"} 
 
 String StatusText
 String SystemStatusText
