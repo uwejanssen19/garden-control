@@ -8,7 +8,8 @@ sitemap openweather label="OpenWeather Overview" {
       Group item=ForecastRainVolumesGroup
     }
 
-    Frame label="Aktuelle Werte von Solar Modul  1 ( Bodenfeuchte)" {
+    Frame label="Aktuelle Werte von Solar Modul  1 ( Bodenfeuchte)" visibility=[ Temp_Solar1 != NULL ]
+ {
         Default item=Time_Solar1 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar1_Display label="Batterie [%s %%]"
         Default item=Status_Solar1 label="Status [%s]"        
@@ -16,7 +17,7 @@ sitemap openweather label="OpenWeather Overview" {
         Default item=Hum_Solar1 label="Soil Humidity [%s]"
     }
 
-    Frame label="Aktuelle Werte von Solar Modul 2 ( Carport NW)" {
+    Frame label="Aktuelle Werte von Solar Modul 2 ( Carport NW)"  visibility=[ Temp_Solar2 != NULL ]{
         Default item=Time_Solar2 label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar2_Display label="Batterie [%s %%]"
         Default item=Status_Solar2 label="Status [%s]"
@@ -26,7 +27,7 @@ sitemap openweather label="OpenWeather Overview" {
     }
 
     
-    Frame label="Aktuelle Werte von Solar Modul 3 ( WZ West-Süd )" {
+    Frame label="Aktuelle Werte von Solar Modul 3 ( WZ West-Süd )"  visibility=[ Temp_Solar3 != NULL ] {
         Default item=Time_Solar3_OH label="Letzte Meldung: [%s]"
         Default item=Vcc_Solar3_Display label="Batterie [%s %%]"        
         Default item=Status_Solar3 label="Status [%s]"        
