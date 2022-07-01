@@ -1,7 +1,8 @@
 // Steckdose mit Versorgung für Pumpe und Ventil
 Thing mqtt:topic:myUnsecureBroker:powerSupply (mqtt:broker:myUnsecureBroker) {
 Channels:
-        Type switch : PowerSupply "PowerSupply" [ stateTopic="stat/PowersupplyGardenControl/POWER", commandTopic="cmnd/PowersupplyGardenControl/POWER", allowedStates="ON,OFF" ]
+        Type switch : PowerSupply "PowerSupply" [ stateTopic="stat/PowersupplyGardenControl/POWER",
+         commandTopic="cmnd/PowersupplyGardenControl/POWER", allowedStates="ON,OFF" ]
 }
 // Thing mqtt:topic:myUnsecureBroker:bme_thing (mqtt:broker:myUnsecureBroker) {
 // //ESP8266 Messtation fuer Temperatur, Feuchtigkeit, Druck
@@ -38,7 +39,7 @@ Channels:
          Type string : status_channel "status_channel" [ stateTopic="UweSolar3/status" ]
          Type number : temp_channel "temp_channel" [ stateTopic="UweSolar3/bme/temp" ]
          Type number : hum_channel "hum_channel" [ stateTopic="UweSolar3/bme/hum" ]
-         Type number : temp_channel "press_channel" [ stateTopic="UweSolar3/bme/press" ]
+         Type number : press_channel "press_channel" [ stateTopic="UweSolar3/bme/press" ]
 }
 Thing mqtt:topic:myUnsecureBroker:level_pump_module_thing (mqtt:broker:myUnsecureBroker) {
 //ESP8266 Outdoor laser level sensor and irrigation pump (planned)

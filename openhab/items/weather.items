@@ -86,6 +86,10 @@ Number  Vcc_Solar3_Display <battery>
 Number LaserLevel <time> { channel="mqtt:topic:myUnsecureBroker:level_pump_module_thing:level_channel" }
 
 Number RainProb <rain> { channel="mqtt:topic:myUnsecureBroker:rainProb_thing:rainProb_channel" }
+Switch retrieveYRainStartDSL // triggers DSL rule retrieveYesterdaysRain
+String YesterdaysRainRetrieverProxy // triggers rain_js Rule
+Number YesterdaysRainAmount // basically this stems from rosenheimwetter.de "Statistik". the rainRetriever rule read from the webpage 
+// extracts the value and writes it to this item
 
 //String OH2_Service  "OH2 Service"   { channel="exec:command:oh2service:input" }
 //String PI_Service   "PI Service"    { channel="exec:command:piservice:input" }

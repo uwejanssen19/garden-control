@@ -1,0 +1,37 @@
+rule retrieveYesterdaysRain
+when Item retrieveYRainStartDSL changed
+then
+    var hmtlPageWithRainData = sendHttpGetRequest("http://www.rosenheimwetter.de/tagesauswertungen.php")
+    Thread.sleep(1000)
+    logDebug("retrieveYesterdaysRain", "retrieveYesterdaysRain hmtlPageWithRainData length = \n{}\n",hmtlPageWithRainData.length)
+    YesterdaysRainRetrieverProxy.sendCommand(hmtlPageWithRainData) // trigger JS rule via sending command to  item
+end
+// rule rain_js rule (only in UI)
+// when Item YesterdaysRainRetrieverProxy received command // this is the html string containing the table with all the data
+//then
+/*
+
+// this rule continues processing htnl data from weather page
+var log = Java.type("org.slf4j.LoggerFactory").getLogger("org.openhab.model.script.Rules.rain_js");
+
+    //log.info("rain_js event = \n{}",event);
+    log.info("rain_js event.itemCommand = \n{}\n",event.itemCommand);
+    var Transformation = Java.type("org.openhab.core.transform.actions.Transformation");   
+    var htmlString = event.itemCommand.toString();
+    var searchPattern = " mm</th><td>"; // e.g. <th>8.5 mm</th> . NOTE that the length of the number may not be constant
+    var startingPoint = htmlString.indexOf(searchPattern); // find position of the space AFTER 8.5 mm
+    log.info(searchPattern+ " at {}",startingPoint);
+    var restOfTable = htmlString.substring(startingPoint-10,startingPoint); // drop header
+    //log.info("rest =  {}",restOfTable);
+    var regexp = ".*([0-9]+\\.[0-9]+).*";
+    var result = Transformation.transform("REGEX",regexp,restOfTable);
+    log.info("result =  {}",result);
+    var liter = parseFloat(result);
+    log.info("liter  =  {}",liter);
+    items.getItem("YesterdaysRainAmount").sendCommand(liter);
+
+
+
+*/
+
+//end

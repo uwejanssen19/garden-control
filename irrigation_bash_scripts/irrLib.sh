@@ -126,7 +126,7 @@ function getDate() {
 }
 # get unix timestamp for now minus 24h
 function getYesterdaysTimeStamp() {
-  echo $(($(date +%s)-(3600*24)))
+  echo $(date "yesterday" "+%s")
   #echo $(($(date +%s)-(3600*72)))
 }
 

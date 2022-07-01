@@ -30,8 +30,7 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
             Default item=ForecastRainVolumesGroup visibility=[willRain_out != "0"] 
 
             Text item=isRaining_out label="Regnet es gerade? [MAP(yesNo.map):%s]"
-            Text item=RainAverage label="Regendurchschnitt von gestern [%.2f Liter]"
-            Text item=TempAverage label="Temperaturdurchschnitt von gestern [%.2f °C]"
+            Text item=YesterdaysRainAmount label="Regen von gestern  [%.2f Liter]"
         }
 
         // Frame label="Systemfunktionen" visibility=[TestModeSwitch == ON]{

@@ -45,7 +45,7 @@ val Functions$Function0<String> getEmailText = [
     Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
     Astro Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=astro\n
     Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n'
-  //logDebug("getEmailText","EmailText  = {}",emailText)
+  logDebug("getEmailText","EmailText  = {}",emailText)
 
   return emailText
 ]
@@ -66,16 +66,19 @@ val Functions$Function0<Boolean> shallIrrigate = [
     comingRainVal = (ForecastRainVolumesGroup.state as DecimalType).floatValue
   }
 
+
   val Boolean switchStateSetToIgnore  = (IgnoreWeatherSwitch?.state == ON)
   val Boolean NoIrrigationWanted = (NoIrrigationPreset?.state == ON)
     
   val Number RAIN_TRESHOLD = 3.0
   val Boolean willNotRain = (comingRainVal < RAIN_TRESHOLD)  
   val Boolean isNotRaining = (isRaining == "0")
+
+  retrieveYRainStartDSL.postUpdate("ON") // start retrieving rain data from the past
   
-  var float rainAv = 0
-// logDebug("shallIrrigate::","RainAverage.state = {}", RainAverage.state)
-// rainAv = (RainAverage.state as DecimalType)?.floatValue
+  logDebug("shallIrrigate::","YesterdaysRainAmount.state = {}", YesterdaysRainAmount.state)
+  val rainAv = (YesterdaysRainAmount.state as DecimalType)?.floatValue
+  logDebug("shallIrrigate::","rainAv = {}", rainAv)
   val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
   
   var Number hum = 0
@@ -179,7 +182,6 @@ then
     Level_out.sendCommand(level)
     logDebug("proc.rules.UPD", "UPD ENTRY: Level_out  = {} ", Level_out)
 
-    logDebug("proc.rules.UPD","##### CHECK ######")
     logDebug("proc.rules.UPD", "Update WL Switch: check for LF in level  = ___{}___", level)
 
     val levelText = transform("MAP",LEVEL_MAP_FILE, level) // damn transform does not work (spent 2 hours in vain)
@@ -187,8 +189,9 @@ then
     //getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Level Test ", "Wasserstand: "+levelText)
     StatusText.sendCommand("level = "+levelText)
 //    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
-    RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusHours(12)).toString)
-
+    //RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusHours(12)).toString)
+    retrieveYRainStartDSL.postUpdate("ON") // start retrieving rain data from the past
+    
     //logDebug("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
     //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
 
@@ -202,7 +205,10 @@ then
     //logDebug("proc.rules.UPD", "BEFORE sendmail")
     //sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
     //logDebug("proc.rules.UPD", "AFTER sendmail")
-    getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Water Level = "+levelText, getEmailText.apply())
+    var actions = getActions("mail","mail:smtp:mysmtp")
+    logDebug("proc.rules.UPD","##### CHECK ######, mail action = {}, levelText = {}",actions, levelText)
+
+    actions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelText, getEmailText.apply())
     //logDebug("proc.rules.UPD", "WanAddress =  {} ",wanAddress)
   }
   logDebug("proc.rules.UPD", "EXIT Update Water Level")
