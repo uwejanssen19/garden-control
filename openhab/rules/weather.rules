@@ -346,7 +346,7 @@ rule "daemon"
     // e.g. 12, 22, 32, 42 etc.
   then
   
-  val irrigating = (Irrigating.state == ON) || (LawnIrrigationSwitch.state == ON)
+  val irrigating = (Irrigating.state == ON) 
   logDebug("Daemon", "ENTRY, Irrigating.state = {}",Irrigating.state)
   
   

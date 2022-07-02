@@ -10,7 +10,6 @@ end
 // when Item YesterdaysRainRetrieverProxy received command // this is the html string containing the table with all the data
 //then
 /*
-
 // this rule continues processing htnl data from weather page
 var log = Java.type("org.slf4j.LoggerFactory").getLogger("org.openhab.model.script.Rules.rain_js");
 
@@ -22,13 +21,14 @@ var log = Java.type("org.slf4j.LoggerFactory").getLogger("org.openhab.model.scri
     var startingPoint = htmlString.indexOf(searchPattern); // find position of the space AFTER 8.5 mm
     log.info(searchPattern+ " at {}",startingPoint);
     var restOfTable = htmlString.substring(startingPoint-10,startingPoint); // drop header
-    //log.info("rest =  {}",restOfTable);
-    var regexp = ".*([0-9]+\\.[0-9]+).*";
+    log.info("restOfTable = {}",restOfTable); // e.g.'d><th>11.8'
+    var regexp = '.*?([0-9]+.[0-9]+)';
     var result = Transformation.transform("REGEX",regexp,restOfTable);
     log.info("result =  {}",result);
     var liter = parseFloat(result);
     log.info("liter  =  {}",liter);
     items.getItem("YesterdaysRainAmount").sendCommand(liter);
+
 
 
 
