@@ -6,6 +6,43 @@ then
     logDebug("retrieveYesterdaysRain", "retrieveYesterdaysRain hmtlPageWithRainData length = \n{}\n",hmtlPageWithRainData.length)
     YesterdaysRainRetrieverProxy.sendCommand(hmtlPageWithRainData) // trigger JS rule via sending command to  item
 end
+
+rule checkStatisticTableUpdate
+// checks wether statistic rain table has been updated 
+// purpose is to determine at which time when it is updated
+when Time cron "0 0/30 * * * ? "
+then
+    val hour = now.getHour
+    // fetch last value
+    val lastValue = YesterdaysRainAmount.state
+    // fetch current value
+    retrieveYRainStartDSL.sendCommand("ON")
+    val currentValue = YesterdaysRainAmount.state
+    // exit condition
+    val Boolean updated = ( RainTableUpdated.state == "ON" )
+
+    if  (hour < 5  && hour >= 0) // crucial time window
+    {
+        logInfo("***** TABLE checker task","lastValue = {}, currentValue = {} *****",lastValue, currentValue)
+        if (!updated) {
+            if (lastValue == currentValue && currentValue != 0) {
+                RainTableUpdated.postUpdate("OFF")
+                // we are right before first irrigation starts (5:00)
+                // and the table has not yet been updated
+                // Thus, yesterdays rain maybe not available
+                // In order to fix it we write the last rain average 
+                val rain_av = RainAverage.state
+                YesterdaysRainAmount.postUpdate(rain_av)
+                logInfo("***** TABLE checker task","table has NOT been updated, current Value = {} *****", currentValue)
+            } else {
+                // set state to updated
+                RainTableUpdated.postUpdate("ON")
+                // table has been updated , all o.k.
+                logInfo("***** TABLE checker task","table has been updated, current Value = {} *****", currentValue)
+            }
+        }
+    }
+end 
 // rule rain_js rule (only in UI)
 // when Item YesterdaysRainRetrieverProxy received command // this is the html string containing the table with all the data
 //then

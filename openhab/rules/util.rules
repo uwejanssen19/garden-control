@@ -1,0 +1,33 @@
+rule checkMQTTPowerSupply
+when Item checkMQTTPowerSupplyTrigger received command
+then
+  val String CMD_topic = "cmnd/PowersupplyGardenControl/POWER"
+  //val String STATE_topic = "stat/PowersupplyGardenControl/POWER"
+
+// get State of powersuppy in order to toggle it properly
+
+    val pstate = GardencontrolPowerSupply.state
+    logInfo("checkMQTTPowerSupply", "pstate before = {}", pstate)
+    var newState = OFF
+
+    if (pstate == OFF) {
+        newState = ON
+    }
+
+    logInfo("checkMQTTPowerSupply", "sending state =  {} via MQTT ", newState)
+    // now send the state directly via MQTT
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT(CMD_topic, newState)
+    // now read the new state from item and store it
+    newState = GardencontrolPowerSupply.state
+    logInfo("checkMQTTPowerSupply", "pstate AFTER change = {}", newState)
+
+    // toggle back
+    GardencontrolPowerSupply.sendCommand(pstate)
+    // check if the newState is been reflected in the Item 
+    if (newState != pstate) {
+        mqttConnected.postUpdate(ON)
+    } else {
+        mqttConnected.postUpdate(OFF)
+    }
+end

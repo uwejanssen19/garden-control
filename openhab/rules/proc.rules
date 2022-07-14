@@ -31,6 +31,11 @@ val Number SOIL_TRESH = 550
 // -----------------------------------------------------------------------------
 //  Functions and procedures section
 // -----------------------------------------------------------------------------
+val Functions$Function0<Boolean> isMQTTConnected = [ 
+  // check powersupply MQTT accessibility
+  checkMQTTPowerSupplyTrigger.sendCommand("ON") // start rule
+  return (mqttConnected.state == "ON")
+]
 
 
 // -----------------------------------------------------------------------------
@@ -41,6 +46,7 @@ val Functions$Function0<String> getEmailText = [
   wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
 
   val String emailText='
+    Regen gestern = '+YesterdaysRainAmount.state+' Liter\n
     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
     Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
     Astro Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=astro\n
@@ -58,6 +64,11 @@ val Functions$Function0<Boolean> shallIrrigate = [
   // logDebug("shallIrrigate:","LocalCurrentRainVolume = {}", LocalCurrentRainVolume.state)
   // logDebug("shallIrrigate:","ForecastRainVolumesGroup = {}", ForecastRainVolumesGroup.state)
   // logDebug("shallIrrigate::","IgnoreWeatherSwitch = {}", IgnoreWeatherSwitch.state)
+  // if (!isMQTTConnected.apply()) {
+  //   logError("shallIrrigate", "power supply mqtt problem")
+  //   // send Mail with info how to connect and test
+  //   // also info how to invoke sonoff and check
+  // }
   val Number SOIL_TRESH = 550 
   val isRaining = isRaining_out.state.toString
   var float comingRainVal = 0
@@ -77,9 +88,9 @@ val Functions$Function0<Boolean> shallIrrigate = [
   retrieveYRainStartDSL.sendCommand("ON") // start retrieving rain data from the past
   
   logDebug("shallIrrigate::","YesterdaysRainAmount.state = {}", YesterdaysRainAmount.state)
-  val rainAv = (YesterdaysRainAmount.state as DecimalType)?.floatValue
-  logDebug("shallIrrigate::","rainAv = {}", rainAv)
-  val Boolean didNotRain  = (rainAv  < RAIN_TRESHOLD)
+  val pastRain = (YesterdaysRainAmount.state as DecimalType)?.floatValue
+  logDebug("shallIrrigate::","pastRain = {}", pastRain)
+  val Boolean didNotRain  = (pastRain  < RAIN_TRESHOLD)
   
   var Number hum = 0
   logDebug("shallIrrigate", "setting SOIL_TRESH = {}", SOIL_TRESH)
@@ -308,6 +319,7 @@ rule "Irrigation ON"
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
+      Irrigating.postUpdate(ON)
       val parameterText = "Wasserstand: "+Level_out.state.toString
       logInfo("Irrigation ON"," BEFORE MAIL, irrigating set to " + Irrigating.state.toString)
       getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de",
@@ -321,6 +333,7 @@ rule "Irrigation ON"
       logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
       val levelText = transform('MAP',LEVEL_MAP_FILE,Level_out.state.toString)
       val parameterText = "KEINE Bewaesserung, denn:\n
+      - es hat geregnet (" + YesterdaysRainAmount.state + ") oder\n
       - es regnet oder\n
       - Regen ist angesagt (" + ForecastRainVolumesGroup.state + ") oder\n
       - Falls Feuchtesensor in Betrieb: Bodenfeuchte zu hoch (>750)\n\n
@@ -335,6 +348,8 @@ rule "Irrigation ON"
         mailText
       )
     }
+    RainTableUpdated.postUpdate("OFF")
+
 end
 
 

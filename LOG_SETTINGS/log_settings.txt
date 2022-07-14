@@ -1,0 +1,4 @@
+log:set WARN openhab.event.ItemCommandEvent
+log:set WARN openhab.event.ItemStateChangedEvent
+log:set WARN openhab.event.ItemStatePredictedEvent
+

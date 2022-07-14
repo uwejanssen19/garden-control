@@ -1,6 +1,6 @@
 rule "call list change"
 when Item FritzBox_CallList28 changed 
-then {
+then 
 	//logInfo("call list change","FritzBox_CallList28 changed: {}", FritzBox_CallList28)
 
 
@@ -28,12 +28,11 @@ then {
 		FritzBox_MC2.postUpdate("")
 		FritzBox_MC3.postUpdate("")
 		FritzBox_MC4.postUpdate("")
-		if (true) {
 		do {
 			// $.[0] JSONPATH parses a single entry of the list: from 0 until ...
 			// remember: JSONPATH returns the complete json-struct if the path can not be resolved!
 			// If the first char of the path start with "[", we have reached the end of the struct
-			logInfo("call list change","checking entry : {}", transform("JSONPATH","$["+i+"]",FritzBox_CallList28.state.toString))
+			logInfo("call_list","checking entry : {}", transform("JSONPATH","$["+i+"]",FritzBox_CallList28.state.toString))
 			calltype =transform("JSONPATH", "$.["+ i +"].type", FritzBox_CallList28.state.toString)
             logInfo("call list change", "calltype = {}",calltype)
 			localNumber = transform("JSONPATH", "$.["+ i +"].localNumber", FritzBox_CallList28.state.toString)
@@ -58,8 +57,6 @@ then {
 				}
 			i = i +1
 			} while (entry)
-		}
-}
 end
 
 rule "Solar Main Switch"

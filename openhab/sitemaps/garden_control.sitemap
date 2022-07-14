@@ -19,8 +19,8 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
         }
 
         Frame label="Einstellungen Bewaesserung" {
-            Default item=NoIrrigationPreset label="Gießen aus bis zum nächsten Gießen" icon="no_irrigation" visibility=[NoIrrigationPreset == "ON"]
-            Default item=NoIrrigationPreset label="Gießen ein wenn kein Regen aktuell oder vorhergesagt" icon="irrigation" visibility=[NoIrrigationPreset == "OFF"]
+            Default item=NoIrrigationPreset label="Gießautomatik aus bis zum nächsten Gießen" icon="no_irrigation" visibility=[NoIrrigationPreset == "ON"]
+            Default item=NoIrrigationPreset label="Gießautomatik aus bis zum nächsten Gießen" icon="irrigation" visibility=[NoIrrigationPreset == "OFF"]
             Default item=IgnoreWeatherSwitch icon="sun_clouds" label="Gießen trotz Regen in der Wettervorhersage"
         }
 
