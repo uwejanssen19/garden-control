@@ -91,6 +91,14 @@ val Functions$Function0<Boolean> shallIrrigate = [
   val pastRain = (YesterdaysRainAmount.state as DecimalType)?.floatValue
   logDebug("shallIrrigate::","pastRain = {}", pastRain)
   val Boolean didNotRain  = (pastRain  < RAIN_TRESHOLD)
+  if (didNotRain && !isNotRaining) {
+    logInfo("shallIrrigate::","*** SPECIAL condition: currently  raining AND yesterday NO rain.\n
+    So if next time there is no current rain AND yesterday's info is still valid:\n
+    Irrigation will be done although it rained before.\n
+    To fix this we misuse the yesterdays rain amount data and enter a fictive value.\n
+    Thus there will be no irrigation until there is a dry day before.")
+    YesterdaysRainAmount.postUpdate("3.33") // 3.33 will be replaced by 0.00 when irrigation stops
+  }
   
   var Number hum = 0
   logDebug("shallIrrigate", "setting SOIL_TRESH = {}", SOIL_TRESH)
@@ -236,9 +244,7 @@ rule "Fill barrel FNI"
 
     //logDebug("proc-2", "FILL barrel FNI: ENTRY received command = " + receivedCommand)
     var String level = LEVEL_EMPTY
-    // pretend we are using tap water on purpose
-    // other wise the daemon rule might turn water off
-    LawnIrrigationSwitch.postUpdate(ON)
+
 
     switch(receivedCommand){
         case ON: {
@@ -254,6 +260,8 @@ rule "Fill barrel FNI"
               logDebug("FILL barrel FNI"," INSIDE while loop since level is empty or filltimer active")
               GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
               Thread::sleep(2000)
+              // inhibit automatic power OFF
+              Irrigating.postUpdate(ON)
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
               logDebug("FILL barrel FNI"," level = " + level)
@@ -278,6 +286,8 @@ rule "Fill barrel FNI"
           }  // end if rain condition
 
           Fill_Switch.postUpdate(OFF)
+          Valve_Switch.postUpdate(OFF)
+
           Level_out.postUpdate(level.toString)
 
 
@@ -309,6 +319,7 @@ rule "Irrigation ON"
   then
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
+    val levelText = transform('MAP',LEVEL_MAP_FILE,Level_out.state.toString)
     
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
@@ -320,7 +331,7 @@ rule "Irrigation ON"
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
       Irrigating.postUpdate(ON)
-      val parameterText = "Wasserstand: "+Level_out.state.toString
+      val parameterText = "Wasserstand derzeit : "+levelText + "\n"
       logInfo("Irrigation ON"," BEFORE MAIL, irrigating set to " + Irrigating.state.toString)
       getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de",
       "Bewaesserung", 
@@ -331,7 +342,6 @@ rule "Irrigation ON"
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
       logInfo("Irrigation ON: NO irrigating , either raining"," ("+LocalCurrentRainVolume.state+", or future rain = "+ForecastRainVolumesGroup.state)
-      val levelText = transform('MAP',LEVEL_MAP_FILE,Level_out.state.toString)
       val parameterText = "KEINE Bewaesserung, denn:\n
       - es hat geregnet (" + YesterdaysRainAmount.state + ") oder\n
       - es regnet oder\n
@@ -372,9 +382,13 @@ rule "Irrigation OFF"
     Irrigating.postUpdate(OFF)
 
     var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
-    var levelText = "LEER"
-    if (level == "0")  levelText = "VOLL"
+    val levelText = transform('MAP',LEVEL_MAP_FILE,level)
     
+    val yesterdaysRain = YesterdaysRainAmount.state
+    if ( yesterdaysRain == "3.33" ) {
+      logInfo("Irrigation_OFF", "Irrigation OFF: fictive rain amount recognized, resetting to 0.00 ")
+      YesterdaysRainAmount.postUpdate("0.00")
+    }
     getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Bewaesserung", "Bewaesserung: AUS \nWasserstand: "+levelText)
     logDebug("", "Irrigation OFF: EXIT")
 end
