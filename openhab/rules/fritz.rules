@@ -64,11 +64,12 @@ when  Item SolarPlug_ON_OFF changed
 then  
  logInfo ("Solar Switch","Solar Main Switch turned {}", SolarPlug_ON_OFF.state.toString)
   val mailActions = getActions("mail","mail:smtp:mysmtp")
-val String mailTextAndSubject  = "Solar Main Switch turned " +SolarPlug_ON_OFF.state.toString
+val String mailTextAndSubject  = "Solar Main Switch turned " +SolarPlug_ON_OFF.state.toString + " Temp = " + SolarPlug_Temp.state.toString
   //val String fakeCia  = "Please report to CIA ASAP or your you will be sentenced.
 //  \n(HOAX)"
   
-mailActions.sendMail("uwe@janssen-muenchen.de, barbara@janssen-muenchen.de",mailTextAndSubject, mailTextAndSubject)
+mailActions.sendMail("uwe@janssen-muenchen.de",mailTextAndSubject, mailTextAndSubject)
   //mailActions.sendMail("uwe@janssen-muenchen.de, barbara@janssen-muenchen.de","your CIA activities", fakeCia)
 
 end
+

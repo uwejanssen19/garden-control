@@ -345,9 +345,28 @@ rule "daemon"
     Time cron "0 5/10 * * * ?" // time spec for release edition: 5/10 means every 10 minutes 5 minutes after minutes % 10
     // e.g. 12, 22, 32, 42 etc.
   then
-  
+  // control fritz plug depending on temperature of the plug
+  val Number fritzPlugTemp = (SolarPlug_Temp.state as QuantityType<Number>).toBigDecimal
+  val hour = now.getHour
+  val Boolean heatingPeriod = (hour >=  9 && hour <= 20)
+  val chosenTemperature = Room_Temperature.state
+ 
+  logInfo("Daemon", "ENTRY, hour = {}, Fritz Plug Temp = {}, chosen = {}", hour, fritzPlugTemp, chosenTemperature)
+  if (heatingPeriod) {
+    if (fritzPlugTemp < chosenTemperature) {
+      logInfo("Daemon", "Fritz Plug Temp = {} < " +chosenTemperature+" -> turn heat +++ON+++",fritzPlugTemp)
+      SolarPlug_ON_OFF.sendCommand(ON)
+    } else {
+        logInfo("Daemon", "Fritz Plug Temp = {} >= "+chosenTemperature+" -> turn heat --OFF--", fritzPlugTemp)
+        SolarPlug_ON_OFF.sendCommand(OFF)
+    }
+  } else {
+  // outside heatingPeriod so turn it OFF whatever happens
+   SolarPlug_ON_OFF.sendCommand(OFF)
+  }
+
   val irrigating = (Irrigating.state == ON) 
-  logDebug("Daemon", "ENTRY, Irrigating.state = {}",Irrigating.state)
+  logDebug("Daemon", "Irrigating.state = {}",Irrigating.state)
   
   
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
@@ -358,6 +377,8 @@ rule "daemon"
   var float comingRainVal  = (ForecastRainVolumesGroup.state as DecimalType).floatValue
   RainProb.sendCommand(comingRainVal)
   logDebug("Daemon","RainProb =  {} ",RainProb.state) 
+
+
 
  
   // *********************************************************************************************************************************************

@@ -264,7 +264,7 @@ rule "Fill barrel FNI"
               Irrigating.postUpdate(ON)
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
-              logDebug("FILL barrel FNI"," level = " + level)
+              logInfo("FILL barrel FNI"," level = " + level)
               if (level == "0" ) // 0=full 
               {
                 logDebug("FILL barrel FNI"," Found barrel full")
@@ -293,6 +293,7 @@ rule "Fill barrel FNI"
 
         } // end case ON
         case OFF: {
+                  logInfo("FILL barrel FNI","*** FILLING BARREL ABORTED ***")
                   water_on_off.sendCommand("0")
                   Fill_Switch.postUpdate(OFF)
                   FillTimerActive.postUpdate(OFF)

@@ -4,11 +4,13 @@ sitemap fritz label= "Fritz Box"
                 Text item=LocalStationLocation label="Koordinaten: [%2$s°N %3$s°E]"
                 { Default item=LocalStationLocation label="Koordinaten: [%2$s°N %3$s°E]"
                 }
+            Slider item=Room_Temperature label="Wunschtemperatur [%s °C]" icon="temperature" minValue=18 maxValue=25 step=0.5
+    
             Default item=SolarPlug_Leistung label="[Aktuelle Leistung %.2f %unit%]" icon="solarplant"
             Default item=SolarPlug_Gesamtverbrauch label="[Gesamtenergie %.3f kWh]" icon="energy"
-            //Default item=gSolarPlug_ON_OFF label="Eingangssteckdose für Solaranlage [%s]" icon="poweroutlet"
+            Default item=SolarPlug_ON_OFF label="Radiator Steckdose [%s]" icon="poweroutlet"
             //Default item=SolarPlug_Spannung label="[Spannung %.1f %unit%]" icon="energy"
-            Default item=SolarPlug_Temp label="[Temperatur %.1f %unit%]" icon="temperature"
+            Default item=SolarPlug_Temp label="[Radiator Steckdose Temperatur %.1f %unit%]" icon="temperature"
             // grafana page not working (probably URL formatting missing)
             //Webview url="<a href='http://xdbu92gos1irkzbd.myfritz.net:8030/d/5KXuWvZRk/solaranlage-und-messstationen?orgId=1&from=now-24h&to=now'>Grafana Solar Overview</a>"
         }
