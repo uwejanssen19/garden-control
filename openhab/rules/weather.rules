@@ -99,6 +99,27 @@ val Procedures$Procedure0 onValveTimer = [
         logDebug("Procedure onValveTimer", "EXIT") 
 ]
 
+val Procedures$Procedure0 heatingControl = [
+  // control fritz plug depending on temperature of the plug
+  val Number fritzPlugTemp = (SolarPlug_Temp.state as QuantityType<Number>).toBigDecimal
+  val hour = now.getHour
+  val Boolean heatingPeriod = (hour >  9 && hour <= 20)
+  val chosenTemperature = Room_Temperature.state
+ 
+  logInfo("heatingControl", "ENTRY, hour = {}, Fritz Plug Temp = {}, chosen = {}", hour, fritzPlugTemp, chosenTemperature)
+  if (heatingPeriod) {
+    if (fritzPlugTemp < chosenTemperature) {
+      logInfo("heatingControl", "Fritz Plug Temp = {} < " +chosenTemperature+" -> turn heat +++ ON +++",fritzPlugTemp)
+      SolarPlug_ON_OFF.sendCommand(ON)
+    } else {
+        logInfo("heatingControl", "Fritz Plug Temp = {} >= "+chosenTemperature+" -> turn heat --- OFF ---", fritzPlugTemp)
+        SolarPlug_ON_OFF.sendCommand(OFF)
+    }
+  } else {
+  // outside heatingPeriod so turn it OFF whatever happens
+   SolarPlug_ON_OFF.sendCommand(OFF)
+  }
+]
 // -----------------------------------------------------------------------------
 //  Timer onIrrigationTimer
 // -----------------------------------------------------------------------------
@@ -345,28 +366,11 @@ rule "daemon"
     Time cron "0 5/10 * * * ?" // time spec for release edition: 5/10 means every 10 minutes 5 minutes after minutes % 10
     // e.g. 12, 22, 32, 42 etc.
   then
-  // control fritz plug depending on temperature of the plug
-  val Number fritzPlugTemp = (SolarPlug_Temp.state as QuantityType<Number>).toBigDecimal
-  val hour = now.getHour
-  val Boolean heatingPeriod = (hour >=  9 && hour <= 20)
-  val chosenTemperature = Room_Temperature.state
- 
-  logInfo("Daemon", "ENTRY, hour = {}, Fritz Plug Temp = {}, chosen = {}", hour, fritzPlugTemp, chosenTemperature)
-  if (heatingPeriod) {
-    if (fritzPlugTemp < chosenTemperature) {
-      logInfo("Daemon", "Fritz Plug Temp = {} < " +chosenTemperature+" -> turn heat +++ON+++",fritzPlugTemp)
-      SolarPlug_ON_OFF.sendCommand(ON)
-    } else {
-        logInfo("Daemon", "Fritz Plug Temp = {} >= "+chosenTemperature+" -> turn heat --OFF--", fritzPlugTemp)
-        SolarPlug_ON_OFF.sendCommand(OFF)
-    }
-  } else {
-  // outside heatingPeriod so turn it OFF whatever happens
-   SolarPlug_ON_OFF.sendCommand(OFF)
-  }
-
   val irrigating = (Irrigating.state == ON) 
   logDebug("Daemon", "Irrigating.state = {}",Irrigating.state)
+
+  // check and turn heating on  / off
+  heatingControl.apply()
   
   
   // tell unix cronjob that openhab's cron is still working (otherwise we will not be here) via script set_alive.sh linked via item 
@@ -503,4 +507,13 @@ then
   val localTimeStr = lastUpdate.format(localFormatter)
   //logInfo("SolarTimeUpdate", "fmt time = "+ localTimeStr)
   Time_Solar3_OH.postUpdate(localTimeStr)
-end 
+end
+
+rule "Wunschtemperatur Aenderung"
+when  Item Room_Temperature changed 
+then  
+  logInfo ("Room_Temperature","Room_Temperature changed {}", Room_Temperature.state)
+  // check if heating should be turned on / off
+  heatingControl.apply()  
+
+end
