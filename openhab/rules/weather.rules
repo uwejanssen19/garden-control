@@ -101,24 +101,24 @@ val Procedures$Procedure0 onValveTimer = [
 
 val Procedures$Procedure0 heatingControl = [
   // control fritz plug depending on temperature of the plug
-  val Number fritzPlugTemp = (SolarPlug_Temp.state as QuantityType<Number>).toBigDecimal
-  val hour = now.getHour
-  val Boolean heatingPeriod = (hour >  9 && hour <= 20)
-  val chosenTemperature = Room_Temperature.state
+  // val Number fritzPlugTemp = (SolarPlug_Temp.state as QuantityType<Number>).toBigDecimal
+  // val hour = now.getHour
+  // val Boolean heatingPeriod = (hour >  9 && hour <= 20)
+  // val chosenTemperature = Room_Temperature.state
  
-  logInfo("heatingControl", "ENTRY, hour = {}, Fritz Plug Temp = {}, chosen = {}", hour, fritzPlugTemp, chosenTemperature)
-  if (heatingPeriod) {
-    if (fritzPlugTemp < chosenTemperature) {
-      logInfo("heatingControl", "Fritz Plug Temp = {} < " +chosenTemperature+" -> turn heat +++ ON +++",fritzPlugTemp)
-      SolarPlug_ON_OFF.sendCommand(ON)
-    } else {
-        logInfo("heatingControl", "Fritz Plug Temp = {} >= "+chosenTemperature+" -> turn heat --- OFF ---", fritzPlugTemp)
-        SolarPlug_ON_OFF.sendCommand(OFF)
-    }
-  } else {
-  // outside heatingPeriod so turn it OFF whatever happens
-   SolarPlug_ON_OFF.sendCommand(OFF)
-  }
+  // logInfo("heatingControl", "ENTRY, hour = {}, Fritz Plug Temp = {}, chosen = {}", hour, fritzPlugTemp, chosenTemperature)
+  // if (heatingPeriod) {
+  //   if (fritzPlugTemp < chosenTemperature) {
+  //     logInfo("heatingControl", "Fritz Plug Temp = {} < " +chosenTemperature+" -> turn heat +++ ON +++",fritzPlugTemp)
+  //     SolarPlug_ON_OFF.sendCommand(ON)
+  //   } else {
+  //       logInfo("heatingControl", "Fritz Plug Temp = {} >= "+chosenTemperature+" -> turn heat --- OFF ---", fritzPlugTemp)
+  //       SolarPlug_ON_OFF.sendCommand(OFF)
+  //   }
+  // } else {
+  // // outside heatingPeriod so turn it OFF whatever happens
+  //  SolarPlug_ON_OFF.sendCommand(OFF)
+  // }
 ]
 // -----------------------------------------------------------------------------
 //  Timer onIrrigationTimer

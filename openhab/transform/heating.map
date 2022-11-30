@@ -1,0 +1,7 @@
+key=value
+heating=Heizen
+standby=Bereit
+Bereit=standby
+Heizen=heating
+UNDEF=-
+-=UNDEF

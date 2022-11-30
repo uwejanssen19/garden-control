@@ -1,0 +1,183 @@
+// location id  for Kolbermoor =  2886446
+Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="19617de07bcc959ff8dc5e0caffce590", refreshInterval=10, language="de"] {
+    Thing weather-and-forecast local "Local Weather And Forecast" [location="47.84889769870895,12.055435180664029", forecastHours=24, forecastDays=0]
+    //Thing weather-and-forecast miami "Weather And Forecast In Miami" [location="25.782403,-80.264563", forecastHours=24, forecastDays=0]
+    //Thing uvindex local "Local UV Index" [location="XXX,YYY", forecastDays=7]
+}
+
+Bridge mqtt:broker:myUnsecureBroker [ host="localhost", secure=false, retain = false, qos=1 ]
+
+//Choose the bridge you want to use and delete the other one.
+Bridge modbus:tcp:localhostTCP [ host="your_inverter_ip", port=502, id=1 ]{
+
+//Bridge modbus:serial:slave100 [ port="/dev/ttyUSB0" ,id=1 , baud=9600, stopBits="1", parity="none", dataBits=8, encoding="rtu" ]{
+
+
+
+Bridge poller slave101holding [ start=30073, length=10, refresh=10000, type="holding" ]{
+    
+        Thing data Rated_power                      [ readStart="30073", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Maximum_active_power             [ readStart="30075", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Maximum_apparent_power           [ readStart="30077", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Maximum_reactive_power_fed       [ readStart="30079", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Maximum_reactive_power_absorbed  [ readStart="30081", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+
+   }
+
+Bridge poller slave102holding [ start=32000, length=1, refresh=10000, type="holding" ]{
+
+
+        Thing data Standalone_tele_indicationbit0          [ readStart="32000.0", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit1          [ readStart="32000.1", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Standalone_tele_indicationbit2          [ readStart="32000.2", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]     
+        Thing data Standalone_tele_indicationbit3          [ readStart="32000.3", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Standalone_tele_indicationbit4          [ readStart="32000.4", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit5          [ readStart="32000.5", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Standalone_tele_indicationbit6          [ readStart="32000.6", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Standalone_tele_indicationbit7          [ readStart="32000.7", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Standalone_tele_indicationbit8          [ readStart="32000.8", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Standalone_tele_indicationbit9          [ readStart="32000.9", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit10         [ readStart="32000.10", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit11         [ readStart="32000.11", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit12         [ readStart="32000.12", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit13         [ readStart="32000.13", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit14         [ readStart="32000.14", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Standalone_tele_indicationbit15         [ readStart="32000.15", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+
+   }
+
+Bridge poller slave102aholding [ start=32002, length=1, refresh=10000, type="holding" ]{
+    
+        Thing data Operating_statusbit0                 [ readStart="32002.0", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Operating_statusbit1                 [ readStart="32002.1", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Operating_statusbit2                 [ readStart="32002.2", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]  
+
+   }
+
+Bridge poller slave103holding [ start=32008, length=1, refresh=10000, type="holding" ]{
+
+        
+        Thing data Alarm_1bit0                          [ readStart="32008.0", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit1                          [ readStart="32008.1", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit2                          [ readStart="32008.2", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit3                          [ readStart="32008.3", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit4                          [ readStart="32008.4", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit5                          [ readStart="32008.5", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit6                          [ readStart="32008.6", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit7                          [ readStart="32008.7", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit8                          [ readStart="32008.8", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit9                          [ readStart="32008.9", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit10                         [ readStart="32008.10", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit11                         [ readStart="32008.11", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit12                         [ readStart="32008.12", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit13                         [ readStart="32008.13", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit14                         [ readStart="32008.14", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_1bit15                         [ readStart="32008.15", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+
+    }
+
+Bridge poller slave103aholding [ start=32009, length=1, refresh=10000, type="holding" ]{        
+        
+        Thing data Alarm_2bit0                          [ readStart="32009.0", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit1                          [ readStart="32009.1", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit2                          [ readStart="32009.2", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit3                          [ readStart="32009.3", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit4                          [ readStart="32009.4", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit5                          [ readStart="32009.5", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit6                          [ readStart="32009.6", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit7                          [ readStart="32009.7", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit8                          [ readStart="32009.8", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit9                          [ readStart="32009.9", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit10                         [ readStart="32009.10", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit11                         [ readStart="32009.11", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit12                         [ readStart="32009.12", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit13                         [ readStart="32009.13", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit14                         [ readStart="32009.14", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Alarm_2bit15                         [ readStart="32009.15", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+
+    } 
+
+//Bridge poller slave103bholding [ start=32010, length=1, refresh=1000, type="holding" ]{        
+                
+        
+    //    Thing data Alarm_3bit0                          [ readStart="320010.0", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit1                          [ readStart="320010.1", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit2                          [ readStart="320010.2", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit3                          [ readStart="320010.3", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit4                          [ readStart="320010.4", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit5                          [ readStart="320010.5", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit6                          [ readStart="320010.6", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit7                          [ readStart="320010.7", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit8                          [ readStart="320010.8", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit9                          [ readStart="320010.9", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit10                         [ readStart="320010.10", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit11                         [ readStart="320010.11", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit12                         [ readStart="320010.12", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit13                         [ readStart="320010.13", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit14                         [ readStart="320010.14", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+    //    Thing data Alarm_3bit15                         [ readStart="320010.15", readValueType="bit",updateUnchangedValuesEveryMillis="5000000" ]
+
+//   }
+
+Bridge poller slave104holding [ start=32016, length=8, refresh=1000, type="holding" ]{
+    
+        Thing data Pv_1_Voltage                    [ readStart="32016", readValueType="int16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Pv_1_Current                    [ readStart="32017", readValueType="int16",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Pv_2_Voltage                    [ readStart="32018", readValueType="int16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Pv_2_Current                    [ readStart="32019", readValueType="int16",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]
+       // Thing data Pv_3_Voltage                    [ readStart="32020", readValueType="int16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+       // Thing data Pv_3_Current                    [ readStart="32021", readValueType="int16",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]
+       // Thing data Pv_4_Voltage                    [ readStart="32022", readValueType="int16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+       // Thing data Pv_4_Current                    [ readStart="32023", readValueType="int16",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]
+
+   }
+
+Bridge poller slave105holding [ start=32064, length=31, refresh=1000, type="holding" ]{
+    
+        Thing data Input_power                    [ readStart="32064", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]     
+        Thing data Uab                            [ readStart="32066", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Ubc                            [ readStart="32067", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Uca                            [ readStart="32068", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Ua                             [ readStart="32069", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Ub                             [ readStart="32070", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Uc                             [ readStart="32071", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data La                             [ readStart="32072", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Lb                             [ readStart="32074", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Lc                             [ readStart="32076", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Active_peak_of_current_day     [ readStart="32078", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Active_power                   [ readStart="32080", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Reactive_power                 [ readStart="32082", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]     
+        Thing data Power_factor                   [ readStart="32084", readValueType="int16",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Frequency                      [ readStart="32085", readValueType="uint16",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ] 
+        Thing data Inverter_efficiency            [ readStart="32086", readValueType="uint16",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Cabinet_temperature            [ readStart="32087", readValueType="int16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Insulation_resistance          [ readStart="32088", readValueType="uint16",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Device_status                  [ readStart="32089", readValueType="uint16",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Fault_code                     [ readStart="32090", readValueType="uint16",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Start_up_time                  [ readStart="32091", readValueType="uint32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Shutdown_time                  [ readStart="32093", readValueType="uint32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="5000000" ]
+
+    }
+
+Bridge poller slave106holding [ start=32106, length=2, refresh=10000, type="holding" ]{
+    
+        Thing data E_total                       [ readStart="32106", readValueType="uint32",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]
+
+    }
+
+Bridge poller slave107holding [ start=32114, length=2, refresh=10000, type="holding" ]{            
+        
+        Thing data E_day                         [ readStart="32114", readValueType="uint32",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="5000000" ]  
+
+    }
+
+Bridge poller slave108holding [ start=40122, length=6, refresh=10000, type="holding" ]{
+    
+        Thing data Reactive_power_compensation_pf [ readStart="40122", readValueType="int16",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]     
+        Thing data Reactive_power_compensation_qs [ readStart="40123", readValueType="int16",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Active_power_derating_percent  [ readStart="40125", readValueType="uint16",readTransform="JS(divide10.js)",updateUnchangedValuesEveryMillis="5000000" ]
+        Thing data Active_power_derating_fixed    [ readStart="40126", readValueType="uint32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="5000000" ]
+    }
+
+
+}

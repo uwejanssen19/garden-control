@@ -1,0 +1,103 @@
+// smart home items
+// infrared heating
+Group Bureau_IR_group
+Group Alerting (Bureau_IR_group) // when the Alerting items change they can send a message
+// ( see smarthome.rules)
+
+Switch Bureau_IR_on_off (Alerting) // should always be ON
+Number Bureau_IR_temp  (Bureau_IR_group) // do not alert every temp change
+Number Set_Bureau_IR_temp  (Bureau_IR_group) // Alert requested temp change
+String Bureau_IR_mode  (Alerting) // mod should always be Auto
+String Bureau_IR_work_state  (Alerting) // this is the actual heating on/off variable
+
+
+// huawei inverter 
+Group   gSolar "Solar data"
+// Group:Number:SUM   gSolalarmMinor  "Minor alarm [%d] "<error>
+// Group:Number:SUM   gSolalarmWarning "Warning [%d] "   <error>
+// Group:Number:SUM   gSolalarmMajor "Major alarm [%d] " <error>
+//Group:Number:SUM   gSolateleIndica  "Standalone tele indication [%d] " <settings>
+Group gPvInput
+
+// Number  Rated_power    "Rated Power [%.1f kWp]"    { channel="modbus:data:localhostTCP:slave101holding:Rated_power:number" }
+// Number  Maximum_active_power                                                                                                { channel="modbus:data:localhostTCP:slave101holding:Maximum_active_power:number" }
+// Number  Maximum_apparent_power                                                                                              { channel="modbus:data:localhostTCP:slave101holding:Maximum_apparent_power:number" }
+// Number  Maximum_reactive_power_fed                                                                                          { channel="modbus:data:localhostTCP:slave101holding:Maximum_reactive_power_fed:number" }
+// Number  Maximum_reactive_power_absorbed                                                                                     { channel="modbus:data:localhostTCP:slave101holding:Maximum_reactive_power_absorbed:number" }
+
+// String  Standalone_tele_indication       "Tele indicatie  [%s]"                 
+// Number  Standalone_tele_indicationbit0   "Stand by"                                                       (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit0:number" }
+// Number  Standalone_tele_indicationbit1   "Grid connection"                                                (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit1:number" }
+// Number  Standalone_tele_indicationbit2   "Normal grid connection"                                         (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit2:number" }
+// Number  Standalone_tele_indicationbit3   "Grid connection with derating due to power rationing"           (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit3:number" }
+// Number  Standalone_tele_indicationbit4   "Grid connection with derating due to inverter internel causes"  (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit4:number" }
+// Number  Standalone_tele_indicationbit5   "Normal stop"                                                    (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit5:number" }
+// Number  Standalone_tele_indicationbit6   "Stop due to faults"                                             (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit6:number" }
+// Number  Standalone_tele_indicationbit7   "Stop due to power rationing"                                    (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit7:number" }
+// Number  Standalone_tele_indicationbit8   "Shutdown"                                                       (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit8:number" }
+// Number  Standalone_tele_indicationbit9   "Spot check"                                                     (gSolateleIndica) { channel="modbus:data:localhostTCP:slave102holding:Standalone_tele_indicationbit9:number" }
+
+// Number  Unlocked              "Unlocked [MAP(0-1.map):%s]"   <settings>                                                     { channel="modbus:data:localhostTCP:slave102aholding:Operating_statusbit0:number" }
+// Number  Pv_connection         "Pv connection [MAP(0-1.map):%s]"  <settings>                                                 { channel="modbus:data:localhostTCP:slave102aholding:Operating_statusbit1:number" }
+// Number  Dsp_data_collection   "Dsp data collection [MAP(0-1.map):%s]"  <settings>                                           { channel="modbus:data:localhostTCP:slave102aholding:Operating_statusbit2:number" }
+
+
+Number  Pv_1_Voltage        "Pv 1 Spannung[%.1f V]"    <energy>                                         (gSolar, gPvInput)             { channel="modbus:data:localhostTCP:slave104holding:Pv_1_Voltage:number" }
+Number  Pv_1_Current        "Pv 1 Strom[%.2f A]"     <energy>                                         (gSolar, gPvInput)              { channel="modbus:data:localhostTCP:slave104holding:Pv_1_Current:number" }
+
+// Number  Input_power                                                                                                          { channel="modbus:data:localhostTCP:slave105holding:Input_power:number" }
+// Number  Uab                                                                                                                  { channel="modbus:data:localhostTCP:slave105holding:Uab:number" }
+// Number  Ubc                                                                                                                  { channel="modbus:data:localhostTCP:slave105holding:Ubc:number" }
+// Number  Uca                                                                                                                  { channel="modbus:data:localhostTCP:slave105holding:Uca:number" }
+// Number  Ua                                                                                            (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Ua:number" }
+// Number  Ub                                                                                            (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Ub:number" }
+// Number  Uc                                                                                            (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Uc:number" }
+// Number  La    "La [%.2f Kw]"                                        { channel="modbus:data:localhostTCP:slave105holding:La:number" }
+// Number  Lb    "Lb [%.2f Kw]"                                        { channel="modbus:data:localhostTCP:slave105holding:Lb:number" }
+// Number  Lc    "Lc [%.2f Kw]"                                        { channel="modbus:data:localhostTCP:slave105holding:Lc:number" }
+// Number  Active_peak_of_current_day  "Peak of Day [%.2f kW]"         { channel="modbus:data:localhostTCP:slave105holding:Active_peak_of_current_day:number" }
+// Number  Reactive_power       "?? [%.2f Kw]"                                                                                                { channel="modbus:data:localhostTCP:slave105holding:Reactive_power:number" }
+// Number  Power_factor                                                                                                         { channel="modbus:data:localhostTCP:slave105holding:Power_factor:number" }
+// Number  Frequency                                                                                                            { channel="modbus:data:localhostTCP:slave105holding:Frequency:number" }
+// Number  Inverter_efficiency  "Inverter Effizienz [%.1f %%]" <settings>                               (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Inverter_efficiency:number" }
+// Number  Cabinet_temperature  "Temperatur Inverter[%.1f °C]"<temperature>                             (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Cabinet_temperature:number" }
+// Number  Insulation_resistance                                                                                                { channel="modbus:data:localhostTCP:slave105holding:Insulation_resistance:number" }
+// Number  Device_status    "Apparat status[MAP(inverter_device_status.map):%s]" <settings>             (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Device_status:number" }
+// Number  Fault_code            "Fault code[%d]"      <error>                                           (gSolar)               { channel="modbus:data:localhostTCP:slave105holding:Fault_code:number" }
+// Number  Start_up_time                                                                                                        { channel="modbus:data:localhostTCP:slave105holding:Start_up_time:number" }
+// Number  Shutdown_time                                                                                                        { channel="modbus:data:localhostTCP:slave105holding:Shutdown_time:number" }
+
+Number  E_total            "Gesamtenergie bisher[%.2f kWh]"    <line>                                      (gSolar)               { channel="modbus:data:localhostTCP:slave106holding:E_total:number" }
+
+Number  E_day              "Solarverbrauch heute[%.2f kWh]" <line>                                      (gSolar)               { channel="modbus:data:localhostTCP:slave107holding:E_day:number" }
+
+// Number  Reactive_power_compensation_pf                                                                                       { channel="modbus:data:localhostTCP:slave108holding:Reactive_power_compensation_pf:number" }
+// Number  Reactive_power_compensation_qs                                                                                       { channel="modbus:data:localhostTCP:slave108holding:Reactive_power_compensation_qs:number" }
+// Number  Active_power_derating_percent                                                                                        { channel="modbus:data:localhostTCP:slave108holding:Active_power_derating_percent:number" }
+// Number  Active_power_derating_fixed                                                                                          { channel="modbus:data:localhostTCP:slave108holding:Active_power_derating_fixed:number" }
+
+Number SOC "Batterie Kapazität [%.1f %%]" <battery> { channel="modbus:data:localhostTCP:slave109holding:SOC:number" }
+
+// Power Meter section
+Number Volt_A "Volt_A [%.1f V]" { channel="modbus:data:localhostTCP:powermeter1:Volt_A:number" }
+Number Volt_B "Volt_B [%.1f V]" { channel="modbus:data:localhostTCP:powermeter1:Volt_B:number" }
+Number Volt_C "Volt_C [%.1f V]" { channel="modbus:data:localhostTCP:powermeter1:Volt_C:number" }
+Group gCurrent "Einzel Ströme"
+Number Current_A "Current_A [%.1f A]" (gCurrent) { channel="modbus:data:localhostTCP:powermeter1:Current_A:number" }
+Number Current_B "Current_B [%.1f A]" (gCurrent) { channel="modbus:data:localhostTCP:powermeter1:Current_B:number" }
+Number Current_C "Current_C [%.1f A]" (gCurrent) { channel="modbus:data:localhostTCP:powermeter1:Current_C:number" }
+
+Group gPowerShares "Einzelverbrauch der Phasen"
+
+Number  Active_power "Solarverbrauch aktuell [%.2f kW]" <energy> (gSolar) { channel="modbus:data:localhostTCP:slave105holding:Active_power:number" }
+
+// Number ActivePower "[Wirkleistung %.1f kW]" { channel="modbus:data:localhostTCP:powermeter1:ActivePower:number" }
+Number GridPower "Netzbezug [%.3f kW]" { channel="modbus:data:localhostTCP:powermeter_grid_power:Grid_power:number" }
+Number Solar_power_calculated "PV Input Power [%.3f kW]" <solarplant>
+
+Number Consumed_power_calculated "Stromverbrauch (Solarverbrauch - Netzbezug) [%.3f kW]" <washingmachine> // solange nichts eingespeist wird und die Stromsensoren noch falsch eingbaut sind
+//Number FedIn_power_calculated "Einspeisung [%.1f W]" // Nur die Einspeisung wird angezeigt
+Group:Number:SUM gPowerShareSum "Gesamtverbrauch reale Werte [%.1f W]" <washingmachine2> // sobald alles korrekt installiert ist (positive Werte -> Einspeisung erlaubt und sinnvoll)
+Number Power_A "Power_A [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerA:Power_A:number" }
+Number Power_B "Power_B [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerB:Power_B:number" }
+Number Power_C "Power_C [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }

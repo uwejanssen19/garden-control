@@ -1,0 +1,74 @@
+// Description: Rules and procedures for smarthome things
+// Author: Uwe Janssen
+// Created: 14.11.2022
+// -----------------------------------------------------------------------------
+// History of changes
+// Date       |  Change                                            | Author
+// -----------------------------------------------------------------------------
+// 14.11.2022 | Creation                                           | Janssen
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+//  Function getEmailText
+// -----------------------------------------------------------------------------
+
+val Functions$Function0<String> getEmailText = [
+  val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
+  wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
+
+  val String emailText='
+    Regen gestern = '+YesterdaysRainAmount.state+' Liter\n
+    IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
+    Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
+    Astro Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=astro\n
+    Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n
+    Smart Home = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=smarthome\n'	
+  //logDebug("getEmailText","EmailText  = {}",emailText)
+
+  return emailText
+]
+// only the members of group "Alerting" will cause a mail to be sent when changed 
+rule Bureau_IR_group_Alerting
+when Member of Alerting changed
+then
+  	var actions = getActions("mail","mail:smtp:mysmtp")
+  	actions.sendMail("uwe@janssen-muenchen.de",triggeringItem.name + " = "+triggeringItem.state, 		getEmailText.apply())
+end
+// Always log a change
+rule Bureau_IR_group
+when Member of Bureau_IR_group changed
+then 
+  logInfo("Bureau_IR_group", triggeringItem.name + " = "+triggeringItem.state)
+end 
+
+rule "Heating OFF"
+// nightly heating stop
+  when
+    //Time cron "0 0/5 * * * ? " // near future test 
+    Time cron "0 00 0-6 * * ? " or
+    Time cron "0 00 21-23 * * ? "
+  then
+    Set_Bureau_IR_temp.sendCommand("18")
+  end
+
+  // Calc Solar Power from Pv Voltage and Current 
+  rule "Calc Solar Power"
+  when Member of gPvInput changed 
+  then
+    val Volt = Pv_1_Voltage.state as Number
+    val Current = Pv_1_Current.state as Number
+    val Power = Volt * Current
+    //logInfo("Calc Solar Power", "Power = "+Power)
+    Solar_power_calculated.postUpdate(Power/1000)
+  end
+
+// Calc consumed Power from Power A B C from power meter
+// Note: If available, Fed-In is included
+  rule "Calc Consumed Power"
+  when Member of gPowerShares changed 
+  then   
+    val netPower = GridPower.state as Number 
+    val solarPower = Active_power.state as Number
+    val consumedPower = solarPower-netPower
+    //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
+    Consumed_power_calculated.postUpdate(consumedPower)
+  end
