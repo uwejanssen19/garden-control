@@ -1,0 +1,31 @@
+Data for integrating tuya device into openhab
+See instructions here: https://github.com/smarthomej/addons/tree/3.2.x/bundles/org.smarthomej.binding.tuya#readme
+
+
+tuya develop account login:	https://iot.tuya.com/cloud/basic?id=p1671156879355kd7jj8&toptab=project
+===================================================================================================
+
+user: google user name
+pwd: google pwd
+
+tuya cloud project data
+=======================
+
+Name				Cloud1
+
+cloud access id:	f5e5rjp8uu3x8dng53rp
+secret:				fc142c1658c14693bccaefffcdedd969
+
+Device id:			bf6f7fff856ae5ee6fmnke
+
+Tuya app login
+==============
+
+User. uwe@janssen-muenchen.de
+pwd: std
+
+
+Project created: 16.12.2022
+
+
+Instructions

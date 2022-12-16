@@ -92,8 +92,8 @@ Group gPowerShares "Einzelverbrauch der Phasen"
 Number  Active_power "Solarverbrauch aktuell [%.2f kW]" <energy> (gSolar) { channel="modbus:data:localhostTCP:slave105holding:Active_power:number" }
 
 // Number ActivePower "[Wirkleistung %.1f kW]" { channel="modbus:data:localhostTCP:powermeter1:ActivePower:number" }
-Number GridPower "Netzbezug [%.3f kW]" { channel="modbus:data:localhostTCP:powermeter_grid_power:Grid_power:number" }
-Number Solar_power_calculated "PV Input Power [%.3f kW]" <solarplant>
+Number GridPower "Netzbezug [%.3f kW]" <energy> { channel="modbus:data:localhostTCP:powermeter_grid_power:Grid_power:number" }
+Number Solar_power_calculated "PV Dach Leistung [%.3f kW]" <solarplant>
 
 Number Consumed_power_calculated "Stromverbrauch (Solarverbrauch - Netzbezug) [%.3f kW]" <washingmachine> // solange nichts eingespeist wird und die Stromsensoren noch falsch eingbaut sind
 //Number FedIn_power_calculated "Einspeisung [%.1f W]" // Nur die Einspeisung wird angezeigt
@@ -101,3 +101,8 @@ Group:Number:SUM gPowerShareSum "Gesamtverbrauch reale Werte [%.1f W]" <washingm
 Number Power_A "Power_A [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerA:Power_A:number" }
 Number Power_B "Power_B [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerB:Power_B:number" }
 Number Power_C "Power_C [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }
+
+Number Solar600_P_AC "P_AC reported from AHOY [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_AC" }
+Number Solar600_P_AC_Limit "Limit for P_AC set to [%.2f W]"
+Switch GridFeedControlEnable "Einspeisebegrenzung [%s]"
+Number LastPowerLimit

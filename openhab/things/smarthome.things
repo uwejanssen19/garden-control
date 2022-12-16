@@ -2,9 +2,10 @@
 Bridge modbus:tcp:localhostTCP 
 [ host="192.168.178.181", port=502, id=1,
  connectMaxTries=1, //How many times we try to establish the connection. Should be at least 1.
- timeBetweenTransactionsMillis=1000, 
+ timeBetweenTransactionsMillis=2000, 
  afterConnectionDelayMillis=3000,
- reconnectAfterMillis=60000, //The connection is kept open at least the time specified here. Value of zero means that connection is disconnected after every MODBUS transaction. In milliseconds.
+ //reconnectAfterMillis=60000, //The connection is kept open at least the time specified here. Value of zero means that connection is disconnected after every MODBUS transaction. In milliseconds.
+ reconnectAfterMillis=0, // new connection for every request
  timeBetweenReconnectMillis=5000 
 
 //rtuEncoded=false, //default: false
@@ -20,15 +21,15 @@ Bridge modbus:tcp:localhostTCP
  ]
  {
 
-   Bridge poller slave101holding [ start=30073, length=10, refresh=10000, type="holding" ]{
+//    Bridge poller slave101holding [ start=30073, length=10, refresh=10000, type="holding" ]{
     
-        Thing data Rated_power                      [ readStart="30073", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
-        Thing data Maximum_active_power             [ readStart="30075", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
-        Thing data Maximum_apparent_power           [ readStart="30077", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
-        Thing data Maximum_reactive_power_fed       [ readStart="30079", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
-        Thing data Maximum_reactive_power_absorbed  [ readStart="30081", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
+//         Thing data Rated_power                      [ readStart="30073", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
+//         Thing data Maximum_active_power             [ readStart="30075", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
+//         Thing data Maximum_apparent_power           [ readStart="30077", readValueType="uint32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
+//         Thing data Maximum_reactive_power_fed       [ readStart="30079", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
+//         Thing data Maximum_reactive_power_absorbed  [ readStart="30081", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="500000" ]
 
-   }
+//    }
 //    Bridge poller slave105holding [ start=32064, length=31, refresh=10000, type="holding" ]{
     Bridge poller slave105holding [ start=32080, length=2, refresh=10000, type="holding" ]{
     

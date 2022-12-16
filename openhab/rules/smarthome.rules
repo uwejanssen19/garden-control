@@ -16,11 +16,8 @@ val Functions$Function0<String> getEmailText = [
   wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
 
   val String emailText='
-    Regen gestern = '+YesterdaysRainAmount.state+' Liter\n
     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
-    Weather Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=openweather\n
-    Astro Page = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=astro\n
-    Grafana = http://'+wanAddress.state.toString+':'+'8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n
+    Grafana = http://'+wanAddress.state.toString+':8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n
     Smart Home = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=smarthome\n'	
   //logDebug("getEmailText","EmailText  = {}",emailText)
 
@@ -63,12 +60,95 @@ rule "Heating OFF"
 
 // Calc consumed Power from Power A B C from power meter
 // Note: If available, Fed-In is included
-  rule "Calc Consumed Power"
-  when Member of gPowerShares changed 
-  then   
-    val netPower = GridPower.state as Number 
-    val solarPower = Active_power.state as Number
-    val consumedPower = solarPower-netPower
-    //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
-    Consumed_power_calculated.postUpdate(consumedPower)
-  end
+rule "Calc Consumed Power"
+when Member of gPowerShares changed 
+then   
+  val netPower = GridPower.state as Number 
+  val solarPower = Active_power.state as Number
+  val consumedPower = solarPower-netPower
+  //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
+  Consumed_power_calculated.postUpdate(consumedPower)
+end
+
+
+// rule to aoid grid feeding via solar 600 mini
+rule "grid feed control"
+//when Time cron "0 0/5 * * * ? " // every five minutes
+when  Item GridPower changed
+then
+// check if GridPower gets postive (grid feeding)
+// if grid power negative or zero // consumption
+// then 
+//  set to default and leave
+// else // (value is positive, i.e. value Watts are fed into grid)
+//  decrease PV power by absolute gridPower value in order not to feed power into grid
+// endif
+// send e-mail until it works properly
+// 
+// TESTS: 
+// ------
+// with fixed grid power negative positive and zero
+// and various PV outpout power values 0, 0.17 (night) , 300, MAX value and negative value (software error)
+
+// let's go:
+val Number MAX_POWER = 750 // Watts
+var gridpower = GridPower.state as Number
+var Number powerLimit = MAX_POWER // default
+val CMD_topic="inverter/devcontrol/0/11/256" // persistent absolute
+val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+var mailActions = getActions("mail","mail:smtp:mysmtp")
+if ( Solar600_P_AC.state == UNDEF || Solar600_P_AC.state == NULL) {// data not availabe
+      logDebug("grid feed control", "**** INVERTER input power not available. Leaving rule")
+      return
+}
+
+val lastPVPowerOuput = Solar600_P_AC.state as Number
+// init LastPowerLimit
+if (LastPowerLimit.state == UNDEF || LastPowerLimit.state == NULL) {
+  logInfo("grid feed control", "LastPowerLimit undefined ")
+  LastPowerLimit.postUpdate(MAX_POWER)
+  logInfo("grid feed control", "LastPowerLimit is now {} ", LastPowerLimit.state)
+}
+var Number lastPowerLimit = LastPowerLimit.state as Number
+logInfo("grid feed control", "real gridPower = {} , BU600 power = {}, Last power limit = {}",gridpower, lastPVPowerOuput, lastPowerLimit)
+// gridpower = 34 // for test only comment out this line after test
+// logInfo("grid feed control", "test gridPower = {} , BU600 power = {}, Last power limit =",gridpower, lastPVPowerOuput, lastPowerLimit)
+if (GridFeedControlEnable.state == ON) { // feed control enabled 
+  if (gridpower > 0) { // feeding
+    // LIMIT is ALWAYS = PV - gridpower (except gridpower negative which means consumption)
+    // e.g. PV = 200, gridpower = 34 (feeding 34) -> limit = (200-34))
+    // e.g. PV = 004, gridpower = 34 (feeding 34) -> not possible since inverter cannot produce less than fed -> software error 
+    // e.g. PV = 701, gridpower = -180 (NEEDING 180) -> nothing done since gridpower < 0 but we set to MAX in order to restore defaults
+    powerLimit = lastPVPowerOuput-gridpower // e.g. PV = 200, gridpower = 140 (feeding 140) -> limit = 60 (200-140))  
+    logInfo("grid feed control", "powerLimit calculated to {}",powerLimit)
+    // double check powerLimit
+    if ( (powerLimit < 0) || (powerLimit > MAX_POWER )) {
+      logError("grid feed control", "**** WRONG **** powerLimit for inverter message: {}", powerLimit)
+      logError("grid feed control", "**** Leaving rule **** powerLimit for inverter message: {}. Leaving rule", powerLimit)
+      // turn switch OFF :
+      GridFeedControlEnable.sendCommand(OFF)
+      return
+    }    
+  } // "else" gridpower negative : powerLimit = MAX_POWER
+  
+  // only send mail if power limit has been changed
+  if (powerLimit != lastPowerLimit) {
+    // FINISH: 
+    // set limit of HOY-M600 to produce at default value or reduced, respectively
+    // note that this line is also is needed if the value had been reduced before
+    mqttActions.publishMQTT(CMD_topic, powerLimit+"") // make string from number
+    LastPowerLimit.postUpdate(powerLimit) // store for next time check up
+    mailActions.sendMail("uwe@janssen-muenchen.de",
+      "Grid Power = "+gridpower+", Power limit old = "+lastPowerLimit+" set to = "+powerLimit, getEmailText.apply())
+    logInfo("grid feed control", "limit set to =  {} ",powerLimit)
+  }
+} else {
+  logInfo("grid feed control", "NOTHING DONE since GridFeedControlEnable  is OFF")
+}
+
+end
+rule "check grid" 
+when Item GridPower changed
+then 
+logInfo("check grid power rule", "gridPower = {}",GridPower.state)
+end

@@ -1,15 +1,8 @@
 sitemap smarthome label= "Smart Home"
 {
-    Frame label="Büro Infrarot Heizung" {
-      Setpoint item=Set_Bureau_IR_temp label="Wunschtemperatur [%s °C]" icon="temperature" minValue=16 maxValue=26 step=1
-	    Text item=Bureau_IR_work_state icon="heating" label="Heizen: [MAP(heating.map):%s]"
-  		labelcolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"] 		valuecolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"]
-      Switch item=Bureau_IR_on_off label="Betrieb [%s]"
-      Default item=Bureau_IR_temp label="IR Heizung Temperatur [%.1f %unit%]" icon="temperature"
-  	  Text item=Bureau_IR_mode label="mode: [%s]"
-	}
   Frame label="PV Anlage" {
-        Text item=SolarPlug_Leistung label="Mini Anlage [%.2f %unit%]" icon="solarplant"
+        Text item=SolarPlug_Leistung label="PV Mini Leistung [%.2f %unit%]" icon="solarplant" // PV Mini AC Leistung
+        Switch item=GridFeedControlEnable 
         Text item=Solar_power_calculated // (PV) Solar Input Leistung
         Text item=SOC // Speicher
         Text item=GridPower  // Netzbezug
@@ -20,16 +13,24 @@ sitemap smarthome label= "Smart Home"
           Text item=Pv_1_Current
   }
 
-  Frame label="Leistungsverbrauch (Werte negativ = Verbrauch, Positiv = Einspeisung)" {
+  Frame label="Verbrauch aktuell (Negativ = Verbrauch, Positiv = Einspeisung)" {
           Text item=Consumed_power_calculated // by rule . not yet correct cause of wrong wiring of smart meter power sensors
           Group item=gPowerShares 
   }
 
-  Frame label="Energieverbrauch" {
+  Frame label="Energieverbrauch summiert" {
           Text item=E_total
           Text item=E_day
   }
-  Frame label="Strom Verbrauchswerte (Werte negativ = Verbrauch, Positiv = Einspeisung)" {
+  Frame label="PV Dach Stromverbrauch Einzel Werte (Werte negativ = Verbrauch, Positiv = Einspeisung)" {
           Group item=gCurrent
-  }           
+  }         
+    Frame label="Büro Infrarot Heizung" {
+      Setpoint item=Set_Bureau_IR_temp label="Wunschtemperatur [%s °C]" icon="temperature" minValue=16 maxValue=26 step=1
+	    Text item=Bureau_IR_work_state icon="heating" label="Heizen: [MAP(heating.map):%s]"
+  		labelcolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"] valuecolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"]
+      Switch item=Bureau_IR_on_off label="Betrieb [%s]"
+      Default item=Bureau_IR_temp label="IR Heizung Temperatur [%.1f %unit%]" icon="temperature"
+  	  Text item=Bureau_IR_mode label="mode: [%s]"
+	}
 }
