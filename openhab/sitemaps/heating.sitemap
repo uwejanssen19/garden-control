@@ -1,0 +1,45 @@
+sitemap heating label= "Heizung"{
+  Frame label="Büro Infrarot Heizung" {
+        Setpoint item=Set_Bureau_IR_temp label="Wunschtemperatur [%s °C]" icon="temperature" minValue=16 maxValue=26 step=1
+        Text item=Bureau_IR_work_state icon="heating" label="Heizen: [MAP(heating.map):%s]"
+        labelcolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"] valuecolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"]
+        Switch item=Bureau_IR_on_off label="Betrieb [%s]"
+        Default item=Bureau_IR_temp label="Büro Temperatur [%.1f %unit%]" icon="temperature"
+        //Text item=Bureau_IR_mode label="mode: [%s]"
+	}
+  Frame label="Fussboden Heizung" {      
+        Switch item=PumpeFussbodenheizung label="Betrieb 60W [%s]" valuecolor=[PumpeFussbodenheizung==ON="green",==OFF="red"]
+        // // Maintenance
+        //Switch item=Tasmota_Action mappings=[restart="Restart", queryFW="Query FW", upgrade="Upgrade FW"]
+
+        // // Tasmota Status
+        // Text item=Tasmota_Version
+        // Text item=Tasmota_Reachable
+
+        // // Diagnostics
+        // Text item=Tasmota_RestartReason
+        // Text item=Tasmota_RSSI
+        // Text item=Tasmota_WifiDowntime
+        // Text item=Tasmota_LoadAvg
+        // Text item=Tasmota_Uptime label="Uptime [%.1f d]"
+        // Text item=Tasmota_Result
+
+        } 
+        Frame label="Büro Heizkörper" {
+          Default item=DECT_301_basic_operation_mode label="DECT_301_basic_operation_mode [%s]" // auto, manual, vacation
+          //Default item=DECT_301_extern_control label="DECT_301_extern_control [%s]"
+          //DECT_301_device_lock
+          Default item=DECT_301_current_temp icon="temperature" label="DECT_301_current_temp [%.1f]" 
+          Default item=DECT_301_device_temp icon="temperature" label="DECT_301_device_temp [%.1f]"
+          Default item=DECT_301_low_temp icon="temperature" label="DECT_301_low_temp [%s]"
+          Default item=DECT_301_high_temp icon="temperature" label="DECT_301_high_temp [%s]"
+          Default item=DECT_301_radiator_mode label="DECT_301_radiator_mode [%s]" // ON, OFF, ECO, BOOST, WINDOW_OPEN
+          valuecolor=[DECT_301_radiator_mode=="ON"="red",=="COMFORT"="red"]
+          labelcolor=[DECT_301_radiator_mode=="ON"="red",=="COMFORT"="red"]
+        
+          Default item=DECT_301_next_operation label="DECT_301_next_operation [%s]" 
+          Default item=DECT_301_next_temp icon="temperature" label="DECT_301_next_temp [%.1f]"
+          Default item=DECT_301_battery_low label="DECT_301_battery_low [%s]"
+          Default item=DECT_301_battery_level icon="battery" label="DECT_301_battery_level [%s]"
+        }
+}

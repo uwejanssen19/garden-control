@@ -1,0 +1,24 @@
+
+// Tasmota Software on OBI Socket ("OBI Socket 2")
+Thing mqtt:topic:myUnsecureBroker:floor_heating_pump_thing (mqtt:broker:myUnsecureBroker) 
+[ availabilityTopic="tele/floor_heating/LWT", payloadAvailable="Online", payloadNotAvailable="Offline" ] {
+Channels:
+         Type switch : floor_heating_pump_switch
+         [stateTopic="stat/floor_heating/POWER"/*, commandTopic="cmnd/floor_heating/POWER", on="ON", off="OFF"*/]  
+         // Tasmota Status
+        Type string : Version      [stateTopic="stat/floor_heating/STATUS2", transformationPattern="JSONPATH:$.StatusFWR.Version"]
+        Type switch : Reachable    [stateTopic="tele/floor_heating/LWT",     transformationPattern="MAP:tasmota-reachable.map"]
+
+        // Diagnostics: Define specific for what you really need on a regular basis, use standalone MQTT client for troubleshooting
+        Type string : RestartReason [stateTopic="tele/floor_heating/INFO3", transformationPattern="JSONPATH:$.Info3.RestartReason"]
+        // old one, have to query it
+        Type string : Version2      [stateTopic="stat/floor_heating/STATUS2", transformationPattern="JSONPATH:$.StatusFWR.Version"]
+        // new one - comes for free at startup
+        Type string : Version       [stateTopic="tele/floor_heating/INFO1", transformationPattern="JSONPATH:$.Info1.Version"]
+        Type number : RSSI          [stateTopic="tele/floor_heating/STATE", transformationPattern="JSONPATH:$.Wifi.RSSI"]
+        Type string : WifiDowntime  [stateTopic="tele/floor_heating/STATE", transformationPattern="JSONPATH:$.Wifi.Downtime"]
+        Type number : LoadAvg       [stateTopic="tele/floor_heating/STATE", transformationPattern="JSONPATH:$.LoadAvg"]
+        Type number : Uptime        [stateTopic="tele/floor_heating/STATE", transformationPattern="JSONPATH:$.UptimeSec"]
+        Type string : Result        [stateTopic="stat/floor_heating/RESULT"]
+   
+ }

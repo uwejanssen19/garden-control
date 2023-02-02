@@ -4,6 +4,7 @@ Strategies {
     everyDay : "0 0 0 * * ?"
     everyHalfHour : "0 0/30 * * * ?"  // check every half hour
     every10Minutes : "0 0/10 * * * ?"  // check every 10 minutes
+    every5Minutes : "0 0/5 * * * ?"  // check every 5 minutes
     default = everyChange
 }
 
@@ -17,10 +18,10 @@ Items {
     // Solarmodul Gartenhaus
     Vcc_Solar1 : strategy =  everyHalfHour
     Temp_Solar1 : strategy =  everyHalfHour
-    // Solarmodul Carport
+    // Solarmodul 
     Vcc_Solar2 : strategy =  everyHalfHour
     Temp_Solar2 : strategy =  everyHalfHour
-    // Solarmodul South
+    // Solarmodul Carport
     Vcc_Solar3 : strategy =  everyHalfHour
     Temp_Solar3 : strategy =  everyHalfHour
 
@@ -33,4 +34,7 @@ Items {
 
     Hum_Solar1 : strategy = every10Minutes
     SolarPlug_Leistung : strategy = every10Minutes
+
+    Solar_power_calculated: strategy = every10Minutes
+    GridPower : strategy = everyMinute
 }

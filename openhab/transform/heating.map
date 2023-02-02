@@ -1,5 +1,5 @@
 key=value
-heating=Heizen
+heating=Heizen (800W)
 standby=Bereit
 Bereit=standby
 Heizen=heating

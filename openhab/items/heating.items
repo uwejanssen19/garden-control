@@ -1,0 +1,53 @@
+// infrared heating
+Group Bureau_IR_group
+Group Alerting (Bureau_IR_group) // when the Alerting items change they can send a message
+Group HeatingDevices
+// ( see smarthome.rules)
+
+Switch Bureau_IR_on_off (Alerting) // should always be ON
+Number Bureau_IR_temp  (Bureau_IR_group) // do not alert every temp change
+Number Set_Bureau_IR_temp  (Bureau_IR_group) // Alert requested temp change
+String Bureau_IR_mode  (Alerting) // mod should always be Auto
+String Bureau_IR_work_state  (Alerting, HeatingDevices) // this is the actual heating on/off variable
+
+// floor heating pump
+Switch PumpeFussbodenheizung (HeatingDevices) { channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:floor_heating_pump_switch" }
+
+// Tasmota Status
+String             Tasmota_Version   "Tasmota Version [%s]" {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:Version", 
+ channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:Version2"}
+Switch             Tasmota_Reachable "Reachable"            {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:Reachable"}
+
+// Diagnostics
+String               Tasmota_RestartReason "Restart Reason [%s]"  {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:RestartReason"}
+Number:Dimensionless Tasmota_RSSI          "Signal [%d %%]"       {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:RSSI"}
+String               Tasmota_WifiDowntime  "Wifi Downtime [%s]"   {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:WifiDowntime"}
+Number:Dimensionless Tasmota_LoadAvg       "Load [%d %%]"         {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:LoadAvg"}
+String               Tasmota_Result        "Result [%s]"          {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:Result"}
+Number:Time          Tasmota_Uptime        "Uptime [%.1f s]"      {channel="mqtt:topic:myUnsecureBroker:floor_heating_pump_thing:Uptime"}
+
+// Maintenance (described below)
+String Tasmota_Action "Tasmota Action"
+//Manage Heating Devices
+Group:Number:SUM gHeatingPower
+Number:Power Bureau_IR_work_state_Power (gHeatingPower) 
+Number:Power PumpeFussbodenheizung_Power (gHeatingPower)
+
+//Number:Dimensionless SOCLastValue
+
+//+++++++++++++++++++++++++++++++++++++++++++++
+// DECT 301 Heizkoerperventil 
+//+++++++++++++++++++++++++++++++++++++++++++++
+
+String DECT_301_basic_operation_mode // auto, manual, vacation
+Contact DECT_301_extern_control
+Contact DECT_301_device_lock
+Number:Temperature DECT_301_current_temp
+Number:Temperature DECT_301_device_temp
+Number:Temperature DECT_301_low_temp
+Number:Temperature DECT_301_high_temp
+String DECT_301_radiator_mode  (Alerting)// ON, OFF, ECO, BOOST, WINDOW_OPEN
+DateTime DECT_301_next_operation // 
+Number:Temperature DECT_301_next_temp
+Switch DECT_301_battery_low
+Number:Dimensionless DECT_301_battery_level

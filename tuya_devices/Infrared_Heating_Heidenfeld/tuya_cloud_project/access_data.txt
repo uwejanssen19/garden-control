@@ -16,7 +16,8 @@ Name				Cloud1
 cloud access id:	f5e5rjp8uu3x8dng53rp
 secret:				fc142c1658c14693bccaefffcdedd969
 
-Device id:			bf6f7fff856ae5ee6fmnke
+Device id:			bf6f7fff856ae5ee6fmnke (IR heating)
+
 
 Tuya app login
 ==============
@@ -28,4 +29,105 @@ pwd: std
 Project created: 16.12.2022
 
 
-Instructions
+Devices for OPENHAB things
+#################Büro Heizung ########################
+UID: tuya:tuyaDevice:bf6f7fff856ae5ee6fmnke
+label: Bureau IR
+thingTypeUID: tuya:tuyaDevice
+configuration:
+  pollingInterval: 0
+  protocol: "3.3"
+  productId: j4vyknploaq0d4le
+  deviceId: bf6f7fff856ae5ee6fmnke
+  localKey: cd617f018e985f50
+channels:
+  - id: mode
+    channelTypeUID: tuya:string
+    label: mode
+    description: null
+    configuration:
+      dp: 4
+      range: smart,auto
+  - id: temp_current_f
+    channelTypeUID: tuya:number
+    label: temp_current_f
+    description: null
+    configuration:
+      dp: 15
+      max: 122
+      min: -4
+  - id: temp_set
+    channelTypeUID: tuya:number
+    label: temp_set
+    description: null
+    configuration:
+      dp: 2
+      max: 40
+      min: 0
+  - id: temp_unit_convert
+    channelTypeUID: tuya:string
+    label: temp_unit_convert
+    description: null
+    configuration:
+      dp: 13
+      range: c,f
+  - id: temp_current
+    channelTypeUID: tuya:number
+    label: temp_current
+    description: null
+    configuration:
+      dp: 3
+      max: 50
+      min: -20
+  - id: work_state
+    channelTypeUID: tuya:string
+    label: work_state
+    description: null
+    configuration:
+      dp: 11
+      range: heating
+  - id: switch
+    channelTypeUID: tuya:switch
+    label: switch
+    description: null
+    configuration:
+      dp: 1
+  - id: temp_set_f
+    channelTypeUID: tuya:number
+    label: temp_set_f
+    description: null
+    configuration:
+      dp: 14
+      max: 104
+      min: 32
+######################################################
+
+################ Fussbodenheizung ####################
+ID: tuya:tuyaDevice:6331124570039f8bcc62
+label: Pumpe Fussbodenheizung
+thingTypeUID: tuya:tuyaDevice
+configuration:
+  pollingInterval: 0
+  protocol: "3.3"
+  productId: mp3kv0ozvagrezwu
+  deviceId: 6331124570039f8bcc62
+  localKey: bd563989d3dbfe1c
+channels:
+  - id: switch_1
+    channelTypeUID: tuya:switch
+    label: switch_1
+    description: null
+    configuration:
+      dp: 1
+  - id: countdown_1
+    channelTypeUID: tuya:number
+    label: countdown_1
+    description: null
+    configuration:
+      dp: 9
+      max: 86400
+      min: 0
+########################################################
+
+
+

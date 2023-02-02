@@ -63,26 +63,3 @@ Thing mqtt:topic:myUnsecureBroker:astro_thing (mqtt:broker:myUnsecureBroker) {
         Type string : elevation_channel "elevation_channel" [stateTopic="elevation", commandTopic="elevation"]
         Type string : distance "distance_channel" [stateTopic="distance", commandTopic="distance"]
 }
-Thing mqtt:topic:myUnsecureBroker:solar_600_thing (mqtt:broker:myUnsecureBroker) {
-Channels:
-        // state topic for reporting the output power
-        Type number : P_AC "Power AC from Inverter" [ stateTopic="inverter/BU_600/ch0/P_AC"]
-        // how the state topic is built:
-        // power reading from topic schema
-        // inverter     defined in ahoy setup
-        // BU_600       inverter name defined in ahoy setup
-        // ch0          AC values (ch1, ch2 DC module specific)
-        // P_AC         AC power output
-
-        // command power for setting power limit
-        Type number : Set_Limit_absolute_P_AC "Persistent Absolute Limit" [commandTopic="inverter/devcontrol/0/11/256" ]
-        // how the command topic is built:
-        // inverter/devcontrol/0/11/256 means: 
-        //
-        // inverter     defined in ahoy setup
-        // devcontrol   predefined
-        // 0            first inverter in setup page
-        // 11           set power limit command
-        // 256          set persistent power limit in WATT (0 ... 65535)
-        // 257          set persistent power limit relative in percent of max (0 ... 100)
-}

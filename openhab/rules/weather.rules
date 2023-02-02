@@ -41,6 +41,19 @@ val int SOIL_HUM_TRESHOLD = 550
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
+//  Function isWinter
+// (for the current day)
+// -----------------------------------------------------------------------------
+
+val Functions$Function0<Boolean> isWinter = [ 
+  // check if are in winter
+  val month = now.getMonth.getValue()
+  val Boolean retVal = (month >10 || month < 4)
+  logDebug("isWinter ", " month  = {}, retVal = {}" , month, retVal)
+  return retVal
+]
+
+// -----------------------------------------------------------------------------
 //  Function isLastLawnIrrigationCron
 // (for the current day)
 // -----------------------------------------------------------------------------
@@ -52,8 +65,7 @@ val Functions$Function0<Boolean> isLastLawnIrrigationCron = [
   // Calculation of last event is based upon cron entry "0 0/1 8-20 * 3-10 ?" 
 
   val hour = now.getHour
-  val minute = now.getMinute
-  
+  val minute = now.getMinute  
   val Boolean retVal = (hour ==  19 && minute == 59) // last occurrence 
   logDebug("isLastLawnIrrigationCron ", " hour = {}, minute = {}, retVal = {}" , hour, minute, retVal)
   return retVal
@@ -361,7 +373,7 @@ end
 
 // This rule serves as a steady bgackground task running periodically
 rule "daemon"
-  when 
+  when
     //Time cron "0 0/1 * * * ?" //near future test
     Time cron "0 5/10 * * * ?" // time spec for release edition: 5/10 means every 10 minutes 5 minutes after minutes % 10
     // e.g. 12, 22, 32, 42 etc.
@@ -382,43 +394,36 @@ rule "daemon"
   RainProb.sendCommand(comingRainVal)
   logDebug("Daemon","RainProb =  {} ",RainProb.state) 
 
-
-
- 
-  // *********************************************************************************************************************************************
-  // NOTE: 
-  // If we do not get here within ONE hour since the last Set_alive command something is wrong with openhab CRON and the computer will be restarted
-  //
-  // *********************************************************************************************************************************************
-
   val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
+  if (!(isWinter.apply())) { // only in summer
 
-  // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
-  // -> turn ON again 
-  if (irrigating) {
-      logDebug("Daemon","found irrigation is active, so turn or leave it ON")
-      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-      if (irrigating) {
-        Irr_Switch.postUpdate(ON)
-        irrOnOffProc?.apply("1", SCRIPT_DIR)
+    // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
+    // -> turn ON again 
+    if (irrigating) {
+        logDebug("Daemon","found irrigation is active, so turn or leave it ON")
+        GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+        if (irrigating) {
+          Irr_Switch.postUpdate(ON)
+          irrOnOffProc?.apply("1", SCRIPT_DIR)
+        }
+    } else {
+        logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
+        irrOnOffProc?.apply("0", SCRIPT_DIR)
+        if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
+            // save water: 
+            water_on_off.sendCommand("0")
+            GardencontrolPowerSupply.sendCommand(OFF)
+            logDebug("Daemon","found irrigation is inactive, so I turned off tap water")
+            //Valve_Switch?.sendCommand(OFF)
+            //water_on_off?.sendCommand("0")
+            //GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
+            //GardencontrolPowerSupply.postUpdate(OFF) 
+            LawnIrrigationTimeLeft.sendCommand(-1)
+        }
       }
-  } else {
-      logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
-      irrOnOffProc?.apply("0", SCRIPT_DIR)
-      if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
-          // save water: 
-          water_on_off.sendCommand("0")
-          GardencontrolPowerSupply.sendCommand(OFF)
-          logDebug("Daemon","found irrigation is inactive, so I turned off tap water")
-          //Valve_Switch?.sendCommand(OFF)
-          //water_on_off?.sendCommand("0")
-          //GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
-          //GardencontrolPowerSupply.postUpdate(OFF) 
-          LawnIrrigationTimeLeft.sendCommand(-1)
-      }
-    }
+  } 
       
-    logDebug("Daemon","EXIT")
+logDebug("Daemon","EXIT")
 end
 
 // -----------------------------------------------------------------------------

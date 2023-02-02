@@ -16,7 +16,7 @@ then
 
 		val fboxactions = getActions("tr064","tr064:fritzbox:fbox")	// actions for the phonebook, does NOT work in OpenHAB version 3.0.1, install a newer version of the tr064 binding!!!
 
-		logInfo ("call list change", "========== Fritzbox CallList ==========")
+		logDebug ("call list change", "========== Fritzbox CallList ==========")
 		//val String rawData = '[{"length":1,"radius":11},{"length":2,"radius":22},{"length":3,"radius":33}]'
 
 		// var first = transform("JSONPATH", "$.[3]", FritzBox_CallList28.state.toString) 
@@ -32,9 +32,9 @@ then
 			// $.[0] JSONPATH parses a single entry of the list: from 0 until ...
 			// remember: JSONPATH returns the complete json-struct if the path can not be resolved!
 			// If the first char of the path start with "[", we have reached the end of the struct
-			logInfo("call_list","checking entry : {}", transform("JSONPATH","$["+i+"]",FritzBox_CallList28.state.toString))
+			logDebug("call_list","checking entry : {}", transform("JSONPATH","$["+i+"]",FritzBox_CallList28.state.toString))
 			calltype =transform("JSONPATH", "$.["+ i +"].type", FritzBox_CallList28.state.toString)
-            logInfo("call list change", "calltype = {}",calltype)
+            logDebug("call list change", "calltype = {}",calltype)
 			localNumber = transform("JSONPATH", "$.["+ i +"].localNumber", FritzBox_CallList28.state.toString)
 			entry = ! calltype.startsWith("[")
 			if (entry && calltype == "2") {
@@ -65,7 +65,7 @@ then
  logInfo ("Solar Switch","Solar Main Switch turned {}", SolarPlug_ON_OFF.state.toString)
   val mailActions = getActions("mail","mail:smtp:mysmtp")
 val String mailTextAndSubject  = "Solar Main Switch turned " +SolarPlug_ON_OFF.state.toString + " Temp = " + SolarPlug_Temp.state.toString
-  //val String fakeCia  = "Please report to CIA ASAP or your you will be sentenced.
+  //val String fakeCia  = "Please report to CIA ASAP or you will be sentenced.
 //  \n(HOAX)"
   
 mailActions.sendMail("uwe@janssen-muenchen.de",mailTextAndSubject, mailTextAndSubject)
