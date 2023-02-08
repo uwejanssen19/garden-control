@@ -89,60 +89,60 @@ rule "Smart heating"
 //  control heating in bureau depending on power 
   when Member of gSmartPower changed
   then 
+    val boolean heatingPeriod = ( now.getHour > 9 && now.getHour < 23)
     val boolean lastEnoughPower = if (EnoughPowerLast.state == UNDEF || EnoughPowerLast.state == NULL || EnoughPowerLast.state == "false") false else true
     val Number HIGH_TEMP = 25
     val Number LOW_TEMP = 18
     val Number HEATING_POWER = 800
-    val Number MIMINAL_LOAD_POWER = HEATING_POWER*1.5
+    //val Number MIMINAL_LOAD_POWER = HEATING_POWER*1.5
     val Number solarPower =  Solar_power_calculated.state as Number * 1000 //  Watt
     val Number soc = SOC.state // battery level
     val Number MIN_SOC = 75
     val boolean enoughBattery =(soc > MIN_SOC)
     //val Number gridpower = (GridPower.state as Number)*1000
     val Number MIN_GRID_FEED = 100
-    val Number gridPowerAverage_30minutes = GridPower.averageSince(now.minusMinutes(30))*1000
+    val Number gridPowerAverage = GridPower.averageSince(now.minusMinutes(30))*1000
     val Number solarPowerMini = Solar600_P_AC.state as Number
 
     val boolean enoughPower = 
       enoughBattery ||
-      (solarPower - HEATING_POWER > MIMINAL_LOAD_POWER) || 
-      gridPowerAverage_10minutes > MIN_GRID_FEED /* or at least 100W grid feed in the last 10 minutes should be achieved */
+      gridPowerAverage > MIN_GRID_FEED /* at least 100W grid feed in the last  10 minutes should be achieved */
 
 
     //val boolean socDecreasing =  (soc < socLast)
-    val boolean shallHeat = /*!socDecreasing && */enoughPower
+    //val boolean shallHeat = /*!socDecreasing && */enoughPower
     val String POWER_STR = (if (enoughPower) "Enough Power. will HEAT " else "NOT ENOUGH POWER: Battery Level "+soc+"%; turn DOWN ")
-    val boolean heatingPeriod = ( now.getHour > 9 && now.getHour < 23)
     var temperature = LOW_TEMP
     // PLAUSI CHECK:
     // if (grid power > 0 ) // einspeisung
     // && if solarPowerDach + SolarPowerMini > gridPower -> ERROR
     val Number powerSum = solarPower+solarPowerMini
-    if (powerSum < gridPowerAverage_30minutes) {
-      logError("Smart heating","SUM of Solar Power = {}  < gridPowerAverage = {} . DO NOTHING, just leave.",powerSum, gridPowerAverage_10minutes)
+
+    GridAverageProxy.postUpdate(gridPowerAverage)
+
+    if (powerSum < gridPowerAverage) {
+      logError("Smart heating","SUM of Solar Power = {}  < gridPowerAverage = {} . DO NOTHING, just leave.",powerSum, gridPowerAverage)
       return
     }
 
-
-
     //var Number socLast = if (SOCLastValue == UNDEF || SOCLastValue == NULL) = soc else SOCLastValue.state
     //logInfo("Smart heating DEBUG ","last enough power = {}, current enough power = {}",lastEnoughPower,enoughPower)
-    logDebug("Smart heating",POWER_STR+". SOC state = {}%, Solar Power = {}, gridPowerAverage = {} ",SOC.state, solarPower, gridPowerAverage_10minutes)
+    logDebug("Smart heating",POWER_STR+". SOC state = {}%, Solar Power = {}, gridPowerAverage = {} ",SOC.state, solarPower, gridPowerAverage)
     EnoughPowerLast.postUpdate(enoughPower+"")
     // conditions to do sth.
     // 
     // 1. there muste b a change of conditions versus last rule invocation 
     // 2. inside haeting period
     // 3. IR heater is not OFF
-    val boolean doAnything = (enoughPower != lastEnoughPower) && heatingPeriod && Bureau_IR_on_off.state != OFF
+    val boolean doAnything = (lastEnoughPower != enoughPower) && heatingPeriod && Bureau_IR_on_off.state != OFF
     if (doAnything) {
-      if (shallHeat) {
+      if (enoughPower) {
       // turn higher if ON
         temperature = HIGH_TEMP
-        logInfo("Smart heating",POWER_STR+"HEATING,  turn IR temperature to {}", temperature)
+        logInfo("Smart heating",POWER_STR+", gridAverage = {},  turn IR temperature to {}", gridPowerAverage,temperature)
       }
       Set_Bureau_IR_temp.sendCommand(temperature)
     } else {
-      logDebug("Smart heating","No change -> do nothing, heatingPeriod = {}", heatingPeriod)
+      logDebug("Smart heating","No change -> do nothing, heatingPeriod = {}, IR heating ON/OFF = {}, last enough value = {}, ", heatingPeriod, Bureau_IR_on_off.state, lastEnoughPower )
     }
 end

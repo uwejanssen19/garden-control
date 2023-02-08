@@ -100,3 +100,4 @@ Number LastSetPowerLimit { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:
 
 Group gSmartPower // smart heating input
 String EnoughPowerLast
+Number GridAverageProxy

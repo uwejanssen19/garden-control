@@ -37,4 +37,5 @@ Items {
 
     Solar_power_calculated: strategy = every10Minutes
     GridPower : strategy = everyMinute
+    GridAverageProxy: strategy = everyHalfHour
 }

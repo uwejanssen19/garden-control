@@ -4,7 +4,7 @@ sitemap smarthome label= "Smart Home"
           Text item=Solar_power_calculated // (PV) Solar Input Leistung
           Text item=SOC // Speicher
           Text item=GridPower  // Netzbezug
-                  valuecolor=[GridPower>0="lightgreen",<=0="red"]
+                  valuecolor=[GridPower>0="lime",<=0="red"]
           Text item=Active_power // Eigenverbrauch
   }
   Frame label="PV Anlage Mini" {
