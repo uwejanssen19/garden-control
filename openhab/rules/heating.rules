@@ -86,48 +86,66 @@ rule "Heating Power"
   end
 
 rule "Smart heating"
-//  control heating in bureau depending on power 
+// control heating in bureau depending on power 
+// depending on how much is fed into the grid and SOC (State Of Charge, i.e. battery power) 
   when Member of gSmartPower changed
   then 
     val boolean heatingPeriod = ( now.getHour > 9 && now.getHour < 23)
     val boolean lastEnoughPower = if (EnoughPowerLast.state == UNDEF || EnoughPowerLast.state == NULL || EnoughPowerLast.state == "false") false else true
     val Number HIGH_TEMP = 25
     val Number LOW_TEMP = 18
-    val Number HEATING_POWER = 800
-    //val Number MIMINAL_LOAD_POWER = HEATING_POWER*1.5
-    val Number solarPower =  Solar_power_calculated.state as Number * 1000 //  Watt
+//    val Number HEATING_POWER = 0.800 // kW
+    val Number solarPower =  Solar_power_calculated.state as Number // kW
     val Number soc = SOC.state // battery level
     val Number MIN_SOC = 75
     val boolean enoughBattery =(soc > MIN_SOC)
     //val Number gridpower = (GridPower.state as Number)*1000
-    val Number MIN_GRID_FEED = 100
-    val Number gridPowerAverage = GridPower.averageSince(now.minusMinutes(30))*1000
-    val Number solarPowerMini = Solar600_P_AC.state as Number
+    val Number MIN_GRID_FEED = 0.2 // kW
+    val Number MAX_SOLAR_POWER = 10 // kW , maximum 8kW peak from the roof and maximum 1kW from the mini PV
+    var Number gridPowerAverage = 0
+    val Number solarPowerMini = (Solar600_P_AC.state as Number)/1000 //  kW
+    val Number gridPower = GridPower.state as Number
+// plausi check gridPower value
+    if (gridPower > MAX_SOLAR_POWER) {
+      logError("Smart heating","max grid power exceeded: gridPower [{}] kW > MAX_SOLAR_POWER [{}] kW. DO NOTHING, just leave.",gridPower, MAX_SOLAR_POWER)
+      return
+    } else {
+      // value in Range, so persist gridPower and its average in influx DB for grafana usage
+      GridPower.persist
+      gridPowerAverage = GridPower.averageSince(now.minusMinutes(10))
+      // store item 
+      GridAverageProxy.postUpdate(gridPowerAverage)
+      // store in DB
+      GridAverageProxy.persist
+      logDebug("Smart heating","valid grid power: [{}] > {}. Store in DB ",gridPower)
+    }
 
     val boolean enoughPower = 
       enoughBattery ||
-      gridPowerAverage > MIN_GRID_FEED /* at least 100W grid feed in the last  10 minutes should be achieved */
+      gridPowerAverage > MIN_GRID_FEED /* at least 100W grid feed in the last 10 minutes should be achieved */
+
+    // PLAUSI CHECK: average against 
+    // if (grid power average > 0 ) // einspeisung
+    // && if solarPowerDach + SolarPowerMini > gridPower -> ERROR
+
+    val Number powerSum = solarPower+solarPowerMini // Watt
+
+
+    if (powerSum < gridPowerAverage) {
+      logError("Smart heating","SUM of Solar Power = {} kW < gridPowerAverage = {} kW. DO NOTHING, just leave.",powerSum, gridPowerAverage)
+      return
+    }
+    GridAverageProxy.postUpdate(gridPowerAverage)
 
 
     //val boolean socDecreasing =  (soc < socLast)
     //val boolean shallHeat = /*!socDecreasing && */enoughPower
     val String POWER_STR = (if (enoughPower) "Enough Power. will HEAT " else "NOT ENOUGH POWER: Battery Level "+soc+"%; turn DOWN ")
     var temperature = LOW_TEMP
-    // PLAUSI CHECK:
-    // if (grid power > 0 ) // einspeisung
-    // && if solarPowerDach + SolarPowerMini > gridPower -> ERROR
-    val Number powerSum = solarPower+solarPowerMini
-
-    GridAverageProxy.postUpdate(gridPowerAverage)
-
-    if (powerSum < gridPowerAverage) {
-      logError("Smart heating","SUM of Solar Power = {}  < gridPowerAverage = {} . DO NOTHING, just leave.",powerSum, gridPowerAverage)
-      return
-    }
 
     //var Number socLast = if (SOCLastValue == UNDEF || SOCLastValue == NULL) = soc else SOCLastValue.state
     //logInfo("Smart heating DEBUG ","last enough power = {}, current enough power = {}",lastEnoughPower,enoughPower)
-    logDebug("Smart heating",POWER_STR+". SOC state = {}%, Solar Power = {}, gridPowerAverage = {} ",SOC.state, solarPower, gridPowerAverage)
+    logDebug("Smart heating",POWER_STR+". SOC state = {}%, Solar Power = {} kW, gridPowerAverage = {} kW ",SOC.state, solarPower, gridPowerAverage)
     EnoughPowerLast.postUpdate(enoughPower+"")
     // conditions to do sth.
     // 
