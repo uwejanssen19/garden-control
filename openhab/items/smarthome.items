@@ -79,7 +79,7 @@ Number Current_C "Current_C [%.1f A]" (gCurrent) { channel="modbus:data:localhos
 
 Group gPowerShares "Einzelverbrauch der Phasen"
 
-Number  Active_power "Solarverbrauch aktuell [%.3f kW]" <energy> (gSolar) { channel="modbus:data:localhostTCP:slave105holding:Active_power:number" }
+Number  ActivePower "Solarverbrauch aktuell [%.3f kW]" <energy> (gSolar) { channel="modbus:data:localhostTCP:slave105holding:Active_power:number" }
 
 // Number ActivePower "[Wirkleistung %.1f kW]" { channel="modbus:data:localhostTCP:powermeter1:ActivePower:number" }
 Number GridPower "Netzbezug [%.3f kW]" <energy> (gSmartPower) { channel="modbus:data:localhostTCP:powermeter_grid_power:Grid_power:number" }

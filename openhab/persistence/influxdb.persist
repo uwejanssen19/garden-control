@@ -37,4 +37,7 @@ Items {
     SolarPlug_Leistung : strategy = every10Minutes
 
     Solar_power_calculated: strategy = every10Minutes
+
+    SOC: strategy = every10Minutes  
+    ActivePower: strategy = everyMinute 
 }

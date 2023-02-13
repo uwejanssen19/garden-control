@@ -41,7 +41,7 @@ rule "Calc Consumed Power"
 when Member of gPowerShares changed 
 then   
   val netPower = GridPower.state as Number 
-  val solarPower = Active_power.state as Number
+  val solarPower = ActivePower.state as Number
   val consumedPower = solarPower-netPower
   //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
   Consumed_power_calculated.postUpdate(consumedPower)

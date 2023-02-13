@@ -1,6 +1,6 @@
 sitemap heating label= "Heizung"{
   Frame label="Büro Infrarot Heizung" {
-        Setpoint item=Set_Bureau_IR_temp label="Wunschtemperatur [%s °C]" icon="temperature" minValue=16 maxValue=26 step=1
+        Setpoint item=Set_Bureau_IR_temp label="Wunschtemperatur [%.1f °C]" icon="temperature" minValue=16 maxValue=28 step=1
         Text item=Bureau_IR_work_state icon="heating" label="Heizen: [MAP(heating.map):%s]"
         labelcolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"] valuecolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"]
         Switch item=Bureau_IR_on_off label="Betrieb [%s]"

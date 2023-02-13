@@ -85,29 +85,32 @@ rule "Heating Power"
     PowerItem.postUpdate(varValue)
   end
 
-rule "Smart heating"
+rule "SmartHeating"
 // control heating in bureau depending on power 
 // depending on how much is fed into the grid and SOC (State Of Charge, i.e. battery power) 
   when Member of gSmartPower changed
   then 
-    val boolean heatingPeriod = ( now.getHour > 9 && now.getHour < 23)
-    val boolean lastEnoughPower = if (EnoughPowerLast.state == UNDEF || EnoughPowerLast.state == NULL || EnoughPowerLast.state == "false") false else true
-    val Number HIGH_TEMP = 25
+    val boolean heatingPeriod = ( now.getHour > 8 && now.getHour < 23)
+    // use the set value if not LOW_TEMP
+    val Number HIGH_TEMP = 26 
     val Number LOW_TEMP = 18
+    val Number COMFORT_TEMP = if ((Set_Bureau_IR_temp.state as Number) == LOW_TEMP ) HIGH_TEMP else  Set_Bureau_IR_temp.state
+    logDebug("SmartHeating","Using {} as COMFORT_TEMP",COMFORT_TEMP)
 //    val Number HEATING_POWER = 0.800 // kW
     val Number solarPower =  Solar_power_calculated.state as Number // kW
     val Number soc = SOC.state // battery level
-    val Number MIN_SOC = 75
-    val boolean enoughBattery =(soc > MIN_SOC)
+    val Number MIN_SOC = 75 // percent
+    val boolean enoughBattery = (soc > MIN_SOC)
     //val Number gridpower = (GridPower.state as Number)*1000
     val Number MIN_GRID_FEED = 0.2 // kW
     val Number MAX_SOLAR_POWER = 10 // kW , maximum 8kW peak from the roof and maximum 1kW from the mini PV
     var Number gridPowerAverage = 0
     val Number solarPowerMini = (Solar600_P_AC.state as Number)/1000 //  kW
     val Number gridPower = GridPower.state as Number
+    val Number actualTemperature = (Bureau_IR_temp.state as Number).intValue
 // plausi check gridPower value
     if (gridPower > MAX_SOLAR_POWER) {
-      logError("Smart heating","max grid power exceeded: gridPower [{}] kW > MAX_SOLAR_POWER [{}] kW. DO NOTHING, just leave.",gridPower, MAX_SOLAR_POWER)
+      logError("SmartHeating","max grid power exceeded: gridPower [{}] kW > MAX_SOLAR_POWER [{}] kW. DO NOTHING, just leave.",gridPower, MAX_SOLAR_POWER)
       return
     } else {
       // value in Range, so persist gridPower and its average in influx DB for grafana usage
@@ -117,7 +120,7 @@ rule "Smart heating"
       GridAverageProxy.postUpdate(gridPowerAverage)
       // store in DB
       GridAverageProxy.persist
-      logDebug("Smart heating","valid grid power: [{}] > {}. Store in DB ",gridPower)
+      logDebug("SmartHeating","valid grid power: {} < {} [kW]. Store in DB ",gridPower, MAX_SOLAR_POWER)
     }
 
     val boolean enoughPower = 
@@ -131,36 +134,44 @@ rule "Smart heating"
     val Number powerSum = solarPower+solarPowerMini // Watt
 
 
-    if (powerSum < gridPowerAverage) {
-      logError("Smart heating","SUM of Solar Power = {} kW < gridPowerAverage = {} kW. DO NOTHING, just leave.",powerSum, gridPowerAverage)
+    if (powerSum > 0.5 && powerSum < gridPowerAverage) { // ignore small diffs
+      logDebug("SmartHeating","SUM of Solar Power = {} kW < gridPowerAverage = {} kW. DO NOTHING, just leave.",powerSum, gridPowerAverage)
       return
     }
     GridAverageProxy.postUpdate(gridPowerAverage)
 
-
     //val boolean socDecreasing =  (soc < socLast)
     //val boolean shallHeat = /*!socDecreasing && */enoughPower
-    val String POWER_STR = (if (enoughPower) "Enough Power. will HEAT " else "NOT ENOUGH POWER: Battery Level "+soc+"%; turn DOWN ")
-    var temperature = LOW_TEMP
+    val String POWER_STR = (if (enoughPower) "Enough Power. will HEAT " else "NOT ENOUGH POWER: Battery Level "+soc+"%, turn DOWN ")
+    var Number temperature = LOW_TEMP
 
-    //var Number socLast = if (SOCLastValue == UNDEF || SOCLastValue == NULL) = soc else SOCLastValue.state
-    //logInfo("Smart heating DEBUG ","last enough power = {}, current enough power = {}",lastEnoughPower,enoughPower)
-    logDebug("Smart heating",POWER_STR+". SOC state = {}%, Solar Power = {} kW, gridPowerAverage = {} kW ",SOC.state, solarPower, gridPowerAverage)
-    EnoughPowerLast.postUpdate(enoughPower+"")
+
     // conditions to do sth.
     // 
-    // 1. there muste b a change of conditions versus last rule invocation 
-    // 2. inside haeting period
+    // 1. (Missing) there muste be a change of conditions versus last rule invocation 
+    // 2. inside heating period
     // 3. IR heater is not OFF
-    val boolean doAnything = (lastEnoughPower != enoughPower) && heatingPeriod && Bureau_IR_on_off.state != OFF
-    if (doAnything) {
-      if (enoughPower) {
+    val boolean doSomething = enoughPower && heatingPeriod && Bureau_IR_on_off.state != OFF 
+    val boolean actualWorkStateCold = Bureau_IR_work_state.state == "standby"
+    var boolean currentWorkStateCold =  false
+    if (doSomething) {
       // turn higher if ON
-        temperature = HIGH_TEMP
-        logInfo("Smart heating",POWER_STR+", gridAverage = {},  turn IR temperature to {}", gridPowerAverage,temperature)
-      }
+      temperature = COMFORT_TEMP
+      logDebug("SmartHeating",POWER_STR+", gridAverage = {},  turn IR temperature to {}", gridPowerAverage,temperature)
+    } else {
+      currentWorkStateCold = true
+      logDebug("SmartHeating","No change -> do nothing, heatingPeriod = {}, IR heating ON/OFF = {}", heatingPeriod, Bureau_IR_on_off.state)
+    }
+    // avoid steadily setting temperature if there is nothing to do (avoid aggravating beep of the IR heating when setting temperature)
+    val Number tempDiff = (temperature - actualTemperature)
+    val Number absoluteTempDiff = (tempDiff*tempDiff)/tempDiff // Math::abs does not work so quare and divide gets us rid of the minus sign
+    logDebug("SmartHeating","temperature determined = {}, actual temperature = {}, diff = {}, absolute diff = {}",temperature, actualTemperature, tempDiff, absoluteTempDiff)
+    val boolean tempDiffBigEnough = (absoluteTempDiff > 2)
+    logDebug("SmartHeating","actualWorkStateCold = {}, currentWorkStateCold = {}, temp diff big enough = {}", actualWorkStateCold, currentWorkStateCold, tempDiffBigEnough)
+    if (actualWorkStateCold != currentWorkStateCold && tempDiffBigEnough) {
+      logInfo("SmartHeating","OK, let's HEAT. actualWorkStateCold != currentWorkStateCold AND temp diff big enough -> setting temperature to {}", temperature)      
       Set_Bureau_IR_temp.sendCommand(temperature)
     } else {
-      logDebug("Smart heating","No change -> do nothing, heatingPeriod = {}, IR heating ON/OFF = {}, last enough value = {}, ", heatingPeriod, Bureau_IR_on_off.state, lastEnoughPower )
+      logDebug("SmartHeating","No heating. Heating conditions NOT met.")      
     }
 end

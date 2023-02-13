@@ -5,11 +5,11 @@ sitemap smarthome label= "Smart Home"
           Text item=SOC // Speicher
           Text item=GridPower  // Netzbezug
                   valuecolor=[GridPower>0="lime",<=0="red"]
-          Text item=Active_power // Eigenverbrauch
+          //Text item=ActivePower // Eigenverbrauch
   }
   Frame label="PV Anlage Mini" {
           Text item=SolarPlug_Leistung label="PV Mini Leistung (von Fritz 210) [%.2f %unit%]" icon="solarplant" // PV Mini AC Leistung
-          Text item=LastPowerLimit label="Maximale Leistung [%.2f %unit%]" icon="energy"
+          //Text item=LastPowerLimit label="Maximale Leistung [%.2f %unit%]" icon="energy"
           Text item=Solar600_P_AC icon="energy"
   }
   
