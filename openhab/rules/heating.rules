@@ -172,6 +172,6 @@ rule "SmartHeating"
       logInfo("SmartHeating","OK, let's HEAT. actualWorkStateCold != currentWorkStateCold AND temp diff big enough -> setting temperature to {}", temperature)      
       Set_Bureau_IR_temp.sendCommand(temperature)
     } else {
-      logDebug("SmartHeating","No heating. Heating conditions NOT met.")      
+      logDebug("SmartHeating WARN","No heating. Heating conditions NOT met.")      
     }
 end
