@@ -1,0 +1,3 @@
+Group JRule 
+Switch MyTestSwitch "Test Switch" (JRule) 
+Switch MyTestSwitch2 "Test Switch 2" (JRule)

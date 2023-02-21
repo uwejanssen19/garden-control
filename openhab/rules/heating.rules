@@ -90,6 +90,8 @@ rule "SmartHeating"
 // depending on how much is fed into the grid and SOC (State Of Charge, i.e. battery power) 
   when Member of gSmartPower changed
   then 
+    logWarn("SmartHeating ENTRY","Entry due to change of {}, value = {}",triggeringItem.name, triggeringItem.state)
+
     val boolean heatingPeriod = ( now.getHour > 8 && now.getHour < 23)
     // use the set value if not LOW_TEMP
     val Number HIGH_TEMP = 26 
@@ -102,7 +104,7 @@ rule "SmartHeating"
     val Number MIN_SOC = 75 // percent
     val boolean enoughBattery = (soc > MIN_SOC)
     //val Number gridpower = (GridPower.state as Number)*1000
-    val Number MIN_GRID_FEED = 0.2 // kW
+    val Number MIN_GRID_FEED = 1 // kW
     val Number MAX_SOLAR_POWER = 10 // kW , maximum 8kW peak from the roof and maximum 1kW from the mini PV
     var Number gridPowerAverage = 0
     val Number solarPowerMini = (Solar600_P_AC.state as Number)/1000 //  kW
@@ -152,24 +154,33 @@ rule "SmartHeating"
     // 2. inside heating period
     // 3. IR heater is not OFF
     val boolean doSomething = enoughPower && heatingPeriod && Bureau_IR_on_off.state != OFF 
-    val boolean actualWorkStateCold = Bureau_IR_work_state.state == "standby"
-    var boolean currentWorkStateCold =  false
+    val boolean actualWorkStateStandby = Bureau_IR_work_state.state == "standby"
+    var boolean currentWorkStateStandby =  false
     if (doSomething) {
       // turn higher if ON
       temperature = COMFORT_TEMP
       logDebug("SmartHeating",POWER_STR+", gridAverage = {},  turn IR temperature to {}", gridPowerAverage,temperature)
     } else {
-      currentWorkStateCold = true
+      currentWorkStateStandby = true
       logDebug("SmartHeating","No change -> do nothing, heatingPeriod = {}, IR heating ON/OFF = {}", heatingPeriod, Bureau_IR_on_off.state)
     }
     // avoid steadily setting temperature if there is nothing to do (avoid aggravating beep of the IR heating when setting temperature)
     val Number tempDiff = (temperature - actualTemperature)
+    if (tempDiff == 0) {
+      logDebug("SmartHeating","tempDiff = {}",tempDiff)
+      throw new Exception("tempDiff = 0 -> will cause Error -> leave")
+    }
     val Number absoluteTempDiff = (tempDiff*tempDiff)/tempDiff // Math::abs does not work so quare and divide gets us rid of the minus sign
     logDebug("SmartHeating","temperature determined = {}, actual temperature = {}, diff = {}, absolute diff = {}",temperature, actualTemperature, tempDiff, absoluteTempDiff)
     val boolean tempDiffBigEnough = (absoluteTempDiff > 2)
-    logDebug("SmartHeating","actualWorkStateCold = {}, currentWorkStateCold = {}, temp diff big enough = {}", actualWorkStateCold, currentWorkStateCold, tempDiffBigEnough)
-    if (actualWorkStateCold != currentWorkStateCold && tempDiffBigEnough) {
-      logInfo("SmartHeating","OK, let's HEAT. actualWorkStateCold != currentWorkStateCold AND temp diff big enough -> setting temperature to {}", temperature)      
+    logDebug("SmartHeating","actualWorkStateStandby = {}, currentWorkStateStandby = {}, temp diff big enough = {}", actualWorkStateStandby, currentWorkStateStandby, tempDiffBigEnough)
+    if (actualWorkStateStandby != currentWorkStateStandby && tempDiffBigEnough) {
+      logInfo("SmartHeating","OK, let's HEAT. actualWorkStateStandby (= {}) != currentWorkStateStandby (= {}) AND temp diff big enough -> setting temperature to {}",  actualWorkStateStandby, currentWorkStateStandby, temperature)      
+      // force mode to auto since sometimes it ignores heating up
+      // this usually happens if the thermometer runs out of battery
+      // after replacing the battery
+      Bureau_IR_mode.sendCommand("smart")
+      Bureau_IR_mode.sendCommand("auto")
       Set_Bureau_IR_temp.sendCommand(temperature)
     } else {
       logDebug("SmartHeating WARN","No heating. Heating conditions NOT met.")      

@@ -1,0 +1,31 @@
+Diese Zeile ausführen um das JAR File jrule-generated.jar zum lokalen repository 
+hinzuzufügen:
+
+& "c:\Users\uwe\.m2\wrapper\dists\apache-maven-3.6.3-bin\1iopthnavndlasol9gbrbg6bf2\apache-maven-3.6.3\bin\mvn.cmd" install:inst
+all-file -Dfile=/p:/dokumente/uwe/garden-control/openhab/automation/jrule/jar/jrule-generated.jar -DgroupId=jrulegenjar -DartifactId=jrulegen -Dversion=1 -Dpackaging=jar
+
+
+Das lokalen Repo legt Maven hier an:
+C:\Users\uwe\.m2\repository\jrulegenjar\jrulegen\1\jrulegen-1.jar
+
+Ursprüngliche Anleitung:
+========================
+
+Guide to installing 3rd party JARs
+
+Occasionally, you will have 3rd party JARs that you need to put in your local repository for use in your builds, since they don't exist in any public repository like Maven Central. The JARs must be placed in the local repository in the correct place in order for it to be correctly picked up by Apache Maven.
+
+To make this easier, and less error prone, we have provided an install-file goal in the maven-install-plugin which should make this relatively painless.
+
+To install a JAR in the local repository use the following command:
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Link zur Seite, falls es sie noch gibt:
+
+https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
+
+
+ 
