@@ -1,6 +1,6 @@
 sitemap smarthome label= "Smart Home"
 {
-  Frame label="PV Anlage" {
+  Frame label="PV Anlage Dach" {
           Text item=Solar_power_calculated // (PV) Solar Input Leistung
           Text item=SOC // Speicher
           Text item=GridPower  // Netzbezug
@@ -31,7 +31,7 @@ sitemap smarthome label= "Smart Home"
                  labelcolor=[gHeatingPower!=0="red",==0="black"] valuecolor=[gHeatingPower!=0="red",==0="black"] 
 
   }
-  Frame label="Details PV Anlage" {
+  Frame label="Details PV Anlage Dach" {
       Text label="Solar Module Spannung und Strom" icon="energy"{
         Text item=Pv_1_Voltage 
         Text item=Pv_1_Current

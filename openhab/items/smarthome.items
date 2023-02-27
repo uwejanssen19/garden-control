@@ -32,8 +32,8 @@ Group gPvInput
 // Number  Dsp_data_collection   "Dsp data collection [MAP(0-1.map):%s]"  <settings>                                           { channel="modbus:data:localhostTCP:slave102aholding:Operating_statusbit2:number" }
 
 
-Number  Pv_1_Voltage        "Pv 1 Spannung[%.1f V]"    <energy>                                         (gSolar, gPvInput)             { channel="modbus:data:localhostTCP:slave104holding:Pv_1_Voltage:number" }
-Number  Pv_1_Current        "Pv 1 Strom[%.2f A]"     <energy>                                         (gSolar, gPvInput)              { channel="modbus:data:localhostTCP:slave104holding:Pv_1_Current:number" }
+Number  Pv_1_Voltage        "Dach PV Spannung[%.1f Volt]"    <energy>                                         (gSolar, gPvInput)             { channel="modbus:data:localhostTCP:slave104holding:Pv_1_Voltage:number" }
+Number  Pv_1_Current        "Dach PV Strom[%.2f Ampere]"     <energy>                                         (gSolar, gPvInput)              { channel="modbus:data:localhostTCP:slave104holding:Pv_1_Current:number" }
 
 // Number  Input_power                                                                                                          { channel="modbus:data:localhostTCP:slave105holding:Input_power:number" }
 // Number  Uab                                                                                                                  { channel="modbus:data:localhostTCP:slave105holding:Uab:number" }

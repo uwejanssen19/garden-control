@@ -90,13 +90,13 @@ rule "SmartHeating"
 // depending on how much is fed into the grid and SOC (State Of Charge, i.e. battery power) 
   when Member of gSmartPower changed
   then 
-    logWarn("SmartHeating ENTRY","Entry due to change of {}, value = {}",triggeringItem.name, triggeringItem.state)
 
     val boolean heatingPeriod = ( now.getHour > 8 && now.getHour < 23)
     // use the set value if not LOW_TEMP
     val Number HIGH_TEMP = 26 
     val Number LOW_TEMP = 18
-    val Number COMFORT_TEMP = if ((Set_Bureau_IR_temp.state as Number) == LOW_TEMP ) HIGH_TEMP else  Set_Bureau_IR_temp.state
+    val Number COMFORT_TEMP = if ((Set_Bureau_IR_temp.state as Number) > LOW_TEMP ) Set_Bureau_IR_temp.state else HIGH_TEMP
+    logDebug("SmartHeating ENTRY","Entry due to change of {}, value = {}",triggeringItem.name, triggeringItem.state)
     logDebug("SmartHeating","Using {} as COMFORT_TEMP",COMFORT_TEMP)
 //    val Number HEATING_POWER = 0.800 // kW
     val Number solarPower =  Solar_power_calculated.state as Number // kW
