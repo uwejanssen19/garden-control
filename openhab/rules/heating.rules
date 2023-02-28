@@ -26,19 +26,19 @@ val Functions$Function0<String> getEmailText = [
 //     logDebug("floor heating pump night control", "pump NOW is {}",onOff)
 // end
 
-// only the members of group "Alerting" will cause a mail to be sent when changed 
-rule Bureau_IR_group_Alerting
-when Member of Alerting changed
-then
-  	var actions = getActions("mail","mail:smtp:mysmtp")
-  	actions.sendMail("uwe@janssen-muenchen.de","Alert rule: "+triggeringItem.name + " = "+triggeringItem.state, getEmailText.apply())
-end
-// Always log a change
-rule Bureau_IR_group
-when Member of Bureau_IR_group changed
-then 
-  logInfo("Bureau_IR_group", triggeringItem.name + " = "+triggeringItem.state)
-end 
+// // only the members of group "Alerting" will cause a mail to be sent when changed 
+// rule Bureau_IR_group_Alerting
+// when Member of Alerting changed
+// then
+//   	var actions = getActions("mail","mail:smtp:mysmtp")
+//   	actions.sendMail("uwe@janssen-muenchen.de","Alert rule: "+triggeringItem.name + " = "+triggeringItem.state, getEmailText.apply())
+// end
+// // Always log a change
+// rule Bureau_IR_group
+// when Member of Bureau_IR_group changed
+// then 
+//   logInfo("Bureau_IR_group", triggeringItem.name + " = "+triggeringItem.state)
+// end 
 
 rule "Heating OFF"
 // nightly heating stop

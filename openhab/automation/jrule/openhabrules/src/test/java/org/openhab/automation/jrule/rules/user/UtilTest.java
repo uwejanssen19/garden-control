@@ -1,24 +1,14 @@
 package org.openhab.automation.jrule.rules.user;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 public class UtilTest {
-    /**
-     * 
-     */
     @Test
     public void getDiffFor21AND22() {
-        // var state = new JRuleEventState("21");
-        // var oldState = new JRuleEventState("22");
-
-        // var event = new JRuleItemEvent("MockItem", null, state, oldState);
-
-        // assertEquals(1,(int)Util.getAbsDiff(event));
         assertTrue(Util.getAbsDiffByValue(21, 24) == 3);
-
     }
 
     @Test
@@ -40,18 +30,20 @@ public class UtilTest {
     public void getDiff4() {
         assertTrue(Util.getAbsDiffByValue(-22, 21) > 0);
     }
+
     @Test
     public void checkIfDebugOutputWhenSetBureauTempIsTheMember() {
-        //assertFalse("Will always log INFO when member is SetBureauTemp",BureauChange.willLogDebug(true, true));
-        assertFalse("Will always log INFO when member is SetBureauTemp",Util.willLogDebug(true, false));
+        assertFalse("Will always log INFO when member is SetBureauTemp",Util.willLogDebug("Set_Bureau_IR_temp", false));
     }
+
     @Test
     public void checkIfDebugOutputWhenBureauTempIsTheMemberAndDiffSmall() {
-        assertTrue("Will log DEBUG",Util.willLogDebug(false, false));
+        assertTrue("Will log DEBUG",Util.willLogDebug("Bureau_IR_temp", false));
     }
+
     @Test
     public void checkIfDebugOutputWhenBureauTempIsTheMemberAndDiffBigEnough() {
-        assertFalse("Will log INFO",Util.willLogDebug(false, true));
+        assertFalse("Will log INFO",Util.willLogDebug("Bureau_IR_temp", true));
     }
 
 }
