@@ -19,5 +19,9 @@ public class JRuleBase extends JRule {
                 + event.getState().getValue();
         return logText;
     }
-
+}
+class JRuleBaseException extends Exception {
+    public JRuleBaseException(String msg){
+        super(JRuleBaseException.class.getName()+" : "+msg);
+    }
 }

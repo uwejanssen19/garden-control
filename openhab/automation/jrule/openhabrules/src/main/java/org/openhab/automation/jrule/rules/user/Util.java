@@ -1,7 +1,5 @@
 package org.openhab.automation.jrule.rules.user;
 
-import java.lang.annotation.Documented;
-
 import org.openhab.automation.jrule.generated.items._Set_Bureau_IR_temp;
 import org.openhab.automation.jrule.items.JRuleItem;
 import org.openhab.automation.jrule.items.JRuleItemRegistry;

@@ -1,15 +1,15 @@
-val Functions$Function0<String> getEmailText = [
-  val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
-  wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
+// val Functions$Function0<String> getEmailText = [
+//   val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
+//   wanAddress.postUpdate(WAN_ADDRESS_FRITZ)
 
-  val String emailText='
-    IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
-    Grafana = http://'+wanAddress.state.toString+':8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n
-    Smart Home = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=smarthome\n'	
-  //logDebug("getEmailText","EmailText  = {}",emailText)
+//   val String emailText='
+//     IP = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=garden_control\n
+//     Grafana = http://'+wanAddress.state.toString+':8030'/*GRAFANA_PORT*/+'/d/5KXuWvZRk/overview?tab=advanced&orgId=1&from=now-6h&to=now&refresh=1h\n
+//     Smart Home = http://'+wanAddress.state.toString+':8080/basicui/app?sitemap=smarthome\n'	
+//   //logDebug("getEmailText","EmailText  = {}",emailText)
 
-  return emailText
-]
+//   return emailText
+// ]
 
 // rule "floor heating pump night control"
 // when 
@@ -51,39 +51,40 @@ rule "Heating OFF"
     DECT_301_radiator_mode.sendCommand("ECO")
 end
 
-rule "Heating Power" 
-  when Member of HeatingDevices changed
-  then
-    var String varName = ""
-    var Number varValue = 0
-    // HeatingDevices.members.forEach[ item | 	
-		// 	if (item.name.state == "OFF") {
-		// 		do something with item.name
-		// 	}
-		// ]
-    // create triggering object first
-//    HeatingDevices.members.filter[ a | a.name == "Bureau_IR_work_state"] as SwitchItem
-      varName = triggeringItem.name +"_Power"
+// rule "Heating Power" 
+//   when Member of HeatingDevices changed
+//   then
+//     var String varName = ""
+//     var Number varValue = 0
+//     // HeatingDevices.members.forEach[ item | 	
+// 		// 	if (item.name.state == "OFF") {
+// 		// 		do something with item.name
+// 		// 	}
+// 		// ]
+//     // create triggering object first
+//     // using associated items
+// //    HeatingDevices.members.filter[ a | a.name == "Bureau_IR_work_state"] as SwitchItem
+//       varName = triggeringItem.name +"_Power"
 
-      // TODO: use transformation ON,800 or 60 && OFF,0
-    logInfo("Heating Power", triggeringItem.name + " = "+triggeringItem.state+" new varName = "+varName)
-    val PowerItem = gHeatingPower.members.findFirst [ it | name == varName ] 
-    logInfo("Heating Power", "PowerItem = "+ PowerItem)
-      // TODO: use transformation ON,800 or 60 && OFF,0 
-      // or use a hashMap for the different devices (bad since code had to be edited)
-    if ( triggeringItem.state == ON || triggeringItem.state == "heating") {
-      if (varName == "Bureau_IR_work_state_Power"){
-        varValue = 800
-      } else {
-        varValue = 60
-      }
-    }
-      else {
-        varValue = 0
-    }
-    logInfo("Heating Power","setting "+ PowerItem + " TO "+varValue)
-    PowerItem.postUpdate(varValue)
-  end
+//       // TODO: use transformation ON,800 or 60 && OFF,0
+//     logInfo("Heating Power", triggeringItem.name + " = "+triggeringItem.state+" new varName = "+varName)
+//     val PowerItem = gHeatingPower.members.findFirst [ it | name == varName ] 
+//     logInfo("Heating Power", "PowerItem = "+ PowerItem)
+//       // TODO: use transformation ON,800 or 60 && OFF,0 
+//       // or use a hashMap for the different devices (bad since code had to be edited)
+//     if ( triggeringItem.state == ON || triggeringItem.state == "heating") {
+//       if (varName == "Bureau_IR_work_state_Power"){
+//         varValue = 800
+//       } else {
+//         varValue = 60
+//       }
+//     }
+//       else {
+//         varValue = 0
+//     }
+//     logInfo("Heating Power","setting "+ PowerItem + " TO "+varValue)
+//     PowerItem.postUpdate(varValue)
+//   end
 
 rule "SmartHeating"
 // control heating in bureau depending on power 
@@ -167,8 +168,9 @@ rule "SmartHeating"
     // avoid steadily setting temperature if there is nothing to do (avoid aggravating beep of the IR heating when setting temperature)
     val Number tempDiff = (temperature - actualTemperature)
     if (tempDiff == 0) {
-      logDebug("SmartHeating","tempDiff = {}",tempDiff)
-      throw new Exception("tempDiff = 0 -> will cause Error -> leave")
+      logInfo("SmartHeating","**** tempDiff = {} -> do nothing and leave rule ",tempDiff)
+      //throw new Exception("tempDiff = 0 -> will cause Error -> leave")
+      return
     }
     val Number absoluteTempDiff = (tempDiff*tempDiff)/tempDiff // Math::abs does not work so quare and divide gets us rid of the minus sign
     logDebug("SmartHeating","temperature determined = {}, actual temperature = {}, diff = {}, absolute diff = {}",temperature, actualTemperature, tempDiff, absoluteTempDiff)
