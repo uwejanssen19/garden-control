@@ -1,104 +1,19 @@
-// ---------------------------------------------------------------------------------------------------------------------
-// this rules have different tasks:
-// - send status, temperature, pressure and battery status via MQTT
-// - when not sending goto deep sleep for 4300  or 3600 sec to save battery power
-//   NOTE: the deep sleep jump must be set (jumper is next to the RST pin and the 'SET' position is close to the WEMOS board)
-// - when pgm jumper (pin D5 of wemos d1 mini) goes zero (jumper connected, position close to WEMOS board)
-//   do NOT enter deep sleep next cycle when pgm mode is true
-//   if you cant wait (at least 3600s) just push the rest button
-// - if pgm is set keep publishing values
-// 
-// ---------------------------------------------------------------------------------------------------------------------
-// General NOTE: if you want to flash a new software to the WEMOS (not loading new rules, this always work if not sleeping)
-//               you will have to REMOVE the RST jumper which makes the connection from D0 - RST 
-//               You might also place it to the other position away from WEMOS board
-//               This connection is required to wake up after end of sleep.
-//               When you are done with flasing and want to use the deep again please enable the jumper again 
-// ---------------------------------------------------------------------------------------------------------------------
-
-// the timers t1 and t2 act as subroutines:
-
-
-//----------------------------------------------------- 
-// timer t1 "publisher"
-//-----------------------------------------------------
-// publishes mqtt data every 15 seconds if in PGM mode
-// publishes mqtt data then cancels t1. Then starts timer t2, see there
-//-----------------------------------------------------
-
-On rules#timer=1 do
-      Publish %sysname%/time/value,%systime%
-      publish %sysname%/a0/a0,[a0#a0]
-      publish %sysname%/bme/temp,[bme#temp]
-  if [switch#pmode]=1 // programming mode
-    gpio,2,0 // turn led on 
-     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (timer1, program mode)"
-    timerset,1,15 // repeat sending mqtt
-    timerset,2,0
-
-  else 
-    timerset,1,0
-    timerset,2,2 // goto timer 2 after 2 secs
-  endif
-endon
-
-//-----------------------------------------------------
-// timer t2 (goto sleep or keep publishing to be in pgm mode)
-//----------------------------------------------------- 
-// publishes status 
-// if in sleep mode 
-//   publishes status then goto sleep
-// else (pgm mode)
-//   publish status
-//   start timer t1 (see there)
-// endif
-//-----------------------------------------------------
-
-On rules#timer=2 do
-  gpio,2,1
-  if [switch#pmode]=0 // sleep mode
-     gpio,2,1 // LED OFF
-	 // define sleep time depending on battery power
-     if [a0#a0] > 3.9 // if enough power send more frequently
-	 // 3600s sleep time if good battery else 4300
-       let,14,36
-     else
-       let,14,43
-     endif
-// do not use delay //     delay,500 // wait for establishing wlan
-     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm now sleep for %v14% s"
-     if [var#6]=1 // sent?
-       serialsend,"entering deep sleep"
-       deepsleep,%v14%
-     else 
-       //try again after some time
-       timerset,1,0 // cancel t1
-       timerset,2,10
-     endif
-  else       // programming mode
-     gpio,2,0 // LED ON to indicate pgm mode
-     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dB %ssid% (timer2, program mode)"
-     timerset,2,0 // cancel t2 
-     timerset,1,40 // repeat publishing
-  endif
-endon  
-
 on bme#temp do 
-      delay, 400 // wait for devices to have their stuff ready
+      //delay, 400 // wait for devices to have their stuff ready
+      publish %sysname%/bme/temp,[bme#temp]
       publish %sysname%/time/value,%systime%
       publish %sysname%/a0/a0,[a0#a0]
-      publish %sysname%/bme/temp,[bme#temp]
       publish %sysname%/bme/press,[bme#press]
       let,6,1 // set the 'sent'flag
 endon
 
-on wifi#disconnect do
-  pulse,2,0,1600 // indicate wifi disconnect on LED
-  if [switch#pmode]=0
-    timerset,2,1 // sleep
-    timerset,1,0
-  endif
-endon
+//on wifi#disconnect do
+//  pulse,2,0,1600 // indicate wifi disconnect on LED
+//  if [switch#pmode]=0
+//    timerset,2,1 // sleep
+//    timerset,1,0
+//  endif
+//endon
 
 On switch#pmode do
   // if switch programming mode=OFF goto BED
@@ -117,12 +32,12 @@ endon
 on system#wake do
   let,6,0
   timerset 2,0 // cancel any t2 running
-  timerset 1,1 // publish first
+  timerset 1,5 // publish first
 endon
 
 on system#boot do
   let,6,0
   timerset 2,0 // cancel any t2 running
-  timerset 1,1 // publish first
+  timerset 1,5 // publish first
 endon
 

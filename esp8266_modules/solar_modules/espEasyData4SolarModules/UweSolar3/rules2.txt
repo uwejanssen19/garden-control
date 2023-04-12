@@ -1,0 +1,46 @@
+//-----------------------------------------------------
+// timer t2 (goto sleep or keep publishing to be in pgm mode)
+//----------------------------------------------------- 
+// publishes status 
+// if in sleep mode 
+//   publishes status then goto sleep
+// else (pgm mode)
+//   publish status
+//   start timer t1 (see there)
+// endif
+//-----------------------------------------------------
+
+On rules#timer=2 do
+  gpio,2,1
+  if [switch#pmode]=0 // sleep mode
+       //serialsend,"timer 2 , pmode = 0 (sleep mode)"
+     gpio,2,1 // LED OFF
+	 // define sleep time depending on battery power
+     if [a0#a0] > 3.9 // if enough power send more frequently
+	 // 3600s sleep time if good battery else 4300
+       let,14,3600
+     else
+       let,14,4300
+     endif
+// do not use delay //     delay,500 // wait for establishing wlan
+     If [a0#a0] > 3.8 
+       publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm now sleep for %v14% s"
+     else
+       publish %sysname%/status,"%sysname%/%ip% POWER < 3.8 Load ACCU, sleep for %v14% s"
+     endif
+     if [var#6]=1 // sent?
+       //serialsend,"entering deep sleep"
+       deepsleep,%v14%
+     else 
+       //try again after some time
+       timerset,1,0 // cancel t1
+       timerset,2,10
+     endif
+  else       // programming mode
+       serialsend,"timer 2 , pmode = 1 (pgm mode)"
+     gpio,2,0 // LED ON to indicate pgm mode
+     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dB %ssid% (timer2, program mode)"
+     timerset,1,10 // !=40 repeat publishing
+  endif
+endon  
+

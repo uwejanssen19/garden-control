@@ -1,0 +1,41 @@
+// 
+// this rules have different tasks:
+// - send status, temperature, pressure and battery status via MQTT
+// - when not sending goto deep sleep for 4300  or 3600 sec to save battery power
+//   NOTE: the deep sleep jump must be set (jumper next to the RST pin and the 'SET' position is close to the WEMOS board)
+// - when pgm jumper (pin D5 of wemos d1 mini) goes zero (jumper connected, position close to WEMOS board)
+//   do NOT enter deep sleep next cycle when pgm mode is true
+//   if you cant wait (at least 3600s) just push the rest button
+// - if pgm is set keep publishing values
+// 
+// General NOTE: if you want to flash a new software to the WEMOS (not loading new rules, this always work if not sleeping)
+//               you will have to REMOVE the RST jumper which makes the connection from D0 - RST 
+//               You might also place it to the other position away from WEMOS board
+//               This connection is required to wake up after end of sleep.
+//               When you are done with flasing and want to use the deep again please enable the jumper again 
+// ---------------------------------------------------------------------------------------------------------------------
+
+// timer t1 "publisher"
+// publishes mqtt data every 15 seconds if in PGM mode
+// publishes mqtt data then cancels t1. Then starts timer t2, see there
+//-----------------------------------------------------
+
+On rules#timer=1 do
+      publish %sysname%/bme/temp,[bme#temp]
+      Publish %sysname%/time/value,%systime%
+      publish %sysname%/a0/a0,[a0#a0]
+      //serialsend, "timer 1"
+  if [switch#pmode]=1 // programming mode
+      //serialsend, "timer 1, pgm = 1"
+    gpio,2,0 // turn led on 
+     publish %sysname%/status,"%sysname%/%ip% [a0#a0]V %rssi%dBm (timer1, program mode)"
+    timerset,1,15 // repeat sending mqtt
+    timerset,2,0
+
+  else 
+  //serialsend,"timer 1, pgm=0"
+    timerset,1,0
+    timerset,2,2 // goto timer 2 after 2 secs
+  endif
+endon
+

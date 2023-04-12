@@ -1,5 +1,8 @@
 package org.openhab.automation.jrule.rules.user;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import org.openhab.automation.jrule.generated.items._Set_Bureau_IR_temp;
 import org.openhab.automation.jrule.items.JRuleItem;
 import org.openhab.automation.jrule.items.JRuleItemRegistry;
@@ -13,12 +16,11 @@ public class Util {
         return getAbsDiffByValue(oldValue, newValue);
     }
 
-    public static JRuleItem getItemByName(String itemName) {
-        return JRuleItemRegistry.get(itemName);
-    }
-
     public static float getAbsDiffByValue(float val1, float val2) {
         return Math.abs(val1 - val2);
+    }
+    public static int getHour() {
+        return ZonedDateTime.now().getHour();
     }
 
     
