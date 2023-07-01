@@ -85,9 +85,8 @@ Number  ActivePower "Solarverbrauch aktuell [%.3f kW]" <energy> (gSolar) { chann
 Number GridPower "Netzbezug [%.3f kW]" <energy> (gSmartPower) { channel="modbus:data:localhostTCP:powermeter_grid_power:Grid_power:number" }
 Number Solar_power_calculated "PV Dach Leistung [%.3f kW]" <solarplant> (gSmartPower)
 
-Number Consumed_power_calculated "Stromverbrauch (Solarverbrauch - Netzbezug) [%.3f kW]" <washingmachine> // solange nichts eingespeist wird und die Stromsensoren noch falsch eingbaut sind
-//Number FedIn_power_calculated "Einspeisung [%.1f W]" // Nur die Einspeisung wird angezeigt
-Group:Number:SUM gPowerShareSum "Gesamtverbrauch reale Werte [%.1f W]" <washingmachine2> // sobald alles korrekt installiert ist (positive Werte -> Einspeisung erlaubt und sinnvoll)
+Number Consumed_power_calculated "Stromverbrauch (Solarverbrauch - Netzbezug) [%.3f kW]" <washingmachine> 
+Group:Number:SUM gPowerShareSum "Gesamtverbrauch reale Werte [%.1f W]" <washingmachine2> 
 Number Power_A "Power_A [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerA:Power_A:number" }
 Number Power_B "Power_B [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerB:Power_B:number" }
 Number Power_C "Power_C [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }

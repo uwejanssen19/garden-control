@@ -30,22 +30,45 @@ when Member of gPvInput changed
   then
     val Volt = Pv_1_Voltage.state as Number
     val Current = Pv_1_Current.state as Number
-    val Power = Volt * Current
+    val Number Power = Volt * Current
     //logInfo("Calc Solar Power", "Power = "+Power)
     Solar_power_calculated.postUpdate(Power/1000)
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT("SOC",SOC.state.toString,true)
+    mqttActions.publishMQTT("PV_Power",Solar_power_calculated.state.toString,true)
+  end
+
+  // SOC (Battery charge) change rule
+rule "SOC (Battery charge) change rule"
+when Item SOC changed 
+  then
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT("SOC",SOC.state.toString,true)
   end
 
 // Calc consumed Power from Power A B C from power meter
 // Note: If available, Fed-In is included
 rule "Calc Consumed Power"
-when Member of gPowerShares changed 
+when Item GridPower changed 
 then   
   val netPower = GridPower.state as Number 
   val solarPower = ActivePower.state as Number
   val consumedPower = solarPower-netPower
+  val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
   //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
   Consumed_power_calculated.postUpdate(consumedPower)
+  // and also update any client processing Power (e.g. DISPLAY devices)
+  mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)
+  mqttActions.publishMQTT("ConsumedPower",Consumed_power_calculated.state.toString,true)
 end
+
+rule "PV Mini changed" 
+when Item Solar600_P_AC changed 
+then
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT("Mini600",Solar600_P_AC.state.toString,true)  
+end
+
 
 
 // // rule to aoid grid feeding via solar 600 mini

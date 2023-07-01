@@ -4,7 +4,7 @@ Thing mqtt:topic:myUnsecureBroker:floor_heating_pump_thing (mqtt:broker:myUnsecu
 [ availabilityTopic="tele/floor_heating/LWT", payloadAvailable="Online", payloadNotAvailable="Offline" ] {
 Channels:
          Type switch : floor_heating_pump_switch
-         [stateTopic="stat/floor_heating/POWER"/*, commandTopic="cmnd/floor_heating/POWER", on="ON", off="OFF"*/]  
+         [stateTopic="stat/floor_heating/POWER", commandTopic="cmnd/floor_heating/POWER",allowedStates="ON,OFF"]  
          // Tasmota Status
         Type string : Version      [stateTopic="stat/floor_heating/STATUS2", transformationPattern="JSONPATH:$.StatusFWR.Version"]
         Type switch : Reachable    [stateTopic="tele/floor_heating/LWT",     transformationPattern="MAP:tasmota-reachable.map"]

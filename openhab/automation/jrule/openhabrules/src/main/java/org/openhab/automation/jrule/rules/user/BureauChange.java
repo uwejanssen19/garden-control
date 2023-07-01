@@ -8,6 +8,7 @@ import org.openhab.automation.jrule.generated.items._Bureau_IR_temp;
 import org.openhab.automation.jrule.generated.items._Bureau_IR_work_state;
 import org.openhab.automation.jrule.generated.items._PumpeFussbodenheizung;
 import org.openhab.automation.jrule.generated.items._Set_Bureau_IR_temp;
+
 import org.openhab.automation.jrule.items.JRuleNumberItem;
 // NOT YET working: import static org.openhab.automation.jrule.generated.items.JRuleItemNames.Alerting;
 import org.openhab.automation.jrule.rules.JRuleLogName;

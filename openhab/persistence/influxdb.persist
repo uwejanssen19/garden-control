@@ -26,7 +26,7 @@ Items {
     Vcc_Solar3 : strategy =  everyHalfHour
     Temp_Solar3 : strategy =  everyHalfHour
 
-    LaserLevel : strategy = every10Minutes
+    LaserLevel : strategy = every5Minutes
 
     LocalCurrentRainVolume : strategy = everyHour
     LocalCurrentCloudiness: strategy = every10Minutes

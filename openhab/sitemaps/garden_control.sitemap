@@ -2,14 +2,14 @@
 sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
 {
         Frame label="Stationsdaten" {
-            Default item=wanAddress label= "Öffentliche IP Adresse: [%s]" // do not removed since it is linked with channel via UI
+            Default item=wanAddress label= "Öffentliche IP Adresse: [%s]" // do not remove since it is linked with channel via UI
         }
        
         Frame label="Wasserstand" {        
-            Default item=LaserLevel label="Wasserstand Lasermessung: [%s]" icon="cistern"
+            Default item=LaserLevel label="Wasserstand Lasermessung [%s]" icon="cistern"
             Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern"
-            Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
-            Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
+            //Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
+            //Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {

@@ -16,20 +16,6 @@ sitemap smarthome label= "Smart Home"
   Frame label="Verbrauch aktuell (Negativ = Einspeisung, Positiv = Verbrauch)" {
             // Consumed_power_calculated by rule. Not yet correct maybe cause of wrong wiring of smart meter power sensors
             Text item=Consumed_power_calculated valuecolor=[Consumed_power_calculated>0="red",<=0="lightgreen"]
-
-            Text label="Details Strom Heizung" icon="energy" {
-              Text item=Bureau_IR_work_state icon="heating" label="Büro: [MAP(heating.map):%s]"
-                labelcolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"] valuecolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"]
-              Switch item=PumpeFussbodenheizung icon="heating" label="Fussbodenheizung: [%s]"
-                 labelcolor=[PumpeFussbodenheizung=="ON"="red",=="OFF"="black"] valuecolor=[PumpeFussbodenheizung=="ON"="red",=="OFF"="black"]
-              Text item=Bureau_IR_work_state_Power icon="energy" label="Strom Büro [%.0f W]"
-                 labelcolor=[Bureau_IR_work_state_Power!=0="red",==0="black"] valuecolor=[Bureau_IR_work_state_Power!=0="red",==0="black"] 
-              Text item=PumpeFussbodenheizung_Power icon="energy" label="Strom für PumpeFussbodenheizung : [%.0f W]"
-                 labelcolor=[PumpeFussbodenheizung_Power!=0="red",==0="black"] valuecolor=[PumpeFussbodenheizung_Power!=0="red",==0="black"] 
-            }
-            Text item=gHeatingPower icon="energy" label="Strom für Heizung gesamt: [%.0f W]"
-                 labelcolor=[gHeatingPower!=0="red",==0="black"] valuecolor=[gHeatingPower!=0="red",==0="black"] 
-
   }
   Frame label="Details PV Anlage Dach" {
       Text label="Solar Module Spannung und Strom" icon="energy"{

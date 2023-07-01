@@ -1,11 +1,8 @@
 package org.openhab.automation.jrule.rules.user;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import org.openhab.automation.jrule.generated.items._Set_Bureau_IR_temp;
-import org.openhab.automation.jrule.items.JRuleItem;
-import org.openhab.automation.jrule.items.JRuleItemRegistry;
 import org.openhab.automation.jrule.rules.event.JRuleItemEvent;
 
 public class Util {

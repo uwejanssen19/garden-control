@@ -1,6 +1,6 @@
 //Choose the bridge you want to use and delete the other one.
 Bridge modbus:tcp:localhostTCP 
-[ host="192.168.178.181", port=502, id=1,
+[ host="192.168.178.181", port=502, id=1, // IP Address is that of HUAWEI Inverter smart dongle (see in your router)
  connectMaxTries=1, //How many times we try to establish the connection. Should be at least 1.
  timeBetweenTransactionsMillis=2000, 
  afterConnectionDelayMillis=3000,

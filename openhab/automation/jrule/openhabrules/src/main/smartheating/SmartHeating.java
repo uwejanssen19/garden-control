@@ -57,8 +57,7 @@ public class SmartHeating extends JRuleBase {
      *              Bureau_IR_temp
      * 
      *              When enough power : turn ON IR heating and turn down raditor 
-     *
-     *              output: turns on/OFF IR heating and radiator heating
+     *              else vice versa
      * 
      */
     @JRuleName(MYRULE_NAME)
@@ -82,9 +81,9 @@ public class SmartHeating extends JRuleBase {
       JRuleActions.persist(_GridPower);
       gridPowerAverage = GridPower.averageSince(now.minusMinutes(10));
       // store item 
-      GridAverageProxy.postUpdate(gridPowerAverage)
+      GridAverageProxy.postUpdate(gridPowerAverage);
       // store in DB
-      GridAverageProxy.persist;
+      JRuleActions.persist(_GridAverageProxy);
       logDebug("SmartHeating","valid grid power: {} < {} [kW]. Store in DB ",gridPower, MAX_SOLAR_POWER)
     }
 
