@@ -244,15 +244,13 @@ rule "Fill barrel FNI"
 
     //logDebug("proc-2", "FILL barrel FNI: ENTRY received command = " + receivedCommand)
     var String level = LEVEL_EMPTY
-
+    logDebug("myLogger.fill","##### CHECK ######")
 
     switch(receivedCommand){
         case ON: {
-    logDebug("myLogger.fill","##### CHECK ######")
-          if (/*true*/shallIrrigate.apply()) { // will irrigate
-            //  return
-
-            //  logDebug("", "FILL barrel FNI: starting fill barrel cycle")
+          if (/*true*/shallIrrigate.apply() && (LaserLevel.state as Number)  < 70 ) // weather suitable and barrel not full
+          { // will fill
+            logInfo("", "FILL barrel FNI: starting fill barrel cycle")
           
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // set time limit 
@@ -264,12 +262,12 @@ rule "Fill barrel FNI"
               //Irrigating.postUpdate(ON)
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
-              logInfo("FILL barrel FNI"," level = " + level)
-              if (level == "0" ) // 0=full 
+              logInfo("FILL barrel FNI"," level = {}, LaserLevel = {}, bigger than 70 {}" ,level, LaserLevel.state as Number, LaserLevel.state as Number > 70)
+              if (level == "0" || LaserLevel.state as Number  > 70 ) // 0=full 
               {
-                logDebug("FILL barrel FNI"," Found barrel full")
+                logInfo("FILL barrel FNI"," Found barrel full")
                 FillTimerActive.postUpdate(OFF)
-                maxTimer?.cancel()
+                //maxTimer?.cancel()
                 Fill_Switch.postUpdate(OFF)
                 water_on_off.sendCommand("0")
               } // full
@@ -277,11 +275,11 @@ rule "Fill barrel FNI"
               Thread::sleep(10000)
               //logDebug("FILL barrel","STOP waiting 10 s")
             } // end while
-            logDebug("FILL barrel FNI"," END while loop since level is no longer empty or filltimer expired")
-            maxTimer?.cancel()
+            logInfo("FILL barrel FNI"," END while loop since level is no longer empty or filltimer expired")
+            //maxTimer.cancel()
           } else { // will not irrigate
              //if (LocalCurrentRainVolume.state > 0 || ForecastRainVolumesGroup.state >  DONT_IRRIGATE_BEYOND) {      
-             logDebug("FILL barrel FNI"," NO refill, either raining ("+isRaining_out.state.toString+") or future rain = "+ForecastRainVolumesGroup.state)
+             logInfo("FILL barrel FNI"," NO refill, either raining ("+isRaining_out.state.toString+") or barrel full or future rain = "+ForecastRainVolumesGroup.state)
              StatusText.postUpdate("FILL barrel NO refill due to weather, future rain = "+ForecastRainVolumesGroup.state)
           }  // end if rain condition
 
@@ -293,6 +291,7 @@ rule "Fill barrel FNI"
 
         } // end case ON
         case OFF: {
+                  //maxTimer.cancel()
                   logInfo("FILL barrel FNI","*** FILLING BARREL ABORTED ***")
                   water_on_off.sendCommand("0")
                   Fill_Switch.postUpdate(OFF)
