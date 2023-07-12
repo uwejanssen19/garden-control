@@ -249,8 +249,9 @@ end
     if (LawnIrrigationInterVal.state == NULL || LawnIrrigationInterVal.state == UNDEF) {
             LawnIrrigationInterVal.postUpdate(10)
     }
-    logDebug("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
+    logInfo("Lawn irrigation","ENTRY LawnIrrigationInterVal = {}", LawnIrrigationInterVal) 
     if (isLastLawnIrrigationCron.apply()) {
+      logInfo("Lawn irrigation"," --- isLastLawnIrrigationCron ---") 
       StatusText.postUpdate("LAST lawn irrigation cron executed")
       // turn OFF everything
       LawnIrrigationTimeLeft.postUpdate(-1)
@@ -262,16 +263,17 @@ end
       GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     } else {
       val Boolean willDoLawn = ((LawnIrrigationSwitch?.state == ON) && shallDoLawnIrrigation.apply())
-      logDebug("Lawn irrigation","willDoLawn = {}", willDoLawn)
+      logInfo("Lawn irrigation","willDoLawn = {}", willDoLawn)
       //StatusText.sendCommand("willDoLawn = "+willDoLawn)
       val interval = LawnIrrigationInterVal.state
       if (willDoLawn) {
+        logInfo("Lawn irrigation"," --- WILL DO LAWN IRRIGATION ---") 
         // count down
         var counterVal = LawnIrrigationTimeLeft.state as Number
         LawnIrrigationTimeLeft.postUpdate(counterVal-1) // count down
         logDebug("Lawn irrigation","counter =  {}", counterVal)
         if (counterVal == 0 ) {
-          logDebug("Lawn irrigation","Mode = ON -> start Lawn irrigation") 
+          logInfo("Lawn irrigation","Mode = ON -> start Lawn irrigation") 
           GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
           Thread::sleep(2000) // wait 2s
           Valve_Switch.postUpdate(ON)
@@ -288,7 +290,7 @@ end
         LawnIrrigationTimeLeft.sendCommand(-1)
       }
     } // last cron ?
-    logDebug("Lawn irrigation","EXIT") 
+    logInfo("Lawn irrigation","EXIT") 
    end
 
 rule "Time Interval Changed" 

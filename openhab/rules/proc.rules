@@ -88,7 +88,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
   retrieveYRainStartDSL.sendCommand("ON") // start retrieving rain data from the past
   
   logDebug("shallIrrigate::","YesterdaysRainAmount.state = {}", YesterdaysRainAmount.state)
-  val pastRain = (YesterdaysRainAmount.state as DecimalType)?.floatValue
+  val pastRain = (YesterdaysRainAmount.state as DecimalType).floatValue
   logDebug("shallIrrigate::","pastRain = {}", pastRain)
   val Boolean didNotRain  = (pastRain  < RAIN_TRESHOLD)
   if (didNotRain && !isNotRaining) {
@@ -243,31 +243,34 @@ rule "Fill barrel FNI"
   then
 
     //logDebug("proc-2", "FILL barrel FNI: ENTRY received command = " + receivedCommand)
-    var String level = LEVEL_EMPTY
-    logDebug("myLogger.fill","##### CHECK ######")
+    //var String sensorLevel = LEVEL_EMPTY
+    var Number MIN_LEVEL = 30
+    var level = LEVEL_EMPTY
 
     switch(receivedCommand){
         case ON: {
-          if (/*true*/shallIrrigate.apply() && (LaserLevel.state as Number)  < 70 ) // weather suitable and barrel not full
+          val laserLevel = (LaserLevel.state as Number)
+          logInfo("", "FILL barrel FNI: before calling shallIrrigate, laserLevel =  {}", laserLevel)
+          if (shallIrrigate.apply() && laserLevel < 80) // weather suitable and barrel not full
           { // will fill
-            logInfo("", "FILL barrel FNI: starting fill barrel cycle")
+            logInfo("", "FILL barrel FNI: starting fill barrel cycle, fill level = {}", laserLevel)
           
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // set time limit 
-            while (level == LEVEL_EMPTY && FillTimerActive.state == ON) {
-              logDebug("FILL barrel FNI"," INSIDE while loop since level is empty or filltimer active")
+            while ((laserLevel < MIN_LEVEL || level == LEVEL_EMPTY) && FillTimerActive.state == ON) {
+              logInfo("FILL barrel FNI"," INSIDE while loop since level is empty or filltimer active")
               GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
               Thread::sleep(2000)
               // inhibit automatic power OFF
               //Irrigating.postUpdate(ON)
               water_on_off.sendCommand("1")
               level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
-              logInfo("FILL barrel FNI"," level = {}, LaserLevel = {}, bigger than 70 {}" ,level, LaserLevel.state as Number, LaserLevel.state as Number > 70)
-              if (level == "0" || LaserLevel.state as Number  > 70 ) // 0=full 
+              logInfo("FILL barrel FNI"," level = {}, LaserLevel = {}, bigger than 70 {}" ,level, laserLevel, laserLevel > 70)
+              if (level == "0" || laserLevel  > MIN_LEVEL ) // 0=full 
               {
                 logInfo("FILL barrel FNI"," Found barrel full")
                 FillTimerActive.postUpdate(OFF)
-                //maxTimer?.cancel()
+                maxTimer.cancel()
                 Fill_Switch.postUpdate(OFF)
                 water_on_off.sendCommand("0")
               } // full
@@ -285,10 +288,7 @@ rule "Fill barrel FNI"
 
           Fill_Switch.postUpdate(OFF)
           Valve_Switch.postUpdate(OFF)
-
           Level_out.postUpdate(level.toString)
-
-
         } // end case ON
         case OFF: {
                   //maxTimer.cancel()

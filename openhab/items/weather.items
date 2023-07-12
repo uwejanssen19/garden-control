@@ -83,7 +83,7 @@ Number  Vcc_Solar1_Display <battery>
 Number  Vcc_Solar2_Display <battery> 
 Number  Vcc_Solar3_Display <battery>
 
-Number:Dimensionless LaserLevel <cistern> { channel="mqtt:topic:myUnsecureBroker:waterlevel_thing:level_channel:number" }
+Number:Dimensionless LaserLevel <cistern> { channel="mqtt:topic:myUnsecureBroker:waterlevel_thing:level_channel" }
 
 Number RainProb <rain> { channel="mqtt:topic:myUnsecureBroker:rainProb_thing:rainProb_channel" }
 Switch retrieveYRainStartDSL // triggers DSL rule retrieveYesterdaysRain
