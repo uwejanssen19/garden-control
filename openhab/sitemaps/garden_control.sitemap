@@ -13,7 +13,8 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
         }
 
         Frame label="Manuelle Bewaesserungskontrolle" {
-            Default item=Irr_Switch icon="water" label= "Bewässern"
+            Default item=WateringPump icon="water"
+            Default item=Irr_Switch icon="water" label= "12V Sensor PowerSupply"
             Default item=Valve_Switch icon="faucet" label=  "Regentonne fuellen"
             Default item=Fill_Switch icon="cistern" label=  "Füllen fuer die naechste Bewässerung"
         }

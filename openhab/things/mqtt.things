@@ -63,3 +63,8 @@ Thing mqtt:topic:myUnsecureBroker:astro_thing (mqtt:broker:myUnsecureBroker) {
         Type string : elevation_channel "elevation_channel" [stateTopic="elevation", commandTopic="elevation"]
         Type string : distance "distance_channel" [stateTopic="distance", commandTopic="distance"]
 }
+Thing mqtt:topic:myUnsecureBroker:watering_thing (mqtt:broker:myUnsecureBroker) {
+        Channels: 
+        Type switch : watering_channel "Watering" [ stateTopic="stat/watering/POWER",
+         commandTopic="cmnd/watering/POWER", allowedStates="ON,OFF" ]
+}

@@ -35,6 +35,7 @@ Switch LawnIrrigationSwitch
 Switch InitSwitch {expire="60s,OFF"} // only for test of the 'system started' rule 
 Switch TestModeSwitch // expert mode, makes diagnostic switches and fields visible
 Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mqtt:topic:myUnsecureBroker:powerSupply:PowerSupply" }
+Switch WateringPump "Bewässerung" { channel="mqtt:topic:myUnsecureBroker:watering_thing:watering_channel" }
 
 // Number Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_temp_channel" }
 // Number Humidity_8266 <humidity> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_hum_channel" }

@@ -327,6 +327,7 @@ rule "Irrigation ON"
       logInfo("", "Irrigation ON: turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
       Fill_Switch.sendCommand(ON)
+    WateringPump.sendCommand(ON)
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
@@ -338,6 +339,7 @@ rule "Irrigation ON"
       "Bewaesserung findet statt.\n"+getEmailText.apply()+parameterText)
 //      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: VOLL")
     } else {
+    WateringPump.sendCommand(OFF)
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
@@ -379,6 +381,7 @@ rule "Irrigation OFF"
     Irr_Switch.postUpdate(OFF)
     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     irr_on_off.sendCommand("0")
+    WateringPump.sendCommand(OFF)
     Irrigating.postUpdate(OFF)
 
     var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)

@@ -41,4 +41,5 @@ Items {
     SOC: strategy = every10Minutes  
     ActivePower: strategy = everyMinute 
     Solar600_P_AC: strategy = everyMinute 
+    Valve_Switch: strategy = everyChange
 }
