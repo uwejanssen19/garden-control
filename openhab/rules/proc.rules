@@ -13,8 +13,8 @@
 // -----------------------------------------------------------------------------
 // constants
 // -----------------------------------------------------------------------------
-val String LEVEL_EMPTY = "1"
-val String LEVEL_FULL = "0"
+//val String LEVEL_EMPTY = "1"
+//val String LEVEL_FULL = "0"
 val String SCRIPT_DIR="/home/openhabian/scripts/"
 val MAX_FILL_BARREL_TIME = 300
 val Number RAIN_SENSOR_HTTP_PORT = 8062
@@ -25,7 +25,7 @@ val String OPENHAB_PREFIX = ':8080/basicui/app?sitemap='
 val String GARDEN_CONTROL_SUFFIX = 'garden_control'
 val String OPEN_WEATHER_SUFFIX = 'open_weather'
 val String WAN_ADDRESS_FRITZ = "xdbu92gos1irkzbd.myfritz.net"
-val String LEVEL_MAP_FILE = "waterLevel.map"
+//val String LEVEL_MAP_FILE = "waterLevel.map"
 val Number SOIL_TRESH = 550 
 
 // -----------------------------------------------------------------------------
@@ -161,21 +161,21 @@ val Procedures$Procedure0 onFillTimer = [
 //  lambda readLevel>
 // -----------------------------------------------------------------------------
 
-val readLevel = [ 
-  String SCRIPT_DIR, Boolean powerOff
-  |
-  //logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
-  GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-  Thread::sleep(4000)
-  var Number level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
+// val readLevel = [ 
+//   String SCRIPT_DIR, Boolean powerOff
+//   |
+//   //logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
+//   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+//   Thread::sleep(4000)
+//   var Number level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
 
-  logDebug("proc rules readLevel", "readLevel() result = {}",level)
-  if (powerOff) {
-    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
-  }
-  // return value to caller
-  level.toString
-]
+//   logDebug("proc rules readLevel", "readLevel() result = {}",level)
+//   if (powerOff) {
+//     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+//   }
+//   // return value to caller
+//   level.toString
+// ]
 
 // -----------------------------------------------------------------------------
 //  END Functions & Procedures
@@ -185,53 +185,53 @@ val readLevel = [
 //  Trigger Update Water Level
 // -----------------------------------------------------------------------------
 
-rule "Update Water Level Switch"
-when 
-  Item UpdateLevelSwitch received command
-then 
+// rule "Update Water Level Switch"
+// when 
+//   Item UpdateLevelSwitch received command
+// then 
 
-  //Thread::sleep(500) // give time to update variables
-  //logDebug("proc.rules.UPD", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
-  if (receivedCommand == ON) {
-  // call of shallIrrigate() is just for test since we do not want to wait for some timer to occur
-  // val willIrrigate = shallIrrigate.apply()
-  // logDebug("proc.rules.UPD", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
-    var String level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true).toString
-    //Display_level_out?.postUpdate(level) 
-    Level_out.sendCommand(level)
-    logDebug("proc.rules.UPD", "UPD ENTRY: Level_out  = {} ", Level_out)
+//   //Thread::sleep(500) // give time to update variables
+//   //logDebug("proc.rules.UPD", "Update Water Level Switch: ENTRY, UpdateLevelSwitch = {} ", receivedCommand)
+//   if (receivedCommand == ON) {
+//   // call of shallIrrigate() is just for test since we do not want to wait for some timer to occur
+//   // val willIrrigate = shallIrrigate.apply()
+//   // logDebug("proc.rules.UPD", "Update Water Level Switch: willIrrigate = {} ",willIrrigate)
+//     var String level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true).toString
+//     //Display_level_out?.postUpdate(level) 
+//     Level_out.sendCommand(level)
+//     logDebug("proc.rules.UPD", "UPD ENTRY: Level_out  = {} ", Level_out)
 
-    //logDebug("proc.rules.UPD", "Update WL Switch: check for LF in level  = ___{}___", level)
+//     //logDebug("proc.rules.UPD", "Update WL Switch: check for LF in level  = ___{}___", level)
 
-    val levelText = transform("MAP",LEVEL_MAP_FILE, level) // damn transform does not work (spent 2 hours in vain)
-    //logDebug("proc.rules.UPD", "Update WL Switch: AFTER transforming.  levelString = {} ", levelText)
-    //getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Level Test ", "Wasserstand: "+levelText)
-    StatusText.sendCommand("level = "+levelText)
-//    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
-    //RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusHours(12)).toString)
-    retrieveYRainStartDSL.sendCommand("ON") // start retrieving rain data from the past
-    logDebug("proc.rules.UPD","##### CHECK ###### retrieveYRainStartDSL set to {}", retrieveYRainStartDSL.state)
+//     val levelText = transform("MAP",LEVEL_MAP_FILE, level) // damn transform does not work (spent 2 hours in vain)
+//     //logDebug("proc.rules.UPD", "Update WL Switch: AFTER transforming.  levelString = {} ", levelText)
+//     //getActions("mail","mail:smtp:mysmtp").sendMail("uwe@janssen-muenchen.de","Level Test ", "Wasserstand: "+levelText)
+//     StatusText.sendCommand("level = "+levelText)
+// //    StatusText.sendCommand("wanAddress = "+wanAddress.state.toString)
+//     //RainAverage.postUpdate(LocalCurrentRainVolume.averageSince(now.minusHours(12)).toString)
+//     retrieveYRainStartDSL.sendCommand("ON") // start retrieving rain data from the past
+//     logDebug("proc.rules.UPD","##### CHECK ###### retrieveYRainStartDSL set to {}", retrieveYRainStartDSL.state)
     
-    //logDebug("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
-    //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
+//     //logDebug("proc.rules.UPD","TempAverage before update = {} ",TempAverage.state)
+//     //TempAverage.postUpdate(Temp_Solar1.averageSince(now.minusDays(1)).toString)
 
-    // logDebug("proc.rules.UPD","TempAverage after update  = {} ",TempAverage.state)
+//     // logDebug("proc.rules.UPD","TempAverage after update  = {} ",TempAverage.state)
 
-    // val float tmpAv = (TempAverage?.state as DecimalType).floatValue
-    // logDebug("proc.rules.UPD","TempAverage float value = {} ",tmpAv)
-    // val Boolean wasHot = (tmpAv > 24.0)
-    // logDebug("proc.rules.UPD","TempAverage wasHot last day = {} ",wasHot)
+//     // val float tmpAv = (TempAverage?.state as DecimalType).floatValue
+//     // logDebug("proc.rules.UPD","TempAverage float value = {} ",tmpAv)
+//     // val Boolean wasHot = (tmpAv > 24.0)
+//     // logDebug("proc.rules.UPD","TempAverage wasHot last day = {} ",wasHot)
 
-    //logDebug("proc.rules.UPD", "BEFORE sendmail")
-    //sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
-    //logDebug("proc.rules.UPD", "AFTER sendmail")
-    var actions = getActions("mail","mail:smtp:mysmtp")
+//     //logDebug("proc.rules.UPD", "BEFORE sendmail")
+//     //sendMail("uwe@janssen-muenchen.de","Water Level = "+level.toString+" ( 0 = FULL, 1 = EMPTY )", getEmailText.apply())
+//     //logDebug("proc.rules.UPD", "AFTER sendmail")
+//     var actions = getActions("mail","mail:smtp:mysmtp")
 
-    actions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelText, getEmailText.apply())
-    //logDebug("proc.rules.UPD", "WanAddress =  {} ",wanAddress)
-  }
-  logDebug("proc.rules.UPD", "EXIT Update Water Level")
-end
+//     actions.sendMail("uwe@janssen-muenchen.de","Water Level = "+levelText, getEmailText.apply())
+//     //logDebug("proc.rules.UPD", "WanAddress =  {} ",wanAddress)
+//   }
+//   logDebug("proc.rules.UPD", "EXIT Update Water Level")
+// end
 
 // -----------------------------------------------------------------------------
 //  Fill barrel for next irrigation
@@ -245,7 +245,7 @@ rule "Fill barrel FNI"
     //logDebug("proc-2", "FILL barrel FNI: ENTRY received command = " + receivedCommand)
     //var String sensorLevel = LEVEL_EMPTY
     var Number MIN_LEVEL = 30
-    var level = LEVEL_EMPTY
+//    var level = LEVEL_EMPTY
 
     switch(receivedCommand){
         case ON: {
@@ -264,15 +264,17 @@ rule "Fill barrel FNI"
               // inhibit automatic power OFF
               //Irrigating.postUpdate(ON)
               water_on_off.sendCommand("1")
-              level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
-              logInfo("FILL barrel FNI"," level = {}, LaserLevel = {}, bigger than 70 {}" ,level, laserLevel, laserLevel > 70)
-              if (level == "0" || laserLevel  > MIN_LEVEL ) // 0=full 
+              Valve_Switch.sendCommand(ON)
+//              level = readLevel.apply(SCRIPT_DIR,/* PowerOff = */false)
+              logInfo("FILL barrel FNI","LaserLevel = {}, bigger than 70 {}" ,laserLevel, laserLevel > 70)
+              if (laserLevel  > MIN_LEVEL ) // 0=full 
               {
                 logInfo("FILL barrel FNI"," Found barrel full")
                 FillTimerActive.postUpdate(OFF)
                 maxTimer.cancel()
                 Fill_Switch.postUpdate(OFF)
                 water_on_off.sendCommand("0")
+                Valve_Switch.sendCommand(OFF)
               } // full
               //logDebug("FILL barrel","START waiting 10 s")
               Thread::sleep(10000)
@@ -288,7 +290,7 @@ rule "Fill barrel FNI"
 
           Fill_Switch.postUpdate(OFF)
           Valve_Switch.postUpdate(OFF)
-          Level_out.postUpdate(level.toString)
+//          Level_out.postUpdate(level.toString)
         } // end case ON
         case OFF: {
                   //maxTimer.cancel()
@@ -313,13 +315,14 @@ rule "Irrigation ON"
   when
     //Time cron "0 0/5 * * * ? " // near future test 
     Time cron "0 00 08 * 5-8 ? " or
-    Time cron "0 00 09 * 4-10 ? " or 
-    Time cron "0 00 18 * 4-10 ? " or
-    Time cron "0 00 19 * 4-8 ? "  
+//    Time cron "0 00 09 * 4-10 ? " or 
+    Time cron "0 00 18 * 4-10 ? " // or
+//    Time cron "0 00 19 * 4-8 ? "  
   then
     // Irrigate except forecast tells otherwise
     logDebug("Irrigation ON"," ENTRY, isRaining = " + LocalCurrentRainVolume.state +", rainForeCast 24hrs  = "+ForecastRainVolumesGroup.state)
-    val levelText = transform('MAP',LEVEL_MAP_FILE,Level_out.state.toString)
+//    val levelText = transform('MAP',LEVEL_MAP_FILE,Level_out.state.toString)
+    val levelText = LaserLevel.state.toString
     
     if (shallIrrigate.apply() == true ) {
       GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
@@ -373,9 +376,9 @@ rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
     //Time cron "0 5/10 * * * ? " // near future test 
-    Time cron "0 00 10 * 4-10 ? " or
-    Time cron "0 00 19 * 4,9,10 ? " or
-    Time cron "0 00 20 * 4-8 ? " 
+    Time cron "0 00 09 * 4-10 ? " or
+    Time cron "0 00 19 * 4,9,10 ? " //or
+    //Time cron "0 00 20 * 4-8 ? " 
   then   
     logDebug("", "Irrigation OFF: ENTRY, Cron event is due, stop irrigation")
     Irr_Switch.postUpdate(OFF)
@@ -384,8 +387,7 @@ rule "Irrigation OFF"
     WateringPump.sendCommand(OFF)
     Irrigating.postUpdate(OFF)
 
-    var level = readLevel.apply(SCRIPT_DIR, /*PowerOff = */true)
-    val levelText = transform('MAP',LEVEL_MAP_FILE,level)
+    val levelText = LaserLevel.state.toString
     
     val yesterdaysRain = YesterdaysRainAmount.state
     if ( yesterdaysRain == "3.33" ) {

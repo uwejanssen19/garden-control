@@ -23,14 +23,14 @@ Switch Valve_Switch {expire="600s,OFF"}
 Switch Fill_Switch  {expire="130s,OFF"} 
 Switch NoIrrigationPreset {expire="9h,OFF"}
 
-Number Display_level_out
+//Number Display_level_out
 // reading level will not take more than 8 s
-Switch UpdateLevelSwitch {expire="30s,OFF"} 
+//Switch UpdateLevelSwitch {expire="30s,OFF"} 
 
 String StatusText
 String SystemStatusText
 
-String Level_out //  set by rule 
+//String Level_out //  set by rule 
 Switch LawnIrrigationSwitch
 Switch InitSwitch {expire="60s,OFF"} // only for test of the 'system started' rule 
 Switch TestModeSwitch // expert mode, makes diagnostic switches and fields visible

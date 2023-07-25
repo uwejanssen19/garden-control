@@ -116,7 +116,7 @@ public class BureauChange extends JRuleBase {
         String powerItemName = itemName + "_Power";
 
         // now find the object in the item registry
-        JRuleNumberItem powerItem = (JRuleNumberItem) Util.getItemByName(powerItemName);
+        JRuleNumberItem powerItem = (JRuleNumberItem) getItemByName(powerItemName);
         if (powerItem == null) {
             throw new JRuleBaseException("powerItem = null");
         }

@@ -7,7 +7,7 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
        
         Frame label="Wasserstand" {        
             Default item=LaserLevel label="Wasserstand Lasermessung [%s]" icon="cistern"
-            Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern" visibility=[TestModeSwitch == ON]
+//            Default item=UpdateLevelSwitch label="Wasserstand aktualisieren"    icon="cistern" visibility=[TestModeSwitch == ON]
             //Default item=Display_level_out label="Regentonne: LEER" icon="tonne_leer" labelcolor=["red"]   visibility=[Level_out == "1"]
             //Default item=Display_level_out label="Regentonne: VOLL" icon="tonne_voll" labelcolor=["green"] visibility=[Level_out == "0"] 
         }
@@ -43,7 +43,7 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
             Default item=SystemStatusText label="System Message: [%s]" visibility=[TestModeSwitch == ON]
             Default item=StatusText label="Message: [%s]" visibility=[TestModeSwitch == ON]
             Default item=LawnIrrigationSwitch label="Gießen über Ventilanschluss" visibility=[TestModeSwitch == ON]
-            Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
+//            Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
             Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
             Default item=GardencontrolPowerSupply visibility=[TestModeSwitch == ON]
 

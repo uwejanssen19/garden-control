@@ -90,7 +90,6 @@ public class SmartHeating extends JRuleBase {
 
 
 
-
     }
     public SmartHeatingResult handleEvent(JRuleItemEvent event, SmartHeatingInput input) {
         SmartHeatingResult result = new SmartHeatingResult();

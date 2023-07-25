@@ -4,6 +4,9 @@ import java.time.ZonedDateTime;
 
 import org.openhab.automation.jrule.generated.items._Set_Bureau_IR_temp;
 import org.openhab.automation.jrule.rules.event.JRuleItemEvent;
+import org.openhab.automation.jrule.items.JRuleItemRegistry;
+import org.openhab.automation.jrule.items.JRuleNumberItem;
+
 
 public class Util {
     public static float getAbsDiff(JRuleItemEvent event) {
@@ -51,5 +54,5 @@ public class Util {
         else
             return true;
     }
-
+    
 }
