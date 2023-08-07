@@ -379,12 +379,11 @@ end
 // This rule serves as a steady background task running periodically
 rule "daemon"
   when
-    //Time cron "0 0/1 * * * ?" //near future test
-    Time cron "0 5/10 * * * ?" // time spec for release edition: 5/10 means every 10 minutes 5 minutes after minutes % 10
-    // e.g. 12, 22, 32, 42 etc.
+    Time cron "0 0/10 * * * ?" // time spec for release edition: 0/10 means every 10 minutes
+    // e.g. 15, 25, 35 etc.
   then
   val irrigating = (Irrigating.state == ON) 
-  logDebug("Daemon", "Irrigating.state = {}",Irrigating.state)
+  logDebug("Daemon", "Irrigating.state = {}",irrigating)
 
   // check and turn heating on  / off
   heatingControl.apply()
@@ -399,46 +398,18 @@ rule "daemon"
   RainProb.sendCommand(comingRainVal)
   logDebug("Daemon","RainProb =  {} ",RainProb.state) 
 
-  val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
-  if (!(isWinter.apply())) { // only in summer
-
-    // if someone ( e.g. low level script ) turned OFF irrigation inadvertedly
-    // -> turn ON again 
-    if (irrigating) {
-        logDebug("Daemon","found irrigation is active, so turn or leave it ON")
-        GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
-          Irr_Switch.postUpdate(ON)
-          irrOnOffProc?.apply("1", SCRIPT_DIR)
-          val hour = now.getHour
+//  val Boolean lawnIrrigatinMode  = (LawnIrrigationSwitch?.state == ON)
+  val hour = now.getHour
             // workaround in case after 19:00 a'clock there is still irrigation (irrigation OFF cron rule did not work, see there)
-          if (hour > 19 ) {
-          logWarn("Daemon","found after 19:00 a'clock there is still irrigation - IRR OFF did not trigger -> turn all OFF")
-            irrOnOffProc?.apply("0", SCRIPT_DIR)
-            water_on_off.sendCommand("0")
-            GardencontrolPowerSupply.sendCommand(OFF)
-            WateringPump.sendCommand(OFF)
-            Irrigating.postUpdate(OFF)
-    
-          }
-    } else {
-        logDebug("Daemon","found irrigation is inactive, so turn or leave it OFF")
-        irrOnOffProc?.apply("0", SCRIPT_DIR)
-        if (!(lawnIrrigatinMode)) { // if not in lawn irrigation mode
-            // save water: 
-            water_on_off.sendCommand("0")
-            GardencontrolPowerSupply.sendCommand(OFF)
-            WateringPump.sendCommand(OFF)
-            logDebug("Daemon","found irrigation is inactive, so I turned off tap water")
-            //Valve_Switch?.sendCommand(OFF)
-            //water_on_off?.sendCommand("0")
-            //GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve  
-            //GardencontrolPowerSupply.postUpdate(OFF) 
-            LawnIrrigationTimeLeft.sendCommand(-1)
-        }
-      }
-  } 
-      
-logDebug("Daemon","EXIT")
+  if (hour > 19 && WateringPump.state == ON ) {
+    logWarn("Daemon","found after 19:00 a'clock there is still irrigation - IRRIGATION OFF did not execute -> turn all OFF")
+    irrOnOffProc?.apply("0", SCRIPT_DIR)
+    water_on_off.sendCommand("0")
+    GardencontrolPowerSupply.sendCommand(OFF)
+    WateringPump.sendCommand(OFF)
+    Irrigating.postUpdate(OFF)   
+  }     
+  logDebug("Daemon","EXIT")
 end
 
 // -----------------------------------------------------------------------------

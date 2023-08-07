@@ -377,7 +377,7 @@ rule "Irrigation OFF"
   when
     //Time cron "0 5/10 * * * ? " // near future test 
     Time cron "0 00 09 * 4-10 ? " or
-    Time cron "0 00 19 * 4,9,10 ? " //or
+    Time cron "0 00 19 * 4-10 ? " //or
     //Time cron "0 00 20 * 4-8 ? " 
   then   
     logDebug("", "Irrigation OFF: ENTRY, Cron event is due, stop irrigation")
