@@ -19,7 +19,7 @@ Switch Set_alive { channel="exec:command:set_alive:run", autoupdate = "false" }
 // Virtual variable section
 
 Switch Irr_Switch 
-Switch Valve_Switch {expire="600s,OFF"} 
+//Switch Valve_Switch {expire="600s,OFF"} 
 Switch Fill_Switch  {expire="130s,OFF"} 
 Switch NoIrrigationPreset {expire="9h,OFF"}
 
@@ -31,10 +31,11 @@ String StatusText
 String SystemStatusText
 
 //String Level_out //  set by rule 
-Switch LawnIrrigationSwitch
+//Switch LawnIrrigationSwitch
 Switch InitSwitch {expire="60s,OFF"} // only for test of the 'system started' rule 
 Switch TestModeSwitch // expert mode, makes diagnostic switches and fields visible
-Switch GardencontrolPowerSupply "Stromversorgung Pumpe und Ventil" { channel="mqtt:topic:myUnsecureBroker:powerSupply:PowerSupply" }
+Switch WaterValveSwitch "Steuerung fuer Ventil"
+Switch WaterValve "Stromversorgung Ventil" { channel="mqtt:topic:myUnsecureBroker:powerSupply:PowerSupply" }
 Switch WateringPump "Bewässerung" { channel="mqtt:topic:myUnsecureBroker:watering_thing:watering_channel" }
 
 // Number Temperature_8266 <temperature> { channel="mqtt:topic:myUnsecureBroker:bme_thing:bme_temp_channel" }
@@ -70,10 +71,10 @@ Number Press_Solar3 <pressure> (gSolar3Data) { channel="mqtt:topic:myUnsecureBro
 // BEGIN using this as a global variable within a rule
 Switch FillTimerActive 
 Switch Irrigating
-Number LawnIrrigationTimeLeft
-Number LawnIrrigationInterVal
-// not displayed - for internal use only 
-Number LawnIrrigationCounter
+// Number LawnIrrigationTimeLeft
+// Number LawnIrrigationInterVal
+// // not displayed - for internal use only 
+// Number LawnIrrigationCounter
 // END
 
 Group gWeatherItems

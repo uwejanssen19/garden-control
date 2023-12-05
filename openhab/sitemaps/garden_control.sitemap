@@ -14,8 +14,8 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
 
         Frame label="Manuelle Bewaesserungskontrolle" {
             Default item=WateringPump icon="water"
-            Default item=Irr_Switch icon="water" label= "12V Sensor PowerSupply"
-            Default item=Valve_Switch icon="faucet" label=  "Regentonne fuellen"
+//            Default item=Irr_Switch icon="water" label= "12V Sensor PowerSupply"
+            Default item=WaterValveSwitch icon="faucet" label=  "Regentonne fuellen"
             Default item=Fill_Switch icon="cistern" label=  "Füllen fuer die naechste Bewässerung"
         }
 
@@ -42,19 +42,19 @@ sitemap garden_control label= "Raspberry Pi Garden Irrigation Control"
         Frame label="Test section" visibility=[TestModeSwitch == ON] {
             Default item=SystemStatusText label="System Message: [%s]" visibility=[TestModeSwitch == ON]
             Default item=StatusText label="Message: [%s]" visibility=[TestModeSwitch == ON]
-            Default item=LawnIrrigationSwitch label="Gießen über Ventilanschluss" visibility=[TestModeSwitch == ON]
+//            Default item=LawnIrrigationSwitch label="Gießen über Ventilanschluss" visibility=[TestModeSwitch == ON]
 //            Default item=Level_out label="Water level set by rule [%s]" visibility=[TestModeSwitch == ON]
             Default item=InitSwitch label="Drücken zum Test der Rule 'System started'" visibility=[TestModeSwitch == ON]
-            Default item=GardencontrolPowerSupply visibility=[TestModeSwitch == ON]
+            Default item=WaterValve visibility=[TestModeSwitch == ON]
 
-            Default item=LawnIrrigationTimeLeft label="Minuten bis Gießen: [%s]" 
-                                labelcolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
-                                  >=10="maroon", >=8="black", >=6="blue", >=4="orange",>=2="#ff3f00
-                                ", >=1="red", ==0="olive"]
-                                valuecolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
-                                  >=10="maroon", >=8="black", >=6="blue", >=4="orange",>=2="#ff3f00
-                                ", >=1="red", ==0="olive"] visibility=[TestModeSwitch == ON]
-            Setpoint item=LawnIrrigationInterVal label="Rasen GiessIntervall [%s Minuten]" icon="time" minValue=5 maxValue=60 step=5 visibility=[TestModeSwitch == ON]
+            // Default item=LawnIrrigationTimeLeft label="Minuten bis Gießen: [%s]" 
+            //                     labelcolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
+            //                       >=10="maroon", >=8="black", >=6="blue", >=4="orange",>=2="#ff3f00
+            //                     ", >=1="red", ==0="olive"]
+            //                     valuecolor=[LawnIrrigationTimeLeft=="Uninitialized"="gray",
+            //                       >=10="maroon", >=8="black", >=6="blue", >=4="orange",>=2="#ff3f00
+            //                     ", >=1="red", ==0="olive"] visibility=[TestModeSwitch == ON]
+            // Setpoint item=LawnIrrigationInterVal label="Rasen GiessIntervall [%s Minuten]" icon="time" minValue=5 maxValue=60 step=5 visibility=[TestModeSwitch == ON]
         }
 
         Frame label="Expert Mode" {

@@ -1,5 +1,5 @@
 {
-    "openhab.useRestApi": true,
+    "openhab.useRestApi": false,
     "java.project.sourcePaths": [
         "jrule-user-main",
         "automation/jrule/rules",

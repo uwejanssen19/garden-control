@@ -1,4 +1,4 @@
-// Description: Rules and procedures for updating water level and filling for next irrigation
+// Description: Rules and proleveltrycedures for updating water level and filling for next irrigation
 // Author: Uwe Janssen
 // Created: 5.9.2019
 // -----------------------------------------------------------------------------
@@ -153,7 +153,7 @@ val Functions$Function0<Boolean> shallIrrigate = [
 val Procedures$Procedure0 onFillTimer = [ 
         FillTimerActive.postUpdate(OFF)
         logDebug("", "onFillTimer expired")
-        water_on_off.sendCommand("0")
+        WaterValve.sendCommand(OFF)
         Fill_Switch.postUpdate(OFF)
 ]
 
@@ -165,13 +165,13 @@ val Procedures$Procedure0 onFillTimer = [
 //   String SCRIPT_DIR, Boolean powerOff
 //   |
 //   //logDebug("Read level", "readLevel invoked with par = {}",SCRIPT_DIR)
-//   GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+//   WaterValve.sendCommand(ON) // activate PowerSupply for pump and valve
 //   Thread::sleep(4000)
 //   var Number level = executeCommandLine(Duration.ofSeconds(16),SCRIPT_DIR+"Level.sh")
 
 //   logDebug("proc rules readLevel", "readLevel() result = {}",level)
 //   if (powerOff) {
-//     GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+//     GardencontrolPowerSuppltrylevely.sendCommand(OFF) // deactivate PowerSupply for pump and valve
 //   }
 //   // return value to caller
 //   level.toString
@@ -247,6 +247,7 @@ rule "Fill barrel FNI"
     var Number MIN_LEVEL = 30
 //    var level = LEVEL_EMPTY
 
+try {
     switch(receivedCommand){
         case ON: {
           val laserLevel = (LaserLevel.state as Number)
@@ -257,9 +258,9 @@ rule "Fill barrel FNI"
           
             FillTimerActive.postUpdate( ON )
             var maxTimer = createTimer (now.plusSeconds(MAX_FILL_BARREL_TIME), onFillTimer) // set time limit 
-            while ((laserLevel < MIN_LEVEL || level == LEVEL_EMPTY) && FillTimerActive.state == ON) {
+            while ((laserLevel < MIN_LEVEL) && FillTimerActive.state == ON) {
               logInfo("FILL barrel FNI"," INSIDE while loop since level is empty or filltimer active")
-              GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
+              WaterValve.sendCommand(ON) // activate PowerSupply for pump and valve
               Thread::sleep(2000)
               // inhibit automatic power OFF
               //Irrigating.postUpdate(ON)
@@ -303,7 +304,11 @@ rule "Fill barrel FNI"
         default: logError("", "Switch/case neither ON nor OFF do not know how to handle " + receivedCommand.toString)
     }
     LawnIrrigationSwitch.postUpdate(OFF)
-    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+    WaterValve.sendCommand(OFF) // deactivate PowerSupply for pump and valve
+} catch (Exception e) {
+    logError("FNI","#### EXCEPTION ### FNI:\n"+ e)
+}
+
 
 end
 // -----------------------------------------------------------------------------
@@ -314,9 +319,9 @@ rule "Irrigation ON"
 // time based beginning of irrigation
   when
     //Time cron "0 0/5 * * * ? " // near future test 
-    Time cron "0 00 08 * 5-8 ? " or
+    Time cron "0 00 09 * 5-8 ? " or
 //    Time cron "0 00 09 * 4-10 ? " or 
-    Time cron "0 00 18 * 4-10 ? " // or
+    Time cron "0 00 19 * 4-10 ? " // or
 //    Time cron "0 00 19 * 4-8 ? "  
   then
     // Irrigate except forecast tells otherwise
@@ -325,12 +330,11 @@ rule "Irrigation ON"
     val levelText = LaserLevel.state.toString
     
     if (shallIrrigate.apply() == true ) {
-      GardencontrolPowerSupply.sendCommand(ON) // activate PowerSupply for pump and valve
       // trigger fill barrel rule,
       logInfo("", "Irrigation ON: turn on fill_switch")
       // tripping the fillswitch serves as a subroutine call here
       Fill_Switch.sendCommand(ON)
-    WateringPump.sendCommand(ON)
+      WateringPump.sendCommand(ON)
       Irr_Switch.postUpdate(ON)
       irr_on_off.sendCommand("1")
       Irrigating.sendCommand(ON)
@@ -342,7 +346,7 @@ rule "Irrigation ON"
       "Bewaesserung findet statt.\n"+getEmailText.apply()+parameterText)
 //      "Bewaesserung findet statt.\n"+getEmailText.apply()+"Wasserstand: VOLL")
     } else {
-    WateringPump.sendCommand(OFF)
+      WateringPump.sendCommand(OFF)
       Irr_Switch.postUpdate(OFF)
       irr_on_off.sendCommand("0")
       Irrigating.postUpdate(OFF)
@@ -376,13 +380,12 @@ rule "Irrigation OFF"
 // time based ceasing of irrigation
   when
     //Time cron "0 5/10 * * * ? " // near future test 
-    Time cron "0 00 09 * 4-10 ? " or
-    Time cron "0 00 19 * 4-10 ? " //or
+    Time cron "0 00 10 * 4-10 ? " or
+    Time cron "0 00 20 * 4-10 ? " //or
     //Time cron "0 00 20 * 4-8 ? " 
   then   
     logDebug("", "Irrigation OFF: ENTRY, Cron event is due, stop irrigation")
     Irr_Switch.postUpdate(OFF)
-    GardencontrolPowerSupply.sendCommand(OFF) // deactivate PowerSupply for pump and valve
     irr_on_off.sendCommand("0")
     WateringPump.sendCommand(OFF)
     Irrigating.postUpdate(OFF)

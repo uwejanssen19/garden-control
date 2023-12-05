@@ -1,10 +1,15 @@
 rule retrieveYesterdaysRain
 when Item retrieveYRainStartDSL received command
 then
+try {
     var hmtlPageWithRainData = sendHttpGetRequest("http://www.rosenheimwetter.de/tagesauswertungen.php")
     Thread.sleep(1000)
     logDebug("retrieveYesterdaysRain", "retrieveYesterdaysRain hmtlPageWithRainData length = \n{}\n",hmtlPageWithRainData.length)
     YesterdaysRainRetrieverProxy.sendCommand(hmtlPageWithRainData) // trigger JS rule via sending command to  item
+} catch (Exception e) {
+    logError("yRain","#### EXCEPTION ### retrieveYesterdaysRain via HTML:\n")
+}
+
 end
 
 rule checkStatisticTableUpdate
