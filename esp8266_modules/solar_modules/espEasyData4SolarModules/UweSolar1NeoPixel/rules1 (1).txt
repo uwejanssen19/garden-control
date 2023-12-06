@@ -1,0 +1,20 @@
+on bme#temp do 
+      Let 6,[bme#temp]
+      //Let 6,29
+      If [var#6] <= 22
+      // blue
+        NeoPixelAll,0,0,255
+      endif
+      If [var#6] <= 24 And  [var#6] > 22
+      // green
+        NeoPixelAll,0,255,0
+      endif
+      If [var#6] <= 25 And  [var#6] > 24
+      // red
+        NeoPixelAll,255,0,0
+      endif
+      If [var#6] > 25
+      // purple
+        NeoPixelAll,255,0,255
+      endif
+endon

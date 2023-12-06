@@ -17,6 +17,7 @@ Release/
 **/mail.things
 **/mail.cfg
 **/*jar
+**/*.class
 
 
 

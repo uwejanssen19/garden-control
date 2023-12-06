@@ -1,0 +1,40 @@
+on bme#temp do 
+      Let 6,[bme#temp]
+      // FOR TEST: Let 6,24.6
+      //white
+      If [var#6] <= 20 
+        NeoPixelAll 255,255,255 
+      endif
+      // blue
+      If [var#6] <= 21 And  [var#6] > 20 
+        NeoPixelAll,0,0,255
+      endif
+      // blue / green
+      If [var#6] <= 21.5 And  [var#6] > 21 
+        NeoPixelAll,0,255,255
+      endif
+      // green
+      If [var#6] <= 22 And  [var#6] > 21.5 
+        NeoPixelAll,0,255,0
+      endif
+      // green/yellow
+      If [var#6] <= 23 And  [var#6] > 22
+        NeoPixelAll,128,255,0
+      endif
+      // yellow
+      If [var#6] <= 24 And  [var#6] > 23 
+        NeoPixelAll,255,255,0
+      endif
+      // orange
+      If [var#6] <= 25 And  [var#6] > 24 
+        NeoPixelAll,255,128,0
+      endif
+      // red
+      If [var#6] <= 26 And  [var#6] > 25 
+        NeoPixelAll,255,0,0
+      endif
+      // purple
+      If [var#6] > 26 
+        NeoPixelAll,255,0,255
+      endif
+endon
