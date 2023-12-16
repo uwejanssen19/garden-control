@@ -48,19 +48,19 @@ when Item SOC changed
 
 // Calc consumed Power from Power A B C from power meter
 // Note: If available, Fed-In is included
-rule "Calc Consumed Power"
-when Item GridPower changed 
-then   
-  val netPower = GridPower.state as Number 
-  val solarPower = ActivePower.state as Number
-  val consumedPower = solarPower-netPower
-  val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
-  //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
-  Consumed_power_calculated.postUpdate(consumedPower)
-  // and also update any client processing Power (e.g. DISPLAY devices)
-  mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)
-  mqttActions.publishMQTT("ConsumedPower",Consumed_power_calculated.state.toString,true)
-end
+// rule "Calc Consumed Power"
+// when Item GridPower changed 
+// then   
+//   val netPower = GridPower.state as Number 
+//   val solarPower = ActivePower.state as Number
+//   val consumedPower = solarPower-netPower
+//   val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+//   //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
+//   Consumed_power_calculated.postUpdate(consumedPower)
+//   // and also update any client processing Power (e.g. DISPLAY devices)
+//   mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)
+//   mqttActions.publishMQTT("ConsumedPower",Consumed_power_calculated.state.toString,true)
+// end
 
 rule "PV Mini changed" 
 when Item Solar600_P_AC changed 

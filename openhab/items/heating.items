@@ -5,7 +5,7 @@ Group HeatingDevices
 // ( see smarthome.rules)
 
 Switch Bureau_IR_on_off (Alerting, gSmartPower) // should always be ON
-Number Bureau_IR_temp  (Bureau_IR_group) // do not alert every temp change
+Number:Temperature Bureau_IR_temp  (Bureau_IR_group) // do not alert every temp change
 Number Set_Bureau_IR_temp  (Bureau_IR_group, gSmartPower) // Alert requested temp change
 String Bureau_IR_mode // mod should always be Auto
 String Bureau_IR_work_state  (Alerting, HeatingDevices) // this is the actual heating on/off variable

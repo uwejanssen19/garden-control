@@ -4,7 +4,7 @@ sitemap heating label= "Heizung"{
         Text item=Bureau_IR_work_state icon="heating" label="Heizen: [MAP(heating.map):%s]"
         labelcolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"] valuecolor=[Bureau_IR_work_state=="heating"="red",=="standby"="black"]
         Switch item=Bureau_IR_on_off label="Betrieb [%s]"
-        Default item=Bureau_IR_temp label="Büro Temperatur [%.1f %unit%]" icon="temperature"
+        Default item=Bureau_IR_temp label="Büro Temperatur [%.1f °C]" icon="temperature"
         //Text item=Bureau_IR_mode label="mode: [%s]"
 	}
   Frame label="Fussboden Heizung" {      
