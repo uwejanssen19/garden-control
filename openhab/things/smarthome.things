@@ -102,15 +102,15 @@ Bridge poller SOC_poller [ start=37004, length=1, refresh=300000, type="holding"
 	// 	Thing data Current_C   [ readStart="37111", readValueType="int32",readTransform="JS(divide100.js)",updateUnchangedValuesEveryMillis="60000" ]     
 	// }        
 	
-	// Bridge poller powermeter_powerA [ start=37132, length=2, refresh=10000, type="holding" ]{
-	// 	Thing data Power_A   [ readStart="37132", readValueType="int32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="60000" ]     
-	// }        
-	// Bridge poller powermeter_powerB [ start=37134, length=2, refresh=10000, type="holding" ]{
-	// 	Thing data Power_B   [ readStart="37134", readValueType="int32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="60000" ]     
-	// }        
-	// Bridge poller powermeter_powerC [ start=37136, length=2, refresh=10000, type="holding" ]{
-	// 	Thing data Power_C   [ readStart="37136", readValueType="int32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="60000" ]     
-	// }           
+	Bridge poller powermeter_powerA [ start=37132, length=2, refresh=60000, type="holding" ]{
+		Thing data Power_A   [ readStart="37132", readValueType="int32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="60000" ]     
+	}        
+	Bridge poller powermeter_powerB [ start=37134, length=2, refresh=60000, type="holding" ]{
+		Thing data Power_B   [ readStart="37134", readValueType="int32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="60000" ]     
+	}        
+	Bridge poller powermeter_powerC [ start=37136, length=2, refresh=60000, type="holding" ]{
+		Thing data Power_C   [ readStart="37136", readValueType="int32",readTransform="JS(divide1.js)",updateUnchangedValuesEveryMillis="60000" ]     
+	}           
 
     Bridge poller powermeter_grid_power [ start=37113, length=2, refresh=60000, type="holding" ]{
 		Thing data Grid_power [ readStart="37113", readValueType="int32",readTransform="JS(divide1000.js)",updateUnchangedValuesEveryMillis="60000" ]

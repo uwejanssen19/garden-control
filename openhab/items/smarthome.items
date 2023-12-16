@@ -85,11 +85,11 @@ Number  ActivePower "Solarverbrauch aktuell [%.3f kW]" <energy> (gSolar) { chann
 Number GridPower "Netzbezug [%.3f kW]" <energy> (gSmartPower) { channel="modbus:data:localhostTCP:powermeter_grid_power:Grid_power:number" }
 Number Solar_power_calculated "PV Dach Leistung [%.3f kW]" <solarplant> (gSmartPower)
 
-Number Consumed_power_calculated "Stromverbrauch (Solarverbrauch - Netzbezug) [%.3f kW]" <washingmachine> 
-// Group:Number:SUM gPowerShareSum "Gesamtverbrauch reale Werte [%.1f W]" <washingmachine2> 
-// Number Power_A "Power_A [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerA:Power_A:number" }
-// Number Power_B "Power_B [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerB:Power_B:number" }
-// Number Power_C "Power_C [%.1f W]" (gPowerShares/*, gPowerShareSum*/) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }
+//Number Consumed_power_calculated "Stromverbrauch (Solarverbrauch - Netzbezug) [%.3f kW]" <washingmachine> 
+Group:Number:SUM gPowerShareSum "Gesamtverbrauch reale Werte [%.0f W]" <washingmachine2> 
+Number Power_A "Power_A [%.0f W]" (/*gPowerShares, */gPowerShareSum) { channel="modbus:data:localhostTCP:powermeter_powerA:Power_A:number" }
+Number Power_B "Power_B [%.0f W]" (/*gPowerShares, */gPowerShareSum) { channel="modbus:data:localhostTCP:powermeter_powerB:Power_B:number" }
+Number Power_C "Power_C [%.0f W]" (/*gPowerShares, */gPowerShareSum) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }
 
 Number Solar600_P_AC "P_AC reported from AHOY [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_AC" }
 Number Solar600_P_AC_Limit "Limit for P_AC set to [%.2f W]"

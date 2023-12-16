@@ -13,9 +13,14 @@ sitemap smarthome label= "Smart Home"
           Text item=Solar600_P_AC icon="energy"
   }
   
-  Frame label="Verbrauch aktuell (Negativ = Einspeisung, Positiv = Verbrauch)" {
+  Frame label="Verbrauch aktuell (Negativ -> Verbrauch  , Positiv -> Einspeisung)" {
             // Consumed_power_calculated by rule. Not yet correct maybe cause of wrong wiring of smart meter power sensors
-            Text item=Consumed_power_calculated valuecolor=[Consumed_power_calculated>0="red",<=0="lightgreen"]
+            Text item=gPowerShareSum valuecolor=[gPowerShareSum>0="lightgreen",<=0="red"]
+            {
+            Text item=Power_A valuecolor=[Power_A>0="lightgreen",<=0="red"]
+            Text item=Power_B valuecolor=[Power_B>0="lightgreen",<=0="red"]
+            Text item=Power_C valuecolor=[Power_C>0="lightgreen",<=0="red"]
+            }
   }
   Frame label="Details PV Anlage Dach" {
       Text label="Solar Module Spannung und Strom" icon="energy"{
