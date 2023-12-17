@@ -48,19 +48,39 @@ when Item SOC changed
 
 // Calc consumed Power from Power A B C from power meter
 // Note: If available, Fed-In is included
-// rule "Calc Consumed Power"
-// when Item GridPower changed 
-// then   
-//   val netPower = GridPower.state as Number 
-//   val solarPower = ActivePower.state as Number
-//   val consumedPower = solarPower-netPower
-//   val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
-//   //logInfo("Calc Consumed Power", "Consumed Power = solar(or battery)Power - gridPower = {}", consumedPower)
-//   Consumed_power_calculated.postUpdate(consumedPower)
-//   // and also update any client processing Power (e.g. DISPLAY devices)
-//   mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)
-//   mqttActions.publishMQTT("ConsumedPower",Consumed_power_calculated.state.toString,true)
-// end
+rule "Calc Consumed Power"
+  when Member of gPowerShares changed 
+  then
+    // var p_A = Power_A.state as Number
+    // var p_B = Power_B.state as Number
+    // var p_C = Power_C.state as Number
+    // logInfo("RULE Calc Consumed Power", "Power_A as number= {}", p_A)
+    // logInfo("RULE Calc Consumed Power", "Power_A as number= {}", p_B)
+    // logInfo("RULE Calc Consumed Power", "Power_A as number= {}", p_C)
+    // val PowerA_abs =  if (p_A < 0) -p_A else p_A
+    // val PowerB_abs =  if (p_B < 0) -p_B else p_B
+    // val PowerC_abs =  if (p_C < 0) -p_C else p_C
+    // logInfo("RULE Calc Consumed Power", "PowerA_abs = {}", PowerA_abs)
+    // logInfo("RULE Calc Consumed Power", "PowerB_abs = {}", PowerB_abs)
+    // logInfo("RULE Calc Consumed Power", "PowerC_abs = {}", PowerC_abs)
+    // var consumedPower = PowerA_abs+PowerB_abs+PowerC_abs
+    // logInfo("Calc Consumed Power", "Consumed Power = {}", consumedPower)
+    var consumedPower = 0 
+    var Number value = 0 
+    var Number abs = 0
+    gPowerShares.members.forEach[ item | 	
+//      logInfo("RULE Calc Consumed Power", "handle items in loop. item.state = {}", item.state)
+      value = (item.state as Number)
+//      logInfo("RULE Calc Consumed Power", "value = {}", value)
+      abs = if (value < 0 ) -value else value
+  //    logInfo("RULE Calc Consumed Power", "abs value = {}", abs)
+      consumedPower=consumedPower+abs
+    ]
+  //  logInfo("RULE Calc Consumed Power", "Consumed Power = {}", consumedPower)
+    Consumed_power_calculated.postUpdate(consumedPower)
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT("ConsumedPower",Consumed_power_calculated.state.toString,true)
+  end
 
 rule "PV Mini changed" 
 when Item Solar600_P_AC changed 
