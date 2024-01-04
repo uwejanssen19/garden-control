@@ -44,4 +44,5 @@ Items {
     Valve_Switch: strategy = everyChange
 
     Bureau_IR_temp: strategy = every5Minutes
+    DECT_301_current_temp: strategy = everyHalfHour
 }

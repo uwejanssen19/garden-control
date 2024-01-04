@@ -177,11 +177,14 @@ end
 
 // end
 
-// rule "check grid" 
-// when Item GridPower changed
-// then 
-//   logInfo("check grid power", "monitor gridPower {}",GridPower.state)
-// end
+rule "check grid" 
+when Item GridPower changed
+then 
+   logInfo("check grid power", "monitor gridPower {}",GridPower.state)
+    val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+    mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)  
+
+end
 
 
 // rule "GridFeedControlEnable mgmt OFF" 
