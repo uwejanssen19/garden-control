@@ -86,7 +86,10 @@ rule "PV Mini changed"
 when Item Solar600_P_AC changed 
 then
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
-    mqttActions.publishMQTT("Mini600",Solar600_P_AC.state.toString,true)  
+  logInfo("Solar600_P_AC", "Solar600_P_AC = "+ Solar600_P_AC.state as DecimalType)
+  val power = (Solar600_P_AC.state as DecimalType).format("%1.0f")
+  logInfo("Solar600_P_AC", "power = "+ power)
+    mqttActions.publishMQTT("Mini600",power,true)  
 end
 
 
@@ -180,7 +183,7 @@ end
 rule "check grid" 
 when Item GridPower changed
 then 
-   logInfo("check grid power", "monitor gridPower {}",GridPower.state)
+   //logInfo("check grid power", "monitor gridPower {}",GridPower.state)
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
     mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)  
 
