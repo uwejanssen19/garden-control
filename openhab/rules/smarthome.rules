@@ -86,9 +86,9 @@ rule "PV Mini changed"
 when Item Solar600_P_AC changed 
 then
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
-  logInfo("Solar600_P_AC", "Solar600_P_AC = "+ Solar600_P_AC.state as DecimalType)
+  //logInfo("Solar600_P_AC", "Solar600_P_AC = "+ Solar600_P_AC.state as DecimalType)
   val power = (Solar600_P_AC.state as DecimalType).format("%1.0f")
-  logInfo("Solar600_P_AC", "power = "+ power)
+  //logInfo("Solar600_P_AC", "power = "+ power)
     mqttActions.publishMQTT("Mini600",power,true)  
 end
 
