@@ -90,7 +90,8 @@ Number Power_A "Power_A [%.0f W]" (gPowerShares) { channel="modbus:data:localhos
 Number Power_B "Power_B [%.0f W]" (gPowerShares) { channel="modbus:data:localhostTCP:powermeter_powerB:Power_B:number" }
 Number Power_C "Power_C [%.0f W]" (gPowerShares) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }
 
-Number Solar600_P_AC "P_AC reported from AHOY [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_AC" }
+Group  gMiniPV
+Number Solar600_P_AC "P_AC reported from AHOY [%.2f W]" (gMiniPV) { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_AC" }
 Number Solar600_P_AC_Limit "Limit for P_AC set to [%.2f W]"
 Switch GridFeedControlEnable "Einspeisebegrenzung [%s]"
 Number LastPowerLimit
