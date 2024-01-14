@@ -93,7 +93,8 @@ then
   // logInfo("PV Mini changed", "power = "+ power)
    
     //logInfo("PV Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
-    val power = triggeringItem.state.toString
+    //var power = triggeringItem.state.toString
+    var power = (triggeringItem.state).format("%1.0f")
     //logInfo("PV Mini changed", "power = "+ power)
   
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
