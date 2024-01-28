@@ -92,7 +92,7 @@ then
   // val power = (SolarPlug_Leistung.state as DecimalType).format("%1.0f")
   // logInfo("PV Mini changed", "power = "+ power)
    
-    //logInfo("PV Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
+    logInfo("PV Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
     //var power = triggeringItem.state.toString
     var power = (triggeringItem.state).format("%1.0f")
     //logInfo("PV Mini changed", "power = "+ power)
@@ -100,6 +100,26 @@ then
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
     //logInfo("PV Mini changed", "mqttActions = "+ mqttActions)
     mqttActions.publishMQTT("Mini600",power,true)  
+end
+
+
+rule "DC of MiniPV exceeds a limit" 
+when  Member of gMiniDC changed
+then
+  // logInfo("PV Mini changed", "Solar600_P_AC = "+ Solar600_P_AC.state as DecimalType)
+  // logInfo("PV Mini changed", "SolarPlug_Leistung = "+ SolarPlug_Leistung.state as DecimalType)
+  // val power = (SolarPlug_Leistung.state as DecimalType).format("%1.0f")
+  // logInfo("PV Mini changed", "power = "+ power)
+   
+    //logInfo("DC Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
+    //var power = triggeringItem.state.toString
+    var power = (triggeringItem.state).format("%1.0f")
+    //logInfo("PV Mini changed", "power = "+ power)
+    if ((triggeringItem.state as Number) > 300) {
+      val mailActions = getActions("mail","mail:smtp:mysmtp")
+      mailActions.sendMail("uwe@janssen-muenchen.de",
+         "DC power = " +power,"DC power = " + power)  
+    }    
 end
 
 

@@ -94,8 +94,13 @@ Group  gMiniPV
 Number Solar600_P_AC "P_AC reported from AHOY [%.2f W]" (gMiniPV) { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_AC" }
 Number Solar600_P_AC_Limit "Limit for P_AC set to [%.2f W]"
 Switch GridFeedControlEnable "Einspeisebegrenzung [%s]"
-Number LastPowerLimit
-Number LastSetPowerLimit { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:LimitFromInverter" }// from inverter
+//Number LastPowerLimit
+//Number LastSetPowerLimit { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:LimitFromInverter" }// from inverter
+
+Group gMiniDC
+Number Solar800_P_DC_1 "P_DC_1 reported from AHOY [%.2f W]" (gMiniDC) { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_MODULE_1" }
+Number Solar800_P_DC_2 "P_DC_2 reported from AHOY [%.2f W]" (gMiniDC) { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_MODULE_2" }
+
 
 Group gSmartPower // smart heating input
 String EnoughPowerLast

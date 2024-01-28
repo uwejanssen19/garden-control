@@ -2,12 +2,18 @@ Thing mqtt:topic:myUnsecureBroker:solar_600_thing (mqtt:broker:myUnsecureBroker)
 Channels:
         // state topic for reporting the output power
         // Note that the topic and inverter name must match the ones defined in ahoy inverter setup
-        // Topic syntax: "<TOPIC>/<INVERTER_NAME>/ch0/P_AC
-        Type number : P_AC "Total Power AC from Inverter" [ stateTopic="inverter/total/P_AC"]
+        // AHOY Topic syntax: "<TOPIC>/<INVERTER_NAME>/ch0/P_AC
+//        Type number : P_AC "Total Power AC from Inverter" [ stateTopic="inverter/total/P_AC"]
+
+// 20.1.2024 openDTU syntax inverter
+// here: inverter/ac/power
+        Type number : P_AC "Total Power AC from Inverter" [ stateTopic="inverter/ac/power"]
+        Type number : P_MODULE_1 "DC Power Module 1" [ stateTopic="inverter/114491409821/1/power"]
+        Type number : P_MODULE_2 "DC Power Module 2" [ stateTopic="inverter/114491409821/2/power"]
 
         // command for setting power limit
-        Type number : Set_Limit_P_AC "Non Persistent Absolute Limit" [commandTopic="inverter/ctrl/limit_nonpersistent_absolute/0" ]
+//        Type number : Set_Limit_P_AC "Non Persistent Absolute Limit" [commandTopic="inverter/ctrl/limit_nonpersistent_absolute/0" ]
   
-        Type number : LimitFromInverter "Power Limit Reported from Inverter" [stateTopic="inverter/BU_600_display/ch0/PowerLimit" ]
+//        Type number : LimitFromInverter "Power Limit Reported from Inverter" [stateTopic="inverter/BU_600_display/ch0/PowerLimit" ]
 
 }

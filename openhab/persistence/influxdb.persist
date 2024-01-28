@@ -40,7 +40,15 @@ Items {
 
     SOC: strategy = every10Minutes  
     ActivePower: strategy = everyMinute 
-    SolarPlug_Leistung: strategy = everyMinute 
+
+    //############## BEGIN Mini Power Plant 600/800W ###################//
+    SolarPlug_Leistung:strategy = everyMinute  // Data from Fritz 201 socket
+    Solar600_P_AC:strategy = everyMinute  // Data from Ahoy/openDTU 
+    Solar800_P_DC_1:strategy = everyMinute  // Data from Ahoy/openDTU 
+    Solar800_P_DC_2:strategy = everyMinute  // Data from Ahoy/openDTU 
+    
+    //############## END  Mini Power Plant 600/800W ###################//
+    
     Valve_Switch: strategy = everyChange
 
     Bureau_IR_temp: strategy = every5Minutes
