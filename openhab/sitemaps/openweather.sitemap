@@ -1,5 +1,15 @@
 sitemap openweather label="OpenWeather Overview" {
 
+Frame label="Daten der eigenen  Wetter Station (Vevor, registriert als Mitterhart - IKOLBE27 bei Wunderground/Weather Company)" {
+    Default item=WC_temp
+    Default item=WC_Pressure
+    Default item=SolarRadiation
+    Default item=WC_Rain
+    Default item=WindSpeed
+    Default item=WindDir
+    Default item=UV_Index
+    Default item=WC_Hum
+}
 //        Webview item=Dhv url= "http://dhv.de/web/wetter"  height=10
     Frame label="Vorhersage" {
       Image item=localHourlyForecast12ConditionIcon

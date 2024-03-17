@@ -1,0 +1,29 @@
+
+      // JSON result from request
+      // "https://api.weather.com/v2/pws/observations/current?stationId=IKOLBE27&format=json&units=m&apiKey=72513edab73c4e44913edab73cae4425"
+      // might be e.g.
+//      {"observations":
+    //   [{"stationID":"IKOLBE27",
+    //   "obsTimeUtc":"2024-02-04T20:59:04Z",
+    //   "obsTimeLocal":"2024-02-04 21:59:04",
+    //   "neighborhood":"Mitterhart",
+    //   "softwareType":null,
+    //   "country":"DE",
+Number   SolarRadiation   "Globalstrahlung [%.2f]" <sun> 
+//      "lon":12.066,
+    //   "realtimeFrequency":null,
+    //   "epoch":1707080344,
+    //   "lat":47.841,
+Number UV_Index "UV Index [%d]" <sun> 
+Number:Speed WindSpeed "Windgeschwindigkeit [%.1f]" <wind>    
+Number WindDir "Richtung  [%d]" <wind>    
+Number:Dimensionless WC_Hum "Luftfeuchtigkeit [%.2f]" <humidity> 
+    //   "qcStatus":1,
+
+Number WC_temp "Temperatur [%d]" <temperature> 
+    //   "heatIndex":12,
+    //   "dewpt":4,
+    //   "windChill":12,
+    //   "windGust":5,
+Number WC_Pressure "Druck [%.2f]" <pressure> 
+Number WC_Rain "Regen [%.1f]" <rain>

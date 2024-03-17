@@ -7,9 +7,13 @@ Bridge openweathermap:weather-api:api "OpenWeatherMap Account" [apikey="19617de0
 
 Bridge mqtt:broker:myUnsecureBroker [ host="localhost", secure=false, retain = false, qos=1 ]
 
-//Bridge weatherunderground:bridge:api "API" [ apikey="72513edab73c4e44913edab73cae4425" ] 
-
 // Bridge weatherunderground:bridge:api "API" [ apikey="72513edab73c4e44913edab73cae4425" ] {
-//   Thing weather MitterHart "MitterHart" [ location="47.84,12.0653", language="DE", refresh=15 ]
+// //    Thing weather MitterHart "MitterHart" [ location="IKOLBE27", language="DL", refresh=15 ]
+//     //Thing weather MitterHart "MitterHart" [ location="47.84,12.06", language="DL", refresh=15 ]
+//      Thing weather paris "Météo Paris" [ location="France/Paris", language="FR", refresh=15 ]
 // }
+//IROSEN171 ?
+
+// request using weatherCompany and wunderground  API https://api.weather.com/v2/pws/observations/current?stationId=IKOLBE27&format=json&units=m&apiKey=72513edab73c4e44913edab73cae4425
+
 

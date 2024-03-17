@@ -44,8 +44,8 @@ Items {
     //############## BEGIN Mini Power Plant 600/800W ###################//
     SolarPlug_Leistung:strategy = everyMinute  // Data from Fritz 201 socket
     Solar600_P_AC:strategy = everyMinute  // Data from Ahoy/openDTU 
-    Solar800_P_DC_1:strategy = everyMinute  // Data from Ahoy/openDTU 
-    Solar800_P_DC_2:strategy = everyMinute  // Data from Ahoy/openDTU 
+    // Solar800_P_DC_1:strategy = everyMinute  // Data from Ahoy/openDTU 
+    // Solar800_P_DC_2:strategy = everyMinute  // Data from Ahoy/openDTU 
     
     //############## END  Mini Power Plant 600/800W ###################//
     
@@ -53,4 +53,15 @@ Items {
 
     Bureau_IR_temp: strategy = every5Minutes
     DECT_301_current_temp: strategy = everyHalfHour
+    // BEGIN Weatherstation
+    SolarRadiation: strategy = every10Minutes
+    WindSpeed: strategy = every5Minutes
+    WC_temp: strategy= everyHalfHour
+    WC_Hum: strategy= everyHalfHour
+    WC_temp: strategy= everyHalfHour
+    WC_Pressure: strategy= everyHalfHour
+    WC_Rain: strategy= everyHalfHour
+    // END   Weatherstation
+
+    DECT_301_battery_level: strategy= everyHour
 }

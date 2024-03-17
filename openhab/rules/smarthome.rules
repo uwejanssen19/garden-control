@@ -92,35 +92,53 @@ then
   // val power = (SolarPlug_Leistung.state as DecimalType).format("%1.0f")
   // logInfo("PV Mini changed", "power = "+ power)
    
-    logInfo("PV Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
+    //logInfo("PV Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
     //var power = triggeringItem.state.toString
-    var power = (triggeringItem.state).format("%1.0f")
-    //logInfo("PV Mini changed", "power = "+ power)
-  
+    val powerString = (triggeringItem.state).format("%1.0f")
+    val power = triggeringItem.state
+    val limit = 750
+    //logInfo("PV Mini changed", "power = "+ powerString)
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
     //logInfo("PV Mini changed", "mqttActions = "+ mqttActions)
-    mqttActions.publishMQTT("Mini600",power,true)  
-end
-
-
-rule "DC of MiniPV exceeds a limit" 
-when  Member of gMiniDC changed
-then
-  // logInfo("PV Mini changed", "Solar600_P_AC = "+ Solar600_P_AC.state as DecimalType)
-  // logInfo("PV Mini changed", "SolarPlug_Leistung = "+ SolarPlug_Leistung.state as DecimalType)
-  // val power = (SolarPlug_Leistung.state as DecimalType).format("%1.0f")
-  // logInfo("PV Mini changed", "power = "+ power)
-   
-    //logInfo("DC Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
-    //var power = triggeringItem.state.toString
-    var power = (triggeringItem.state).format("%1.0f")
-    //logInfo("PV Mini changed", "power = "+ power)
-    if ((triggeringItem.state as Number) > 300) {
+    //logInfo("PV Mini changed", "triggering Item = "+ triggeringItem)
+    mqttActions.publishMQTT("Mini600",powerString,true)  
+    // Mail it if treshold reached
+    if (power > limit) {
       val mailActions = getActions("mail","mail:smtp:mysmtp")
-      mailActions.sendMail("uwe@janssen-muenchen.de",
-         "DC power = " +power,"DC power = " + power)  
-    }    
+      val String mailText = triggeringItem +" = " +power
+      logWarn("PV Mini changed","Mini 800 passed AC power treshold of " + limit + ", power = "+power)
+      val subject = mailText
+      val adressee = "uwe@janssen-muenchen.de"
+      //val adressee = "uwe@janssen-muenchen.de, barbara@janssen-muenchen.de"
+      mailActions.sendMail(adressee,
+         subject, mailText)
+    }
 end
+
+
+// rule "DC of MiniPV exceeds a limit" 
+// when  Item gDC_Total changed
+// then
+//   // logInfo("PV Mini changed", "Solar600_P_AC = "+ Solar600_P_AC.state as DecimalType)
+//   // logInfo("PV Mini changed", "SolarPlug_Leistung = "+ SolarPlug_Leistung.state as DecimalType)
+//   // val power = (SolarPlug_Leistung.state as DecimalType).format("%1.0f")
+//   // logInfo("PV Mini changed", "power = "+ power)
+   
+//     //logInfo("DC Mini changed", "item name = " + triggeringItem.name + ", value  = "+ triggeringItem.state)
+//     //var power = triggeringItem.state.toString
+//     //var power = (gDC_Total.state).format("%1.0f")
+//     var power = (gDC_Total.state)
+//     //logInfo("PV Mini changed", "power = "+ power)
+//     if (power > 720) {
+//       val mailActions = getActions("mail","mail:smtp:mysmtp")
+//       val String mailText = "AC Power = "+Solar600_P_AC.state+", DC power = " +power
+//       val subject = mailText
+//       val adressee = "uwe@janssen-muenchen.de"
+//       //val adressee = "uwe@janssen-muenchen.de, barbara@janssen-muenchen.de"
+//       mailActions.sendMail(adressee,
+//          subject, mailText)
+//     }    
+// end
 
 
 
@@ -254,3 +272,11 @@ end
 //   var Number lastPowerLimit = LastPowerLimit.state as Number
   
 // ]
+
+rule "Battery full"
+when Item SOC changed to 100
+then
+      val mailActions = getActions("mail","mail:smtp:mysmtp")
+      mailActions.sendMail("uwe@janssen-muenchen.de, barbara@janssen-muenchen.de",
+        "Battery FULL","Battery = " + SOC.state + "%")
+end

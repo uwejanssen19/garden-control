@@ -365,6 +365,7 @@ rule "Depressure"
       Thread::sleep(2000)
       Valve_Switch.postUpdate(ON)
       water_on_off.sendCommand("1")
+      // make depressure time depending on barrel fill state 
       var depTime = if ((LaserLevel.state as Number) >80) DEPRESSURE_TIME/2 else DEPRESSURE_TIME
       SystemStatusText.sendCommand("deflating hose for "+ depTime+ "seconds")
       createTimer (now.plusSeconds(depTime), onValveTimer)
@@ -506,3 +507,69 @@ then
   heatingControl.apply()  
 
 end
+rule "get PWS Data"
+when Time cron "0 0/10 * * * ?" // time spec for release edition: 0/10 means every 10 minutes
+    // e.g. 15, 25, 35 etc.
+  then
+
+      val String jsonOutput = sendHttpGetRequest("https://api.weather.com/v2/pws/observations/current?stationId=IKOLBE27&format=json&units=m&apiKey=72513edab73c4e44913edab73cae4425")
+
+      val String jTemp = transform("JSONPATH", "$.observations.[0].metric.temp", jsonOutput)
+      postUpdate(WC_temp,jTemp)
+
+      val String jPress = transform("JSONPATH", "$.observations.[0].metric.pressure", jsonOutput)
+//      logInfo("get PWS Data","##### TEMPERATURE  = "+jPress)
+      postUpdate(WC_Pressure,jPress)
+  
+      val String jRad = transform("JSONPATH", "$.observations.[0].solarRadiation", jsonOutput)
+      postUpdate(SolarRadiation,jRad)
+
+      val jRain = transform("JSONPATH", "$.observations.[0].metric.precipRate", jsonOutput)
+      // logInfo("get PWS Data","##### RAIN  = "+jRain)
+      postUpdate(WC_Rain,jRain)
+
+      val String jWindSpeed = transform("JSONPATH", "$.observations.[0].metric.windSpeed", jsonOutput)
+      postUpdate(WindSpeed,jWindSpeed)
+
+      val String jWindDir = transform("JSONPATH", "$.observations.[0].winddir", jsonOutput)
+      postUpdate(WindDir,jWindDir)
+
+      val String jUV = transform("JSONPATH", "$.observations.[0].uv", jsonOutput)
+      postUpdate(UV_Index,jUV)
+
+      val jHum = transform("JSONPATH", "$.observations.[0].humidity", jsonOutput)
+      postUpdate(WC_Hum,jHum)
+      
+      // JSON response sample:
+      /*
+      {"observations":
+      [{"stationID":"IKOLBE27",
+      "obsTimeUtc":"2024-02-04T20:59:04Z",
+      "obsTimeLocal":"2024-02-04 21:59:04",
+      "neighborhood":"Mitterhart",
+      "softwareType":null,
+      "country":"DE",
+      "solarRadiation":0.0,
+      "lon":12.066,
+      "realtimeFrequency":null,
+      "epoch":1707080344,
+      "lat":47.841,
+      "uv":0.0,
+      "winddir":266,
+      "humidity":58,
+      "qcStatus":1,
+
+      "metric":
+      {"temp":12,
+      "heatIndex":12,
+      "dewpt":4,
+      "windChill":12,
+      "windSpeed":3,
+      "windGust":5,
+      "pressure":1013.55,
+      "precipRate":0.00,
+      "precipTotal":0.00,
+      "elev":141}}]}
+      */
+      
+  end
