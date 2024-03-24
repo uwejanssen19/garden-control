@@ -228,11 +228,28 @@ end
 
 // end
 
-rule "check grid" 
+rule "SMART CAR CHARGE" 
 when Item GridPower changed
 then 
    //logInfo("check grid power", "monitor gridPower {}",GridPower.state)
     val mqttActions = getActions("mqtt","mqtt:broker:myUnsecureBroker")
+        val gridPowerAverage = GridPower.averageSince(now.minusMinutes(10));
+        GridAverageProxy.postUpdate(gridPowerAverage)
+    //logWarn("RULE SMART CAR CHARGE", "gridPowerAverage = {}", gridPowerAverage)
+
+    if ( gridPowerAverage < 750) 
+    {
+        // turn loading OFF
+        //logInfo("RULE SMART CAR CHARGE", "###############  gridPowerAverage = {}, STOP charging CAR ", gridPowerAverage)
+    }
+    if ( gridPowerAverage > 2600) 
+    {
+      // turn loading ON
+      // if we can control charging power that would be (gridPowerAverage-1000W) so there will always be enough power left over
+      logWarn("RULE SMART CAR CHARGE", "*****************  gridPowerAverage = {}, START CHARING ***********", gridPowerAverage)
+    }
+//    mqttActions.publishMQTT("GridAverage", gridPowerAverage,true)
+
     mqttActions.publishMQTT("GridPower",GridPower.state.toString,true)  
 
 end

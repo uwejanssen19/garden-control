@@ -40,6 +40,8 @@ Items {
 
     SOC: strategy = every10Minutes  
     ActivePower: strategy = everyMinute 
+    GridPower: strategy = everyMinute
+    GridAverageProxy: strategy = every5Minutes
 
     //############## BEGIN Mini Power Plant 600/800W ###################//
     SolarPlug_Leistung:strategy = everyMinute  // Data from Fritz 201 socket
