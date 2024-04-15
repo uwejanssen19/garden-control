@@ -1,0 +1,101 @@
+# open evcc at http://evcc.local:7070
+network:
+  schema: http
+  host: evcc.local # .local suffix announces the hostname on MDNS
+  port: 7070
+
+log: debug
+levels:
+  cache: error
+
+# unique installation id
+plant: 69ec375c4a8abc1fd130de5e968896c9ae01a9efe8cf33af0e640b761723f24d
+
+interval: 30s # control cycle interval
+
+meters:
+
+
+- type: template
+  template: huawei-dongle-powersensor 
+  id: 1  
+  host: 192.168.178.181  
+  port: 502  
+  usage: grid  
+  storageunit: 1  
+  modbus: tcpip  
+  timeout: 15s  
+  name: grid1
+
+#- type: template
+#  template: hoymiles-opendtu
+#  usage: pv
+#  host: 192.168.178.104 # IP-Adresse oder Hostname 
+#  name: mini800
+
+- type: template
+  template: huawei-dongle-powersensor 
+  id: 1  
+  host: 192.168.178.181  
+  port: 502  
+  usage: pv  
+  storageunit: 1  
+  modbus: tcpip  
+  timeout: 15s  
+  name: pv2
+
+- type: template
+  template: huawei-dongle-powersensor 
+  id: 1  
+  host: 192.168.178.181  
+  port: 502  
+  usage: battery  
+  storageunit: 1  
+  modbus: tcpip  
+  timeout: 15s  
+  name: battery3
+
+chargers:
+- type: template
+  template: elliconnect 
+  ski: 6F2D 6C54 D4CE 9340 045E 870E 4935 D529 4F2F B56B  
+  ip: 192.168.178.108  
+  name: wallbox4
+
+loadpoints:
+- title: Garage
+  charger: wallbox4
+  mode: pv
+
+site:
+  title: Mein Zuhause
+  meters:
+    grid: grid1
+    pv:
+    - pv2
+#   - mini800
+    battery:
+    - battery3
+
+
+eebus:
+  certificate:
+      private: |
+          -----BEGIN EC PRIVATE KEY-----
+          MHcCAQEEIArnKuTE/jHlbzBYgLt9oLY9Muw05ABcahMOEtx3RovwoAoGCCqGSM49
+          AwEHoUQDQgAELRvssShoFMQtKYfrSAhrBKAsarmDEc4tsarT1+16+NVMfkvuUR8/
+          auWw32YIThsQWo1dWhJG26/lYXQ9g1U/Cw==
+          -----END EC PRIVATE KEY-----
+      public: |
+          -----BEGIN CERTIFICATE-----
+          MIIBvTCCAWOgAwIBAgIRAesvrROlAVLO+EGZLusHKEQwCgYIKoZIzj0EAwIwPjEL
+          MAkGA1UEBhMCREUxDTALBgNVBAoTBEVWQ0MxCTAHBgNVBAsTADEVMBMGA1UEAwwM
+          RVZDQ19IRU1TXzAxMB4XDTI0MDQxNDEwMDIxOVoXDTM0MDQxMjEwMDIxOVowPjEL
+          MAkGA1UEBhMCREUxDTALBgNVBAoTBEVWQ0MxCTAHBgNVBAsTADEVMBMGA1UEAwwM
+          RVZDQ19IRU1TXzAxMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELRvssShoFMQt
+          KYfrSAhrBKAsarmDEc4tsarT1+16+NVMfkvuUR8/auWw32YIThsQWo1dWhJG26/l
+          YXQ9g1U/C6NCMEAwDgYDVR0PAQH/BAQDAgeAMA8GA1UdEwEB/wQFMAMBAf8wHQYD
+          VR0OBBYEFHv3yjIwtbMU9VNugmYtUE4MtotIMAoGCCqGSM49BAMCA0gAMEUCIGY+
+          Q8Sn2B5WkFoLy9kBCjxr0osvVc5OwBfUkW6tVMLtAiEAw5WV53mvkzUCMFjM/E/n
+          C/qGXpZYA+fYpptE3rO1yYQ=
+          -----END CERTIFICATE-----
