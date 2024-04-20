@@ -5,22 +5,23 @@ sitemap smarthome label= "Smart Home"
     Text item=SOC // Speicher
     Text item=GridPower  // Netzbezug
                   valuecolor=[GridPower>0="lime",<=0="red"]
-          //Text item=ActivePower // Eigenverbrauch
+          Text item=ActivePower // Eigenverbrauch
   }
+  
   Frame label="PV Anlage Mini" {
     Text item=SolarPlug_Leistung label="PV Mini Leistung (von Fritz 210) [%.2f %unit%]" icon="solarplant" // PV Mini AC Leistung
     //Text item=LastPowerLimit label="Maximale Leistung [%.2f %unit%]" icon="energy"
     Text item=Solar600_P_AC icon="energy"
   }
   
-  Frame label="Aktueller Verbrauch" {
-    Text item=Consumed_power_calculated valuecolor=[Consumed_power_calculated<0="lightgreen",>=0="black"]
-    Text label="Einzelwerte der Phasen (Grün: von PV, Rot: Vom Netz)" icon="energy" { 
-      Text item=Power_A valuecolor=[Power_A>0="lightgreen",<=0="red"]
-      Text item=Power_B valuecolor=[Power_B>0="lightgreen",<=0="red"]
-      Text item=Power_C valuecolor=[Power_C>0="lightgreen",<=0="red"]
-    }
-  }
+  // Frame label="Aktueller Verbrauch" {
+  //   Text item=Consumed_power_calculated valuecolor=[Consumed_power_calculated<0="lightgreen",>=0="black"]
+  //   Text label="Einzelwerte der Phasen (Grün: von PV, Rot: Vom Netz)" icon="energy" { 
+  //     Text item=Power_A valuecolor=[Power_A>0="lightgreen",<=0="red"]
+  //     Text item=Power_B valuecolor=[Power_B>0="lightgreen",<=0="red"]
+  //     Text item=Power_C valuecolor=[Power_C>0="lightgreen",<=0="red"]
+  //   }
+  // }
 
 
   Frame label="Details PV Anlage Dach" {

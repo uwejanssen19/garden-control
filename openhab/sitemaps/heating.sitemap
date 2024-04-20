@@ -52,6 +52,7 @@ sitemap heating label= "Heizung"{
                  labelcolor=[Bureau_IR_work_state_Power!=0="red",==0="black"] valuecolor=[Bureau_IR_work_state_Power!=0="red",==0="black"] 
               Text item=PumpeFussbodenheizung_Power icon="energy" label="Strom für PumpeFussbodenheizung : [%.0f W]"
                  labelcolor=[PumpeFussbodenheizung_Power!=0="red",==0="black"] valuecolor=[PumpeFussbodenheizung_Power!=0="red",==0="black"] 
+              Default item=Bureau_IR_mode label="Modus: [%s]"
           }
           Text item=gHeatingPower icon="energy" label="Strom für Heizung gesamt: [%.0f W]"
                  labelcolor=[gHeatingPower!=0="red",==0="black"] valuecolor=[gHeatingPower!=0="red",==0="black"] 

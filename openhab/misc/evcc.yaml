@@ -13,9 +13,14 @@ plant: 69ec375c4a8abc1fd130de5e968896c9ae01a9efe8cf33af0e640b761723f24d
 
 interval: 30s # control cycle interval
 
+vehicles:
+  - name: BYD
+    title: blauer ATTO 3
+    type: template
+    template: offline
+    capacity:  60 # in kWh
+
 meters:
-
-
 - type: template
   template: huawei-dongle-powersensor 
   id: 1  
@@ -27,11 +32,11 @@ meters:
   timeout: 15s  
   name: grid1
 
-#- type: template
-#  template: hoymiles-opendtu
-#  usage: pv
-#  host: 192.168.178.104 # IP-Adresse oder Hostname 
-#  name: mini800
+- type: template
+  template: hoymiles-opendtu
+  usage: pv
+  host: 192.168.178.104 # IP-Adresse oder Hostname 
+  name: mini800
 
 - type: template
   template: huawei-dongle-powersensor 
@@ -64,8 +69,9 @@ chargers:
 
 loadpoints:
 - title: Garage
+  vehicle: BYD
   charger: wallbox4
-  mode: pv
+  mode: off
 
 site:
   title: Mein Zuhause
@@ -73,10 +79,9 @@ site:
     grid: grid1
     pv:
     - pv2
-#   - mini800
+    - mini800
     battery:
     - battery3
-
 
 eebus:
   certificate:
