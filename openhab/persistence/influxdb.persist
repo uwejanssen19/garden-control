@@ -6,7 +6,6 @@ Strategies {
     every10Minutes : "0 0/10 * * * ?"  // check every 10 minutes
     every12Minutes : "0 02/12 * * * ?"  // check every 12 minutes starting at 02
     every5Minutes : "0 0/5 * * * ?"  // check every 5 minutes
-    default = everyChange
 }
 
 Items {
@@ -26,30 +25,30 @@ Items {
     Vcc_Solar3 : strategy =  everyHalfHour
     Temp_Solar3 : strategy =  everyHalfHour
 
-    LaserLevel : strategy = every5Minutes
+    LaserLevel : strategy = every10Minutes
 
     LocalCurrentRainVolume : strategy = everyHour
     LocalCurrentCloudiness: strategy = every10Minutes
     //SunCulm :  strategy = everyDay
-    SunCulm1 :  strategy = everyHour
+    SunCulm1 :  strategy = everyChange
 
     Hum_Solar1 : strategy = every10Minutes
     SolarPlug_Leistung : strategy = every10Minutes
 
     Solar_power_calculated: strategy = every10Minutes
 
-    SOC: strategy = every10Minutes  
-    ActivePower: strategy = everyMinute 
+    SOC: strategy = everyChange  
+    // ActivePower: strategy = everyMinute 
     GridPower: strategy = everyMinute
-    GridAverageProxy: strategy = every5Minutes
+    // GridAverageProxy: strategy = every5Minutes
 
-    //############## BEGIN Mini Power Plant 600/800W ###################//
-    SolarPlug_Leistung:strategy = everyMinute  // Data from Fritz 201 socket
-    Solar600_P_AC:strategy = everyMinute  // Data from Ahoy/openDTU 
-    // Solar800_P_DC_1:strategy = everyMinute  // Data from Ahoy/openDTU 
-    // Solar800_P_DC_2:strategy = everyMinute  // Data from Ahoy/openDTU 
+    //############## BEGIN Mini Power Plant 800/600W ###################//
+    //SolarPlug_Leistung:strategy = everyMinute  // Data from Fritz 201 socket
+    Solar800_1_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
+    Solar800_2_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
+    Solar600_1_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
     
-    //############## END  Mini Power Plant 600/800W ###################//
+    //############## END  Mini Power Plant 800/600W ###################//
     
     Valve_Switch: strategy = everyChange
 
@@ -58,12 +57,13 @@ Items {
     // BEGIN Weatherstation
     SolarRadiation: strategy = every10Minutes
     WindSpeed: strategy = every5Minutes
-    WC_temp: strategy= everyHalfHour
-    WC_Hum: strategy= everyHalfHour
-    WC_temp: strategy= everyHalfHour
-    WC_Pressure: strategy= everyHalfHour
-    WC_Rain: strategy= everyHalfHour
+    WC_temp: strategy = everyHalfHour
+    WC_Hum: strategy = everyHalfHour
+    WC_temp: strategy = everyHalfHour
+    WC_Pressure: strategy = everyHalfHour
+    WC_Rain: strategy = everyHalfHour
     // END   Weatherstation
 
-    DECT_301_battery_level: strategy= everyHour
+    DECT_301_battery_level: strategy = everyHour
+    EvccGreenShare: strategy = everyChange
 }

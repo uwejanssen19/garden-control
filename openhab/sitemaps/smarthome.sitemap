@@ -4,14 +4,17 @@ sitemap smarthome label= "Smart Home"
     Text item=Solar_power_calculated // (PV) Solar Input Leistung
     Text item=SOC // Speicher
     Text item=GridPower  // Netzbezug
-                  valuecolor=[GridPower>0="lime",<=0="red"]
-          Text item=ActivePower // Eigenverbrauch
+                  valuecolor=[GridPower>0="red",<=0="lime"]
+     //     Text item=ActivePower // Eigenverbrauch
   }
   
-  Frame label="PV Anlage Mini" {
-    Text item=SolarPlug_Leistung label="PV Mini Leistung (von Fritz 210) [%.2f %unit%]" icon="solarplant" // PV Mini AC Leistung
+  Frame label="Mini PV Anlagen" {
+    //Text item=SolarPlug_Leistung label="PV Mini Leistung (von Fritz 210) [%.2f %unit%]" icon="solarplant" // PV Mini AC Leistung
     //Text item=LastPowerLimit label="Maximale Leistung [%.2f %unit%]" icon="energy"
-    Text item=Solar600_P_AC icon="energy"
+    Text item=Solar800_1_P_AC icon="energy"
+    Text item=Solar800_2_P_AC icon="energy"
+    Text item=Solar600_1_P_AC icon="energy"
+    
   }
   
   // Frame label="Aktueller Verbrauch" {
@@ -23,15 +26,22 @@ sitemap smarthome label= "Smart Home"
   //   }
   // }
 
+ Frame label="EVCC" {
+     Default item=EvccHomePower
+     Default item=EvccGridPower
+     Default item=EvccBatteryPower
+     Default item=EvccPvPower
+     Default item=EvccGreenShare valuecolor=[EvccGreenShare<=0.6="red",>0.6="lime"]
+ }
 
-  Frame label="Details PV Anlage Dach" {
-      Text label="Solar Module Spannung und Strom" icon="energy"{
-        Text item=Pv_1_Voltage 
-        Text item=Pv_1_Current
-      }
-      Text label="Energieverbrauch Gesamt/Tag" icon="energy"{
-        Text item=E_total
-        Text item=E_day
-      }
-  }  
+  // Frame label="Details PV Anlage Dach" {
+  //     Text label="Solar Module Spannung und Strom" icon="energy"{
+  //       Text item=Pv_1_Voltage 
+  //       Text item=Pv_1_Current
+  //     }
+  //     Text label="Energieverbrauch Gesamt/Tag" icon="energy"{
+  //       Text item=E_total
+  //       Text item=E_day
+  //     }
+  // }  
 }

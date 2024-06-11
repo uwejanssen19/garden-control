@@ -91,9 +91,10 @@ Group gPowerShares "Einzelverbrauch der Phasen"
 //**Number Power_C "Power_C [%.0f W]" (gPowerShares) { channel="modbus:data:localhostTCP:powermeter_powerC:Power_C:number" }
 
 Group  gMiniPV
-Number Solar600_P_AC "P_AC reported from AHOY [%.2f W]" (gMiniPV) { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:P_AC" }
-Number Solar600_P_AC_Limit "Limit for P_AC set to [%.2f W]"
-Switch GridFeedControlEnable "Einspeisebegrenzung [%s]"
+Number Solar800_1_P_AC "P_AC reported from mini 800 1 [%.2f W]" (gMiniPV) { channel="mqtt:topic:myUnsecureBroker:mini_solar_thing:P_AC_1" }
+Number Solar800_2_P_AC "P_AC reported from mini 800 2 [%.2f W]" (gMiniPV) { channel="mqtt:topic:myUnsecureBroker:mini_solar_thing:P_AC_2" }
+Number Solar600_1_P_AC "P_AC reported from mini 600 1 [%.2f W]" (gMiniPV) { channel="mqtt:topic:myUnsecureBroker:mini_solar_thing:P_AC_3" }
+//Switch GridFeedControlEnable "Einspeisebegrenzung [%s]"
 //Number LastPowerLimit
 //Number LastSetPowerLimit { channel="mqtt:topic:myUnsecureBroker:solar_600_thing:LimitFromInverter" }// from inverter
 

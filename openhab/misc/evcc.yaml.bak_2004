@@ -83,14 +83,6 @@ site:
     battery:
     - battery3
 
-# mqtt message broker
-mqtt:
-  broker: localhost:1883
-  topic: evcc # root topic for publishing, set empty to disable publishing
-  # clientid: foo
-  # user:
-  # password:
-
 eebus:
   certificate:
       private: |

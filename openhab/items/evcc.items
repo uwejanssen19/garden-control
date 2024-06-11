@@ -1,0 +1,6 @@
+Number EvccBatteryPower "Batterie Power [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:evcc_thing:batteryPower" }
+Number Solar_power_calculated "PV [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:evcc_thing:pvPower" }
+Number GridPower "Netz [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:evcc_thing:gridPower" }
+Number EvccHomePower "Verbrauch [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:evcc_thing:homePower" }
+Number EvccGreenShare "Autarkie  [%.1f ]" { channel="mqtt:topic:myUnsecureBroker:evcc_thing:greenShare" }
+Number SOC "Batterie SOC [%.2f %%]" { channel="mqtt:topic:myUnsecureBroker:evcc_thing:batterySoc" }

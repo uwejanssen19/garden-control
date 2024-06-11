@@ -1,0 +1,21 @@
+Thing mqtt:topic:myUnsecureBroker:evcc_thing (mqtt:broker:myUnsecureBroker) {
+Channels:
+				Type string : batterySoc "Battery SOC" [
+					stateTopic="evcc/site/battery/1/soc"
+                ]
+				Type string : batteryPower "Battery Power" [
+					stateTopic="evcc/site/battery/1/power"
+                ]
+				Type string : gridPower "Grid Power" [
+					stateTopic="evcc/site/gridPower"
+                ]
+				Type string : pvPower "PV Power" [
+					stateTopic="evcc/site/pvPower"
+                ]
+				Type string : homePower "Home Power" [
+					stateTopic="evcc/site/homePower"
+                ]
+				Type string : greenShare "Green Share" [
+					stateTopic="evcc/site/greenShareHome"
+                ]
+}
