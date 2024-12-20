@@ -28,7 +28,7 @@
       <systemPath>${basedir}/jar/jrule-items.jar</systemPath>
     </dependency>
     <dependency>
-      <version>1.2.9</version>
+      <version>1.5.13</version>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
       <scope>test</scope>
