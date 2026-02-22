@@ -14,6 +14,4 @@ Bridge mqtt:broker:myUnsecureBroker [ host="localhost", secure=false, retain = f
 // }
 //IROSEN171 ?
 
-// request using weatherCompany and wunderground  API https://api.weather.com/v2/pws/observations/current?stationId=IKOLBE27&format=json&units=m&apiKey=72513edab73c4e44913edab73cae4425
-
 

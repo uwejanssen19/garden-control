@@ -5,7 +5,7 @@ Channels:
 // 20.1.2024 openDTU inverter for HMS 800-2T serial 114491409821
 // 01.07.2024 openDTU also includes second HMS 800-2T 1144a008014f
 // power from all modules is summed up in one mqtt value
-        Type number : P_AC_1 "Total Power AC from Inverter" [ stateTopic="inverter_800_1/ac/power"] 
+        Type number : P_AC_1 "Total Power AC from Inverter" [ stateTopic="opendtu/ac/power"] 
 
 // 11.6.2024 Scheduled: Second Module set with 800 W inverter HMS 800-2T via OPEN DTU
 //        Type number : P_AC_2 "Total Power AC from Inverter" [ stateTopic="inverter_800_2/ac/power"] --> moved to open Dtu above
