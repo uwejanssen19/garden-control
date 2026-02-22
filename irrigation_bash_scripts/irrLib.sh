@@ -5,12 +5,12 @@ HIGH='water ### HIGH ###'
 STATE=""
 IRRIGATION_PUMP_PORT=17
 TAP_WATER_VALVE_PORT=18
-LEVEL_SENSOR_PORT=27
+LEVEL_SENSOR_PORT=24
 LOG_FILE=/tmp/waterOnOff.log
 CURRENT_WEATHER_RESPONSE=/tmp/weather.json
 MAX_READ_COUNT=4
 FORECAST=/tmp/forecast.json
-YESTERDAY=/tmp/yesterday.json
+YESTERDAY_FILE=/tmp/yesterday.json
 OW_API='19617de07bcc959ff8dc5e0caffce590'
 
 function irrOnOff () {
@@ -55,7 +55,7 @@ function readLevel {
 
 function init () {
   # gpio $LEVEL_SENSOR_PORT is input and pulled up
-  raspi-gpio set 23 ip pu
+  raspi-gpio set  $LEVEL_SENSOR_PORT ip pu
     # gpio -g mode $LEVEL_SENSOR_PORT in
   # gpio $IRRIGATION_PUMP_PORT and $TAP_WATER_VALVE_PORT output
     gpio -g mode $IRRIGATION_PUMP_PORT out
@@ -126,14 +126,12 @@ function getDate() {
 }
 # get unix timestamp for now minus 24h
 function getYesterdaysTimeStamp() {
-  echo $(date "yesterday" "+%s")
-  #echo $(($(date +%s)-(3600*72)))
+  echo $(date -d "yesterday" "+%s")
 }
 
 function getYesterdaysWeather() {
   yts=$(getYesterdaysTimeStamp)
-  date -d @$yts
-  wget "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=47.8449&lon=12.0667&dt=$yts&units=metric&appid=$OW_API" -O $YESTERDAY
+  wget "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=47.8449&lon=12.0667&dt=$yts&units=metric&appid=$OW_API" -O $YESTERDAY_FILE
 }
 function getRainYesterday () {
   getYesterdaysWeather
