@@ -12,7 +12,7 @@ sitemap smarthome label= "Smart Home"
     //Text item=SolarPlug_Leistung label="PV Mini Leistung (von Fritz 210) [%.2f %unit%]" icon="solarplant" // PV Mini AC Leistung
     //Text item=LastPowerLimit label="Maximale Leistung [%.2f %unit%]" icon="energy"
     Text item=Solar800_1_P_AC icon="energy"
-    Text item=Solar800_2_P_AC icon="energy"
+//    Text item=Solar800_2_P_AC icon="energy"
     Text item=Solar600_1_P_AC icon="energy"
     
   }
@@ -31,7 +31,8 @@ sitemap smarthome label= "Smart Home"
      Default item=EvccGridPower
      Default item=EvccBatteryPower
      Default item=EvccPvPower
-     Default item=EvccGreenShare valuecolor=[EvccGreenShare<=0.6="red",>0.6="lime"]
+     Text item=EvccLocalSolarRate 
+       valuecolor=[EvccLocalSolarRate<=25="red",>75="green"]
  }
 
   // Frame label="Details PV Anlage Dach" {

@@ -45,7 +45,7 @@ Items {
     //############## BEGIN Mini Power Plant 800/600W ###################//
     //SolarPlug_Leistung:strategy = everyMinute  // Data from Fritz 201 socket
     Solar800_1_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
-    Solar800_2_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
+//    Solar800_2_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
     Solar600_1_P_AC: strategy = everyChange  // Data from Ahoy/openDTU 
     
     //############## END  Mini Power Plant 800/600W ###################//
@@ -65,5 +65,6 @@ Items {
     // END   Weatherstation
 
     DECT_301_battery_level: strategy = everyHour
-    EvccGreenShare: strategy = everyChange
+    EvccLocalSolarRate: strategy = everyChange
+    //EvccGreenShare: strategy = everyChange
 }

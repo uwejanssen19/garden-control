@@ -307,10 +307,24 @@ end
   
 // ]
 
-rule "Battery full"
+rule "Battery treshold"
 when Item SOC changed to 100
+ or Item SOC changed to 50
 then
       val mailActions = getActions("mail","mail:smtp:mysmtp")
       mailActions.sendMail("uwe@janssen-muenchen.de, barbara@janssen-muenchen.de",
         "Battery FULL","Battery = " + SOC.state + "%")
 end
+rule "BU_Power_Change"
+when Item BU_power change
+then
+  val buPower = BU_power.state as Number
+  // validate before storing into database
+  if (buPower < 0 || buPower > 10000) {
+    logWarn("RULE BU_Power_Change", "*****************  BU_power = {}, DO NOT store ***********", BU_power)
+  } else {
+    // store power into database
+    logInfo("RULE BU_Power_Change", "*****************  BU_power = {}, START CHARING ***********", buPower)
+  }
+
+end 

@@ -1,4 +1,8 @@
 # open evcc at http://evcc.local:7070
+database:
+    type: sqlite
+    dsn: /var/lib/evcc/evcc.db
+
 network:
   schema: http
   host: evcc.local # .local suffix announces the hostname on MDNS
@@ -19,6 +23,11 @@ vehicles:
     type: template
     template: offline
     capacity:  60 # in kWh
+  - name: BMW
+    title: blauer iX
+    type: template
+    template: offline
+    capacity:  65 # in kWh
 
 meters:
 - type: template
@@ -31,6 +40,13 @@ meters:
   modbus: tcpip  
   timeout: 15s  
   name: grid1
+
+- type: template
+  template: hoymiles-ahoydtu
+  usage: pv
+    #host: 192.168.178.188 # IP-Adresse oder Hostname 
+  host: xdbu92gos1irkzbd.myfritz.net:8032
+  name: mini600
 
 - type: template
   template: hoymiles-opendtu
@@ -60,10 +76,30 @@ meters:
   timeout: 15s  
   name: battery3
 
+- name: sdm54
+  type: template
+  template: eastron-sdm120
+  usage: ext
+  modbus: tcpip
+  id: 1
+  host: 192.168.178.131
+  port: 502
+  
+- name: kdk
+  type: template
+  template: inepro
+  usage: ext
+  modbus: tcpip
+  id: 1
+  host: 192.168.178.131
+  port: 502
+  
 chargers:
 - type: template
   template: elliconnect 
-  ski: 6F2D 6C54 D4CE 9340 045E 870E 4935 D529 4F2F B56B  
+    # EVCC SKI: 7BF7 CA32 30B5 B314 F553 6E82 662D 504E 0CB6 8B48
+  ski: 31A9 C90F 3099 EB76 FA79 23AA F8BA 0F88 61EC EF98
+# old:   ski: 869E 2E68 A0AC AE70 0340 ABCC 3B8C F6F4 2DCF 0C41
   ip: 192.168.178.108  
   name: wallbox4
 
@@ -74,7 +110,8 @@ loadpoints:
   mode: off
 
 site:
-  title: Mein Zuhause
+  title: HOME
+    #  residualPower: 0
   meters:
     grid: grid1
     pv:
@@ -82,6 +119,18 @@ site:
     - mini800
     battery:
     - battery3
+    ext:
+      - kdk
+      #- sdm54
+      #- mini600
+
+# mqtt message broker
+mqtt:
+  broker: localhost:1883
+  topic: evcc # root topic for publishing, set empty to disable publishing
+  # clientid: foo
+  # user:
+  # password:
 
 eebus:
   certificate:
