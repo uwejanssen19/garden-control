@@ -22,3 +22,9 @@ Channels:
 					stateTopic="+/solar" // "EvccLocalSolarRate"
 				]
 }
+Thing mqtt:topic:myUnsecureBroker:evcc_meter_thing (mqtt:broker:myUnsecureBroker) {
+        Channels: 
+        Type string : EG_power "EG_power" [ stateTopic="evcc/site/ext/1/power" ]
+        Type string : AG_power "AG_power" [ stateTopic="evcc/site/ext/2/power" ]
+}
+

@@ -67,4 +67,6 @@ Items {
     DECT_301_battery_level: strategy = everyHour
     EvccLocalSolarRate: strategy = everyChange
     //EvccGreenShare: strategy = everyChange
+    EG_Power: strategy = everyChange
+    AG_Power: strategy = everyChange
 }

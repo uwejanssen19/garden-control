@@ -109,3 +109,7 @@ Number GridAverageProxy
 //Number LastCarCharge
 
 //Switch CarCharge { channel="mqtt:topic:myUnsecureBroker:carcharge_thing:carcharge_switch" }
+// private meter values read by modbus master 192.168.178.131:503 Address = 1
+Number EG_Power "EG power  [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:evcc_meter_thing:EG_power" }
+Number AG_Power "Allgemeinstrom power  [%.2f W]" { channel="mqtt:topic:myUnsecureBroker:evcc_meter_thing:AG_power" }
+
